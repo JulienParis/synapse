@@ -35,10 +35,47 @@ This application proposes several features :
 ## Application requirements :
 
 - Python 2.7
-- Python libraries : Pandas, flask-socketio, eventlet, Pandas3D, Numpy-stl
+- MongoDB
+- Python libraries : Pandas, flask-socketio, eventlet, zeep, flask-mysqldb
 - NGINX
 - Gunicorn
 - server side : ubuntu 14.04 x64 | 4 Go RAM minimum
+
+---
+
+## _XXX._ | MongoDB installation :
+
+- check installation procedure on  :
+https://docs.mongodb.com/manual/installation/
+https://docs.mongodb.com/manual/administration/install-on-linux/
+https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
+
+- Import the public key used by the package management system
+>
+```
+$ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+```
+
+- create a list file for mongodb (Ubuntu 14.04)
+>
+```
+$ echo "deb [ arch=amd64 ] http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
+```
+
+- install mongodb>
+>
+```
+$ sudo apt-get update
+$ sudo apt-get install -y mongodb-org
+```
+
+- start mongodb
+>
+```
+$ sudo service mongod start
+```
+
+- *** start mongo shell (optional)
 
 ---
 

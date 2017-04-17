@@ -14,6 +14,10 @@ WTF_CSRF_ENABLED    = True
 WTF_CSRF_SECRET_KEY = '23QBWBgrfzqsdqsdftSGDYSet-!(5q34gsQRVdsqf<ds)*$'
 
 
-### MONGO DB CONFIG
-MONGO_DBNAME = 'flaplab_DB'
-MONGO_URI    = 'mongodb://admin:Pak0_6938@ds035026.mlab.com:35026/flaplab_DB'
+### MONGO DB CONFIG - production
+# MONGO_DBNAME = 'synapse_test'
+# MONGO_URI    = 'mongodb://127.0.0.1:27017/synapse_test'
+
+### MONGO DB CONFIG - test / connecting on localhost
+MONGO_DBNAME = 'synapse_test'
+MONGO_URI    = 'mongodb://127.0.0.1:27017/synapse_test'

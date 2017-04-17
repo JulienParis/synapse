@@ -8,6 +8,8 @@ import json
 from app   import app, socketio
 from flask import Flask, flash, render_template, url_for, request, session, redirect
 from flask_pymongo import PyMongo ### flask_pymongo instead of flask.ext.pymongo
+import flask_mysqldb
+import zeep
 import bcrypt
 
 from flask_socketio import emit #, send
@@ -24,6 +26,8 @@ from .forms import LoginForm, UserRegisterForm, ArticleForm, DeleteForm, Comment
 
 #### db : MongoDB connection /// PLACED IN CONFIG.PY AT ROOT ####
 mongo = PyMongo(app)
+print "starting app --- MongoDB connected"
+
 
 
 from scripts.app_settings import bootstrap_vars, app_colors, app_metas
@@ -67,9 +71,7 @@ def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-def allowed_models(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1] in ALLOWED_MODELS
+
 
 
 def uploadFile(file_, subdir_):
@@ -85,6 +87,42 @@ def uploadFile(file_, subdir_):
 
 
 
+
+
+
+
+########################################################################################
+### MONGODB ROUTES #####
+@app.route('/users')
+def sitemap_users():
+
+    print
+    print "test access mongoDB "
+
+    users_list = []
+    users      = mongo.db.users.find()
+    # print users
+    for user in users :
+        users_list.append(user)
+    json_users = json.dumps(users_list, default=json_util.default)
+    return json_users
+
+
+@app.route('/add_user')
+def add_user():
+
+    print
+    print "test access mongoDB "
+
+    users = mongo.db.users
+    # print users
+    users.insert({'name' : 'Julien test'})
+    return "user added"
+
+
+
+
+########################################################################################
 ### ROUTING FUNCTIONS #######################
 
 @app.route('/', methods=['GET', 'POST'])

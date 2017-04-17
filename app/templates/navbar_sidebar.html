@@ -17,53 +17,7 @@
       margin: 0 15px;                  /* optional */
   }
 
-  #wrapper {
-    margin-left: 10px;
-    padding-left: 0px;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-    overflow: hidden;
-  }
-  #wrapper.toggled {
-    padding-left: 200px;
-    overflow: scroll;
-  }
-  #sidebar-wrapper {
-    z-index : 5;
-    border-radius: 3px;
-    box-shadow   : 0 5px 15px rgba(0,0,0,.5);
-    position: absolute;
-    left    : 300px;
-    width   : 0;
-    height  : 50%;
-    margin-top :  5%;
-    margin-left: -290px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: {{ app_colors.navbar }};
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-  }
-  #wrapper.toggled #sidebar-wrapper {
-    width: 300px;
-  }
-  #page-content-wrapper {
-    position: absolute;
-    padding: 15px;
-    width: 100%;
-    overflow-x: hidden;
-  }
-  .xyz{
-     min-width: 360px;
-  }
-  #wrapper.toggled #page-content-wrapper {
-     position: relative;
-     margin-right: 0px;
-  }
+
   .fixed-brand{
      width: auto;
   }
@@ -77,88 +31,11 @@
      list-style: none;
      margin-top: 0px;
   }
-  .sidebar-nav li {
-     text-indent: 15px;
-     line-height: 40px;
-  }
-  .sidebar-nav li a {
-     display: block;
-     text-decoration: none;
-     color: #fff;
-  }
-  .sidebar-nav li a:hover {
-     text-decoration: none;
-     color: #fff;
-     /*background: rgba(255,255,255,0.2);*/
-     border-left: white 2px solid;
-  }
-  .sidebar-nav li a:active,
-  .sidebar-nav li a:focus {
-     text-decoration: none;
-  }
-  .sidebar-nav > .sidebar-brand {
-     height: 65px;
-     font-size: 18px;
-     line-height: 60px;
-  }
-  .sidebar-nav > .sidebar-brand a {
-     color: #fff;
-  }
-  .sidebar-nav > .sidebar-brand a:hover {
-     color: #fff;
-     background: none;
-  }
+
   .no-margin{
      margin:0;
   }
 
-  @media(min-width:700px) {
-     #wrapper {
-         padding-left: 300px;
-     }
-     .fixed-brand{
-         width: 150px;
-     }
-     #wrapper.toggled {
-         padding-left: 0;
-     }
-     #sidebar-wrapper {
-         width: 300px;
-     }
-     #wrapper.toggled #sidebar-wrapper {
-         width: 300px;
-     }
-     #wrapper.toggled-2 #sidebar-wrapper {
-         width: 50px;
-     }
-     /* main width size */
-     #wrapper.toggled-2 #sidebar-wrapper:hover {
-         width: 300px;
-     }
-     #page-content-wrapper {
-         padding: 20px;
-         position: relative;
-         -webkit-transition: all 0.5s ease;
-         -moz-transition: all 0.5s ease;
-         -o-transition: all 0.5s ease;
-         transition: all 0.5s ease;
-     }
-     #wrapper.toggled #page-content-wrapper {
-         position: relative;
-         margin-right: 0;
-         padding-left: 300px;
-     }
-     #wrapper.toggled-2 #page-content-wrapper {
-         position: relative;
-         margin-right: 0;
-         margin-left: -200px;
-         -webkit-transition: all 0.5s ease;
-         -moz-transition: all 0.5s ease;
-         -o-transition: all 0.5s ease;
-         transition: all 0.5s ease;
-         width: auto;
-     }
-  }
 
   .dropdown-menu a {
     color : grey !important;
@@ -358,18 +235,10 @@
 
       <li class="divider-vertical"></li>
 
-      <li class="bstooltip" data-toggle="tooltip" data-placement="bottom"
-          title="What is Flap'Lab ?" >
-        <a  role="button"
-            data-toggle="modal"
-            data-target="#mod_intro">
-          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
 
-        </a>
-      </li>
 
       <li class="bstooltip" data-toggle="tooltip" data-placement="bottom"
-          title="How to use Flap'Lab ?" >
+          title="Comment utiliser {{ app_metas.title }} ?" >
         <a  role="button"
             data-toggle="modal"
             data-target="#mod_howto">
@@ -382,14 +251,6 @@
       <li class="divider-vertical"></li>
 
 
-      <li class="bstooltip active" data-toggle="tooltip" data-placement="bottom"
-        title="..." >
-        <a role="button" class=" collapse in" data-toggle="collapse" id="menu-toggle-2">
-          <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
-        </a>
-      </li>
-
-
 
     </ul>
 
@@ -400,7 +261,7 @@
 
 
       <li>
-        <a  href="https://gitlab.com/Julien_P/flaplab" target="_blank"
+        <a  href="https://gitlab.com/Julien_P/{{ app_metas.title }}" target="_blank"
             class="bstooltip" data-toggle="tooltip" data-placement="bottom"
             title="repo Gitlab">
           <i class="fa fa-gitlab fa-lg" area-hidden="true"></i>
@@ -410,7 +271,7 @@
       <li>
         <a  href="https://twitter.com/jparis_py" target="_blank"
             class="bstooltip" data-toggle="tooltip" data-placement="bottom"
-            title="n'hésitez à nous écrire sur Twitter #flaplab ">
+            title="n'hésitez à nous écrire sur Twitter #{{ app_metas.title }} ">
           <i class="fa fa-twitter fa-lg" area-hidden="true"></i>
         </a>
       </li>
@@ -420,7 +281,7 @@
       <li>
         <a  href="https://www.paypal.me/jpydev" target="_blank"
             class="bstooltip" data-toggle="tooltip" data-placement="bottom"
-            title="Faites un don pour nous aider à maintenir FlapLab en ligne">
+            title="Faites un don pour aider un jeune développeur !">
           <i class="fa fa-paypal fa-lg" area-hidden="true"></i>
         </a>
       </li>
@@ -444,41 +305,6 @@
 
 
 
-<!-- SIDEBAR LEFT -->
-
-<div id="wrapper" class="toggled-2">
-
-  <div id="sidebar-wrapper">
-
-    <ul class="sidebar-nav nav-pills nav-stacked" id="menu">
-
-      <br>
-
-      <!-- MAIN FILTERS TITLE  -->
-      <li class="bstooltip" data-toggle="tooltip" data-placement="bottom"
-          title="...">
-
-            <span class="fa-stack fa-lg pull-left" style="color: #7841a9">
-              <i class="fa fa-map fa-stack-1x" aria-hidden="true"></i>
-            </span>
-            <a style="color: #7841a9 ; font-size: 16px">
-              <strong class="text-uppercase">
-                Flaplab
-              </strong>
-            </a>
-      </li>
-
-
-
-
-
-      <br>
-
-    </ul>
-
-  </div><!-- /#sidebar-wrapper -->
-
-</div> <!-- end #wrapper -->
 
 
 

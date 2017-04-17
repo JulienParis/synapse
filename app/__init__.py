@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-'''          FLAPLAB
+'''          SYNAPSE
 --------------------------------------------
 
 ---------------------------------------------
@@ -34,7 +34,7 @@ STATIC_DATA_MODELS    = SITE_STATIC + '/3dmodels'
 #app = Flask(__name__)
 app = Flask(__name__, static_path = SITE_STATIC ) ### change static directory adress to custom address for Flask
 
-### get config.py for forms config
+### get config.py for forms/DB config
 app.config.from_object('config')
 
 ### set socketio

@@ -3,17 +3,17 @@
 
 ### vars for name application / metas
 app_metas = {
-    "title"       : u"Flap'Lab",
-    "subtitle"    : u"Origamizer",
+    "title"       : u"synapse",
+    "subtitle"    : u"dataviz 3D",
     "version"     : u"beta 0.1",
-    "description" : u"2D blueprints generator of 3D models",
+    "description" : u"Visualisation 3D du catalogue de la bibliothèque de St Herblain et des parcours de lecture",
     "authors"     : u"Julien Paris",
-    "licence"     : '...',
+    "licence"     : '...undefined yet...',
     "metas"       : u"""
         dataviz,data visualisation,data visualization,graph,SIG,France,
-        pandas,geopandas,socketio,shapely,
-        opensource,open source,open data,creative commons,github,GNU,GPL,DIY,
-        d3,d3.js,JS,THREE,THREE.js,javascript,python,flask,HTML,CSS,JSON,bootstrap,Leaflet,socketIO
+        pandas,geopandas,socketio,
+        opensource,open source,open data,creative commons,github,
+        JS,THREE,THREE.js,javascript,python,flask,HTML,CSS,JSON,bootstrap,socketIO
         """
     }
 
