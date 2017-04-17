@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+  <head>
+
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- GOOGLE INDEXING  -->
+    <!-- <meta name="google-site-verification" content="..." /> -->
+
+  	<!-- APP INFOS  -->
+    <title> {{ app_metas.title }} - {{ app_metas.version }} </title>
+    <meta name="keywords"    content="{{ app_metas.metas }}">
+    <meta name="author"      content="{{ app_metas.authors }}">
+    <meta name="description" content="{{ app_metas.description }}">
+
+    <!-- JQUERY  -->
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+    <!-- LODASH -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.6/lodash.min.js"></script> -->
+
+  	<!-- BOOTSTRAP  -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+  	<!-- GLYPHICONS -->
+  	<link href="{{ url_for('static', filename='fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}" rel="stylesheet">
+
+    <!-- SOCKET IO -->
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+
+  	<!-- CUSTOM STYLES  -->
+  	<link rel="shortcut icon" href="{{ url_for('static', filename='images/elements/favicon.ico') }}">
+  	<link href="{{ url_for( 'static', filename='css/custom_styles.css' ) }}" rel="stylesheet">
+
+
+  	<style>
+
+      {% include "styles_app.css" %}
+
+    </style>
+
+  </head>
+
+
+
+
+    {% include "modal_loader.html" %}
+
+
+
+
+  <header>
+
+    {% include "navbar_sidebar.html" %}
+
+  </header>
+
+
+  <body id="body" >
+
+
+  	<!-- CONTENTS -->
+  	<div class="container-fluid">
+
+
+      <div class="row" id="row-main"  >
+
+        <!-- id="row-main" -->
+	      {% block content %}{% endblock %}
+
+      </div>
+
+  	</div>
+
+
+
+  	<!-- FOOTER --------------------------------------------------------------------- -->
+
+    <!-- end of footer-->
+
+
+
+  	<!-- MODALS --------------------------------------------------------------------- -->
+
+    {% include "modal_intro.html" %}
+    {% include "modal_howto.html" %}
+
+
+  </body>
+
+
+
+  <!--  bootstrap callings  -->
+  <script type="text/javascript">
+
+    // loader
+    $('#mod_loader').modal('show');
+
+    // activate bootstrap dropdown / carousel
+    $(document).ready( function(){
+
+      $('#mod_loader').modal('hide');
+      $(".dropdown-toggle").dropdown() ;
+      $('.carousel').carousel(
+        {interval: 5000}
+      );
+
+    });
+
+    // activate bootstrap tooltips with custom caller (data-tooltip instead of data-toggle)
+    $(function () {
+        $('[data-tooltip="tooltip"]').tooltip()
+    });
+
+    // manage appear on hover and disappear after x milliseconds
+    $('.bstooltip').mouseenter(function(){
+        var that = $(this);
+        that.tooltip('show');
+        // setTimeout(function(){
+        //   that.tooltip('hide');
+        // }, 10000);
+    });
+
+    $('.bstooltip').mouseleave(function(){
+        $(this).tooltip('hide');
+    });
+
+    // click dropdown on hover
+    $('.dropdown').hover(function(){
+      $('.dropdown-toggle', this).trigger('click');
+    });
+
+
+    // refresh view
+    function refreshPage (href){
+        //console.log(href);
+        window.location = href ;
+    };
+
+
+    // // fades alerts
+    window.setTimeout(function() {
+        $(".alert_fade").fadeTo(500, 0).slideUp(500, function(){
+      $(this).remove();
+        });
+    }, 4000);
+
+
+    // tooltip with image inside
+    $('.tooltip_img').tooltip({
+        animated : 'fade',
+        placement: 'left',
+        html     : true
+    });
+
+
+    //change app scale if view on mobile screen :
+    var screen_width = window.innerWidth;
+    console.log("$(document).ready / screen_width : ", screen_width);
+    if (screen_width < 600 ) {
+    // if (navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i)) {
+      console.log("--- !!! --- small screen_width < 600px  ");
+      // var viewportmeta = document.querySelector('meta[name="viewport"]');
+      // if (viewportmeta) {
+      //   viewportmeta.content = 'width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=0.35';
+      //   document.body.addEventListener('gesturestart', function () {
+      //       viewportmeta.content = 'width=device-width, minimum-scale=0.35, maximum-scale=1.0';
+      //   }, false);
+      // }
+      // $("meta[name='viewport']").attr("content", "width=device-width, initial-scale=0.1");
+      $("meta[name='viewport']").attr("content", "width=device-width, initial-scale=0.35");
+    }
+    else if (screen_width < 800 ) {
+      console.log("--- !!! --- small screen_width < 800px  ");
+      $("meta[name='viewport']").attr("content", "width=device-width, initial-scale=0.7");
+
+    }
+    ;
+
+  </script>
+
+
+</html>

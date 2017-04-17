@@ -1,0 +1,111 @@
+/* GLOBAL STYLES */
+
+.dropdown-header {
+    color: mediumaquamarine;
+}
+
+.well {
+    background-color: mediumaquamarine;
+    border: 0px;
+    border-radius : 10px;
+    padding-right : 10px;
+    padding-left  : 10px;
+    padding-top   : 0px;
+    padding-bottom: 0px;
+}
+
+
+
+
+.label{
+    line-height: 2;
+}
+
+
+textarea{
+    width: auto;
+}
+
+
+
+
+alert{
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    z-index : 99999;
+}
+
+
+
+/* NAVBAR & DROPDOWNS */
+.navbar {
+    /*background-color: rgba(100, 100, 100, 0.5);*/
+    /*background-color: {{ app_colors.navbar }} ;*/
+
+    border: hidden;
+    margin-bottom: 5px;
+    z-index: 10;
+}
+
+.navbar-btn {
+    margin-right: 10px;
+    color: #fff;
+    border-width: 0px;
+}
+
+.form-group-nav{
+    margin-bottom: 0px;
+}
+
+
+
+/* SCROLLBAR */
+.scrollable {
+    max-height: 410px;
+    overflow-y: scroll;
+}
+
+
+::-webkit-scrollbar-track {
+    /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
+    background-color: null;
+}
+::-webkit-scrollbar {
+    width: 6px;
+    background-color: null;
+}
+::-webkit-scrollbar-thumb {
+    background-color: orange;
+    border: 6px solid rgba(0, 0, 0, 0);
+}
+
+
+
+
+
+/* TOOLTIPS	 */
+
+.tooltip{
+    z-index: 9999;
+    position: fixed;
+}
+
+
+
+/* tooltips for nodes */
+.tooltipNode {
+    color : white ;
+    position: absolute;
+    text-align: center;
+    max-width: 250px;
+    /*height: 28px;*/
+    padding: 4px;
+    /*font: 12px sans-serif;*/
+    background: grey;
+    /*border-width: 1px;*/
+    /*border-color: white;*/
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 3;
+}

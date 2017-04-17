@@ -1,0 +1,193 @@
+
+body {
+    /*background-color: teal ;*/
+    /* azure darcyan honeydew lightcyan lightseagreen mintcream teal   */
+}
+
+hr {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-top-style: dashed;
+}
+/*text {
+    font-size: medium;
+}*/
+
+h2 {
+    color: {{ app_colors.navbar }};
+    margin-top: 0px;
+}
+
+h3 {
+    color: {{ app_colors.navbar }} ;
+}
+
+h4 {
+    color: {{ app_colors.btn_info }};
+    font-size: 14px;
+}
+
+h5 {
+    margin-bottom: 2px;
+    margin-top: 2px;
+}
+
+a {
+  color: #fff;
+}
+a:hover{
+  color: {{ app_colors.btn_info }};
+  text-decoration : none;
+}
+
+.a_ {
+  color: {{ app_colors.btn_info }} ;
+}
+
+.a_:hover {
+  text-decoration: underline;;
+}
+
+a.aFake {
+  color : #333;
+}
+
+.lead {
+    margin-bottom: 16px;
+    line-height: 1.2;
+    font-size: 1.2;
+}
+
+
+/* NAVBAR & DROPDOWNS */
+.navbar {
+    background-color: {{ app_colors.navbar }} ;
+    border-radius : 0px ;
+}
+#navbar-text {
+    color : #fff
+}
+
+
+/* SIDEBAR & JUMBOTRON */
+.container-fluid .jumbotron{
+    background-color: {{ app_colors.jumbotron }} ;
+}
+
+
+.btn-warning{
+    background-color: {{ app_colors.btn_warning }} ;
+}
+.btn-default{
+    background-color: {{ app_colors.btn_default }} ;
+}
+.btn-success{
+    background-color: {{ app_colors.btn_success }} ;
+}
+.btn-danger{
+    background-color: {{ app_colors.btn_danger }} ;
+}
+.btn-info{
+    background-color: {{ app_colors.btn_info }} ;
+}
+.btn-primary{
+    background-color: {{ app_colors.btn_primary }} ;
+}
+
+
+/* CUSTOM TOOLTIPS */
+.tooltip .tooltip-inner {
+    max-width: 275px;
+    max-height: 450px;
+    color: #fff;
+    font-size : 12px;
+    font-weight : bold ;
+    background-color: {{ app_colors.btn_info }} ;
+}
+
+.tooltip.right .tooltip-arrow {
+    border-right-color: {{ app_colors.btn_info }} ;
+}
+
+.tooltip.bottom .tooltip-arrow {
+    border-bottom-color: {{ app_colors.btn_info }} ;
+}
+
+.tooltip.left .tooltip-arrow {
+    border-left-color: {{ app_colors.btn_info }} ;
+}
+
+.tooltip.top .tooltip-arrow {
+    border-top-color: {{ app_colors.btn_info }} ;
+}
+
+
+
+.container_logos {
+height: 100px;
+}
+
+.container_logos  .img-responsive {
+    display: block;
+    width: auto;
+    max-height: 100%;
+}
+
+.container_photos {
+height: 120px;
+}
+
+.container_photos  .img-responsive {
+    display: block;
+    width: auto;
+    max-height: 100%;
+}
+
+
+/* ANIMATED LOADER */
+.loader_modal_div {
+    background-color: rgba(0,0,0,0);
+    margin-top: 80px;
+}
+
+#mod_loader .centered{
+    position : absolute;
+    top : 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.noshadow {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    }
+
+
+.loader {
+    border    : 4px solid #f3f3f3; /* Light grey */
+    border-top: 4px solid ;
+    border-top-color: {{ app_colors.btn_info }} ;
+    border-radius: 50%;
+    width : 70px;
+    height: 70px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* PROGRESS BAR */
+.progress{
+  height: 3px;
+  z-index: 20;
+}
+.nobar {
+  opacity: 0;
+}
+.progress-bar.active {
+  animation-duration: 0.3s;
+}

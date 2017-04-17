@@ -1,0 +1,507 @@
+
+<!-- cf tutorial : http://seegatesite.com/create-simple-cool-sidebar-menu-with-bootstrap-3/  -->
+<!-- cf glyphicons : http://fontawesome.io/icons/  -->
+
+<style>
+  /* Toggle Styles */
+
+  element {
+    --width-sidebar: 150px;
+  }
+
+  .divider-vertical {
+      height: 50px;                   /* any height */
+      border-left: 2px solid white;   /* right or left is the same */
+      float: left;                     /* so BS grid doesn't break */
+      opacity: 0.5;                    /* optional */
+      margin: 0 15px;                  /* optional */
+  }
+
+  #wrapper {
+    margin-left: 10px;
+    padding-left: 0px;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    overflow: hidden;
+  }
+  #wrapper.toggled {
+    padding-left: 200px;
+    overflow: scroll;
+  }
+  #sidebar-wrapper {
+    z-index : 5;
+    border-radius: 3px;
+    box-shadow   : 0 5px 15px rgba(0,0,0,.5);
+    position: absolute;
+    left    : 300px;
+    width   : 0;
+    height  : 50%;
+    margin-top :  5%;
+    margin-left: -290px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: {{ app_colors.navbar }};
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+  }
+  #wrapper.toggled #sidebar-wrapper {
+    width: 300px;
+  }
+  #page-content-wrapper {
+    position: absolute;
+    padding: 15px;
+    width: 100%;
+    overflow-x: hidden;
+  }
+  .xyz{
+     min-width: 360px;
+  }
+  #wrapper.toggled #page-content-wrapper {
+     position: relative;
+     margin-right: 0px;
+  }
+  .fixed-brand{
+     width: auto;
+  }
+  /* Sidebar Styles */
+  .sidebar-nav {
+     position: absolute;
+     top: 0;
+     width: 300px;
+     margin: 0;
+     padding: 0;
+     list-style: none;
+     margin-top: 0px;
+  }
+  .sidebar-nav li {
+     text-indent: 15px;
+     line-height: 40px;
+  }
+  .sidebar-nav li a {
+     display: block;
+     text-decoration: none;
+     color: #fff;
+  }
+  .sidebar-nav li a:hover {
+     text-decoration: none;
+     color: #fff;
+     /*background: rgba(255,255,255,0.2);*/
+     border-left: white 2px solid;
+  }
+  .sidebar-nav li a:active,
+  .sidebar-nav li a:focus {
+     text-decoration: none;
+  }
+  .sidebar-nav > .sidebar-brand {
+     height: 65px;
+     font-size: 18px;
+     line-height: 60px;
+  }
+  .sidebar-nav > .sidebar-brand a {
+     color: #fff;
+  }
+  .sidebar-nav > .sidebar-brand a:hover {
+     color: #fff;
+     background: none;
+  }
+  .no-margin{
+     margin:0;
+  }
+
+  @media(min-width:700px) {
+     #wrapper {
+         padding-left: 300px;
+     }
+     .fixed-brand{
+         width: 150px;
+     }
+     #wrapper.toggled {
+         padding-left: 0;
+     }
+     #sidebar-wrapper {
+         width: 300px;
+     }
+     #wrapper.toggled #sidebar-wrapper {
+         width: 300px;
+     }
+     #wrapper.toggled-2 #sidebar-wrapper {
+         width: 50px;
+     }
+     /* main width size */
+     #wrapper.toggled-2 #sidebar-wrapper:hover {
+         width: 300px;
+     }
+     #page-content-wrapper {
+         padding: 20px;
+         position: relative;
+         -webkit-transition: all 0.5s ease;
+         -moz-transition: all 0.5s ease;
+         -o-transition: all 0.5s ease;
+         transition: all 0.5s ease;
+     }
+     #wrapper.toggled #page-content-wrapper {
+         position: relative;
+         margin-right: 0;
+         padding-left: 300px;
+     }
+     #wrapper.toggled-2 #page-content-wrapper {
+         position: relative;
+         margin-right: 0;
+         margin-left: -200px;
+         -webkit-transition: all 0.5s ease;
+         -moz-transition: all 0.5s ease;
+         -o-transition: all 0.5s ease;
+         transition: all 0.5s ease;
+         width: auto;
+     }
+  }
+
+  .dropdown-menu a {
+    color : grey !important;
+    /*display: block;*/
+  }
+  .dropdown-menu a:hover{
+    color : skyblue !important;
+  }
+
+  .indent1 {
+    padding-left: 10pt;
+    }
+  .indent2 {
+    padding-left: 20pt;
+    }
+
+
+  /* reset the slider */
+  input[type=range] {
+    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+    width: 100%; /* Specific width is required for Firefox. */
+    background: transparent; /* Otherwise white in Chrome */
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+  }
+
+  input[type=range]:focus {
+    outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+  }
+
+  input[type=range]::-ms-track {
+    width : 100%;
+    cursor: pointer;
+
+    /* Hides the slider so custom styles can be added */
+    background  : transparent;
+    border-color: transparent;
+    color       : transparent;
+  }
+
+  /* set cursor */
+  /* Special styling for WebKit/Blink */
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: 1px solid #000000;
+    height: 16px;
+    width : 16px;
+    border-radius: 8px;
+    background: #ffffff;
+    cursor    : pointer;
+    margin-top: -6px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; /* Add cool effects to your sliders! */
+  }
+
+  /* All the same stuff for Firefox */
+  input[type=range]::-moz-range-thumb {
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+    border: 1px solid #000000;
+    height: 16px;
+    width : 16px;
+    border-radius: 8px;
+    background: #ffffff;
+    cursor    : pointer;
+  }
+
+  /* All the same stuff for IE */
+  input[type=range]::-ms-thumb {
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+    border: 1px solid #000000;
+    height: 16px;
+    width : 16px;
+    border-radius: 8px;
+    background   : #ffffff;
+    cursor       : pointer;
+  }
+
+
+
+  /* set the track */
+  input[type=range]::-webkit-slider-runnable-track {
+    width : 100%;
+    height: 8.4px;
+    cursor: pointer;
+    /*box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;*/
+    background: {{ app_colors.btn_info }} ;
+    border-radius: 3px;
+    border: 0.1px solid #fff;
+  }
+
+  input[type=range]:focus::-webkit-slider-runnable-track {
+    background: {{ app_colors.btn_info }} ;
+  }
+
+  input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 8.4px;
+    cursor: pointer;
+    /*box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;*/
+    background: {{ app_colors.btn_info }};
+    border-radius: 6px;
+    border: 0.1px solid #fff;
+  }
+
+  input[type=range]::-ms-track {
+    width: 100%;
+    height: 8.4px;
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    border-width: 16px 0;
+    color: transparent;
+  }
+  input[type=range]::-ms-fill-lower {
+    background: #2a6495;
+    /*border: 0.2px solid #010101;*/
+    /*border-radius: 2.6px;*/
+    /*box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;*/
+  }
+  /*input[type=range]:focus::-ms-fill-lower {
+    background: #3071a9;
+  }*/
+  input[type=range]::-ms-fill-upper {
+    background: {{ app_colors.btn_info }};
+    /*border: 0.1px solid #010101;*/
+    border-radius: 2.0px;
+    /*box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;*/
+  }
+  /*input[type=range]:focus::-ms-fill-upper {
+    background: {{ app_colors.btn_info }};
+  }*/
+
+
+  .slider_years{
+    margin-top  : 10px;
+    margin-left : 10px;
+    margin-right: 10px;
+    padding: 0px;
+    width  : auto;
+    height : auto;
+    border : none;
+    background-color: rgba(0,0,0,0);
+  }
+
+  #label_years_nav{
+    background-color: {{ app_colors.btn_info }};
+  }
+
+  .label-default{
+    background-color: {{ app_colors.btn_info }};
+  }
+
+  #annee_selected, #annee_selected2 {
+    color: white;
+    font-size: larger;
+    padding-left: 0px;
+    padding-top: 3px;
+  }
+
+  .navbar-brand{
+    z-index: 25;
+  }
+  .progress{
+    height: 5px;
+    margin-bottom: 0;
+  }
+
+</style>
+
+
+<!-- NAVBAR TOP -->
+<nav class="navbar no-margin" id="navbar-text" >
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header fixed-brand">
+
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" id="menu-toggle">
+        <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+      </button>
+
+      <a class="navbar-brand" href="/">
+        {{ app_metas.title }}
+      </a>
+
+      <!-- <a class="navbar-brand text-center"
+         href="/"
+         id="navbar-text">
+          <img src="{{ url_for('static', filename='images/logo_flaplab_70.png') }}" style="margin-top:-10px">
+      </a> -->
+
+
+  </div><!-- navbar-header-->
+
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+    <ul class="nav navbar-nav">
+
+      <li class="divider-vertical"></li>
+
+      <li class="bstooltip" data-toggle="tooltip" data-placement="bottom"
+          title="What is Flap'Lab ?" >
+        <a  role="button"
+            data-toggle="modal"
+            data-target="#mod_intro">
+          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+
+        </a>
+      </li>
+
+      <li class="bstooltip" data-toggle="tooltip" data-placement="bottom"
+          title="How to use Flap'Lab ?" >
+        <a  role="button"
+            data-toggle="modal"
+            data-target="#mod_howto">
+          <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+
+        </a>
+      </li>
+
+
+      <li class="divider-vertical"></li>
+
+
+      <li class="bstooltip active" data-toggle="tooltip" data-placement="bottom"
+        title="..." >
+        <a role="button" class=" collapse in" data-toggle="collapse" id="menu-toggle-2">
+          <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+        </a>
+      </li>
+
+
+
+    </ul>
+
+
+
+
+    <ul class="nav navbar-nav navbar-right">
+
+
+      <li>
+        <a  href="https://gitlab.com/Julien_P/flaplab" target="_blank"
+            class="bstooltip" data-toggle="tooltip" data-placement="bottom"
+            title="repo Gitlab">
+          <i class="fa fa-gitlab fa-lg" area-hidden="true"></i>
+        </a>
+      </li>
+
+      <li>
+        <a  href="https://twitter.com/jparis_py" target="_blank"
+            class="bstooltip" data-toggle="tooltip" data-placement="bottom"
+            title="n'hésitez à nous écrire sur Twitter #flaplab ">
+          <i class="fa fa-twitter fa-lg" area-hidden="true"></i>
+        </a>
+      </li>
+
+      <li class="divider-vertical"></li>
+
+      <li>
+        <a  href="https://www.paypal.me/jpydev" target="_blank"
+            class="bstooltip" data-toggle="tooltip" data-placement="bottom"
+            title="Faites un don pour nous aider à maintenir FlapLab en ligne">
+          <i class="fa fa-paypal fa-lg" area-hidden="true"></i>
+        </a>
+      </li>
+
+      <li> <a></a> </li>
+    </ul>
+
+
+
+  </div><!-- bs-example-navbar-collapse-1 -->
+
+  <div class="progress nobar">
+    <div  class="progress-bar progress-bar-striped progress-bar-warning active" role="progressbar"
+          aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+    </div>
+  </div>
+
+
+</nav>
+
+
+
+
+<!-- SIDEBAR LEFT -->
+
+<div id="wrapper" class="toggled-2">
+
+  <div id="sidebar-wrapper">
+
+    <ul class="sidebar-nav nav-pills nav-stacked" id="menu">
+
+      <br>
+
+      <!-- MAIN FILTERS TITLE  -->
+      <li class="bstooltip" data-toggle="tooltip" data-placement="bottom"
+          title="...">
+
+            <span class="fa-stack fa-lg pull-left" style="color: #7841a9">
+              <i class="fa fa-map fa-stack-1x" aria-hidden="true"></i>
+            </span>
+            <a style="color: #7841a9 ; font-size: 16px">
+              <strong class="text-uppercase">
+                Flaplab
+              </strong>
+            </a>
+      </li>
+
+
+
+
+
+      <br>
+
+    </ul>
+
+  </div><!-- /#sidebar-wrapper -->
+
+</div> <!-- end #wrapper -->
+
+
+
+
+<script>
+
+  $("#menu-toggle").click(function(e) {
+    e.preventDefault();
+    $("#wrapper").toggleClass("toggled");
+  });
+
+  $("#menu-toggle-2").click(function(e) {
+    e.preventDefault();
+    $("#wrapper").toggleClass("toggled-2");
+    //$('#menu ul').hide();
+  });
+
+  $("#sidebar-wrapper").mouseleave(
+    function() {
+      //console.log("--leaving menu ...");
+      $(this).find(".collapse").collapse('hide');
+    }
+  );
+
+
+</script>

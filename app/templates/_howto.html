@@ -1,0 +1,49 @@
+
+<br>
+<div class="alert alert-info text-center bstooltip" role="alert"
+     data-toggle="tooltip" data-placement="top"
+     title="survoler les liens" >
+  <strong class="lead">HYDROVIZ possède trois fonctionnalités principales </strong>
+</div>
+
+<ol>
+
+  <li class="bstooltip tooltip_img" data-toggle="tooltip" data-placement="left"
+      title="<img src='{{ url_for('static', filename='images/tooltip_slider.jpg') }}' >" >
+    <strong class="a_">un "SLIDER" interactif</strong> permettant de faire défiler les années.
+    Le slider se trouve en haut en violet dans la barre de navigation, ainsi que dans la fenêtre "répartition des pesticides"
+  </li>
+  <hr>
+  <li>
+    <div class="bstooltip tooltip_img" data-toggle="tooltip" data-placement="left"
+        title="<img src='{{ url_for('static', filename='images/tooltip_map.jpg') }}' >" >
+      <strong class="a_">une CARTOGRAPHIE interactive et zoomable</strong> des données sur la France entière.
+      Cette cartographie possède plusieurs calques, dont un pour afficher les nappes phréatiques, et un autre pour afficher les départements.
+      Les niveaux de couleurs représentent soit des concentrations moyennes totales de pesticides, soit du nombre de pesticides détectés dans une catégorie donnée.
+    </div>
+    <ul>
+      <li class="bstooltip tooltip_img" data-toggle="tooltip" data-placement="left"
+          title="<img src='{{ url_for('static', filename='images/tooltip_filters.jpg') }}' >" >
+        <strong class="a_">Des filtres sur la gauche</strong>
+        de l'écran afin de choisir parmi les différentes catégories.</li>
+      <li class="bstooltip tooltip_img" data-toggle="tooltip" data-placement="left"
+          title="<img src='{{ url_for('static', filename='images/tooltip_infomap.jpg') }}' >" >
+        <strong class="a_">Une fenêtre informative sur la droite</strong>
+        de l'écran permet de lire les informations spécifiques à la nappe phréatique (masse d'eau) sélectionnée.</li>
+    </ul>
+  </li>
+  <hr>
+  <li class="bstooltip tooltip_img" data-toggle="tooltip" data-placement="left"
+      title="<img src='{{ url_for('static', filename='images/tooltip_treemap.png') }}' >" >
+    <strong class="a_">une REPRESENTATION HIERARCHIQUE ("treemap") interactive</strong> des pesticides permettant d'avoir des informations plus spécifiques sur les produits détectés :
+    les pesticides sont alors regroupés par fonctions, familles, ou dangerosité.
+  </li>
+
+</ol>
+
+<hr>
+
+{% include "_advice.html"%}
+
+
+<br>
