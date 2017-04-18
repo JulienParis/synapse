@@ -29,7 +29,7 @@ URLroot_ = 'flask'
 SITE_ROOT             = os.path.realpath(os.path.dirname(__file__))
 SITE_STATIC           = SITE_ROOT   +  static_dir
 STATIC_DATA           = SITE_STATIC + '/data'
-STATIC_DATA_MODELS    = SITE_STATIC + '/3dmodels'
+# STATIC_DATA_MODELS    = SITE_STATIC + '/3dmodels'
 
 #app = Flask(__name__)
 app = Flask(__name__, static_path = SITE_STATIC ) ### change static directory adress to custom address for Flask

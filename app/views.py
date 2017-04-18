@@ -8,7 +8,7 @@ import json
 from app   import app, socketio
 from flask import Flask, flash, render_template, url_for, request, session, redirect
 from flask_pymongo import PyMongo ### flask_pymongo instead of flask.ext.pymongo
-import flask_mysqldb
+from flask_mysqldb import MySQL
 import zeep
 import bcrypt
 
@@ -16,18 +16,24 @@ from flask_socketio import emit #, send
 
 from werkzeug.routing import Rule
 from werkzeug.utils   import secure_filename
-#app = Flask(__name__)
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
-ALLOWED_MODELS     = set(['obj', 'stl', 'js', 'json'])
+#ALLOWED_MODELS     = set(['obj', 'stl', 'js', 'json'])
 
 ### forms classes
 from .forms import LoginForm, UserRegisterForm, ArticleForm, DeleteForm, CommentForm
 
+
+
 #### db : MongoDB connection /// PLACED IN CONFIG.PY AT ROOT ####
+# cf : 
 mongo = PyMongo(app)
 print "starting app --- MongoDB connected"
 
+#### distant DBs : MySQL and SOAP service
+# cf : http://flask-mysqldb.readthedocs.io/en/latest/
+mysql_catalogue = MySQL(app)
+print "starting app --- mySQL catalogue connected"
 
 
 from scripts.app_settings import bootstrap_vars, app_colors, app_metas
@@ -113,6 +119,7 @@ def add_user():
 
     print
     print "test access mongoDB "
+
 
     users = mongo.db.users
     # print users

@@ -14,10 +14,15 @@ WTF_CSRF_ENABLED    = True
 WTF_CSRF_SECRET_KEY = '23QBWBgrfzqsdqsdftSGDYSet-!(5q34gsQRVdsqf<ds)*$'
 
 
-### MONGO DB CONFIG - production
-# MONGO_DBNAME = 'synapse_test'
-# MONGO_URI    = 'mongodb://127.0.0.1:27017/synapse_test'
+###### TESTS DBs CONFIG ######################################
 
 ### MONGO DB CONFIG - test / connecting on localhost
 MONGO_DBNAME = 'synapse_test'
 MONGO_URI    = 'mongodb://127.0.0.1:27017/synapse_test'
+
+
+### MYSQLDB CONFIG / CATALOGUE (notices + exemplaires) / connecting on localhost
+MYSQL_HOST     = '127.0.0.1'
+MYSQL_USER     = 'root'
+MYSQL_PASSWORD = 'pakopy_mysql'
+MYSQL_DB       = 'synapse_copy'
