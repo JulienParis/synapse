@@ -1,0 +1,86 @@
+
+
+
+<div class="modal fade" id="login_form" tabindex="-1" role="dialog" aria-labelledby="Login_form_label">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+
+        <h3 class="modal-title text-center"
+            id="Login_form_label">
+          Log in
+        </h3>
+
+      </div>
+
+      <div class="modal-body">
+
+
+        <!--FORM LOGIN-->
+        <form class="form-horizontal"
+              action = "{{ url_for('index') }}"
+              method = "post"
+              name   = "login">
+
+          <input type="hidden" name="req_type" value="log">
+          {{ loginForm.hidden_tag() }}
+
+
+          <div class="form-group">
+            <label for="userName" class="col-sm-2 control-label">pseudo</label>
+            <div class="col-sm-10">
+              {{ loginForm.userName }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="userCard" class="col-sm-2 control-label">n° de carte</label>
+            <div class="col-sm-10">
+              {{ loginForm.userCard }}
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label for="userPassword" class="col-sm-2 control-label">password</label>
+            <div class="col-sm-10">
+              {{ loginForm.userPassword }}
+            </div>
+          </div>
+
+
+
+
+          <div class="form-group">
+
+            <div class="col-sm-offset-2 col-sm-10"> <!-- LOG IN -->
+              <button type="submit"
+                      class="btn btn-success btn-block">
+                Log in
+              </button>
+            </div>
+
+          </div>
+
+
+        </form>
+
+
+        <div class="col-sm-offset-2 col-sm-10">
+          Nouvel utilisateur ? vous pouvez vous
+          <a class="register_trigger"> enregistrer ici </a>
+        </div>
+
+
+        <br>
+
+      </div>
+
+
+    </div>
+  </div>
+</div>

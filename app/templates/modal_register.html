@@ -1,0 +1,94 @@
+
+
+
+<div class="modal fade" id="register_form" tabindex="-1" role="dialog" aria-labelledby="register_form_label">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+
+        <h3 class="modal-title text-center"
+            id="Login_form_label">
+          S'enregistrer comme nouvel utilisateur
+        </h3>
+
+      </div>
+
+      <div class="modal-body">
+
+
+        <!--FORM REGISTER-->
+        <form class  = "form-horizontal"
+              action = "{{ url_for('index') }}"
+              method = "post"
+              name   = "register">
+
+          {{ registerForm.hidden_tag() }}
+          <input type="hidden" name="req_type" value="reg">
+
+          <div class="form-group">
+            <label for="userName" class="col-sm-3 control-label">pseudo</label>
+            <div class="col-sm-9">
+              {{ registerForm.userName }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="userCard" class="col-sm-3 control-label">n° de carte</label>
+            <div class="col-sm-9">
+              {{ registerForm.userCard }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="userEmail" class="col-sm-3 control-label">email</label>
+            <div class="col-sm-9">
+              <!-- <input type="email" class="form-control" name="userEmail" placeholder="your email"> -->
+              {{ registerForm.userEmail }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="userPassword" class="col-sm-3 control-label">password</label>
+            <div class="col-sm-9">
+              <!-- <input type="password" class="form-control" name="userPassword" placeholder="your password"> -->
+              {{ registerForm.userPassword }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword" class="col-sm-3 control-label">répéter votre password</label>
+            <div class="col-sm-9">
+              <!-- <input type="password" class="form-control" name="confirmPassword" placeholder="repeat your password"> -->
+              {{ registerForm.confirmPassword }}              
+            </div>
+          </div>
+
+          <div class="form-group">
+
+            <div class="col-sm-offset-3 col-sm-9"> <!-- REGISTER AND LOG IN -->
+              <button type="submit"
+                      class="btn btn-info btn-block">
+                s'enregistrer et se connecter
+              </button>
+            </div>
+
+
+          </div>
+
+        </form>
+
+
+      </div>
+
+      <!--<div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>-->
+
+    </div>
+  </div>
+</div>

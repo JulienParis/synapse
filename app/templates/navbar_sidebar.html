@@ -259,6 +259,70 @@
 
     <ul class="nav navbar-nav navbar-right">
 
+      {% if isUser != None %}
+      <li>
+          <p class="navbar-text" id="navbar-text" >
+              hi, {{ isUser }}
+          </p>
+      </li>
+
+      <li>
+          <p style="margin-bottom: 0px" >
+              <a  href="{{ url_for('logout') }}"
+                  role="button"
+                  class="btn btn-default navbar-btn btn-sm bstooltip"
+
+                  data-trigger='manual'
+                  data-tooltip="tooltip"
+                  data-placement="bottom"
+                  title="click to log out"
+                  data-container="body"
+                  >
+
+                  <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                  logout
+              </a>
+          </p>
+      </li>
+      {% endif %}
+
+      {% if isUser == None %}
+      <li>
+          <button type="button"
+                  class="btn btn-default btn-sm navbar-btn bstooltip"
+                  data-toggle="modal"
+                  data-target="#login_form"
+
+                  data-trigger='manual'
+                  data-tooltip="tooltip"
+                  data-placement="bottom"
+                  title="click to log in"
+                  data-container="body"
+                  >
+              <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+               login
+          </button>
+      </li>
+
+      <li>
+          <button type="button"
+                  class="btn btn-warning btn-sm navbar-btn bstooltip"
+                  data-toggle="modal"
+                  data-target="#register_form"
+
+                  data-trigger='manual'
+                  data-tooltip="tooltip"
+                  data-placement="bottom"
+                  title="click to register"
+                  data-container="body"
+                  >
+              <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+               sign in
+          </button>
+      </li>
+      {% endif %}
+
+      <li class="divider-vertical"></li>
 
       <li>
         <a  href="https://gitlab.com/Julien_P/{{ app_metas.title }}" target="_blank"

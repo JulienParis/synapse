@@ -21,12 +21,12 @@ ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 #ALLOWED_MODELS     = set(['obj', 'stl', 'js', 'json'])
 
 ### forms classes
-from .forms import LoginForm, UserRegisterForm, ArticleForm, DeleteForm, CommentForm
+from .forms import LoginForm, UserRegisterForm
 
 
 
 #### db : MongoDB connection /// PLACED IN CONFIG.PY AT ROOT ####
-# cf : 
+# cf :
 mongo = PyMongo(app)
 print "starting app --- MongoDB connected"
 
@@ -34,6 +34,7 @@ print "starting app --- MongoDB connected"
 # cf : http://flask-mysqldb.readthedocs.io/en/latest/
 mysql_catalogue = MySQL(app)
 print "starting app --- mySQL catalogue connected"
+
 
 
 from scripts.app_settings import bootstrap_vars, app_colors, app_metas
@@ -49,7 +50,7 @@ import pandas as pd
 import numpy as np
 
 ### global variables Pandas
-idx = pd.IndexSlice
+#idx = pd.IndexSlice
 
 
 
@@ -58,7 +59,7 @@ idx = pd.IndexSlice
 ### INTERNAL FUNCTIONS  #####
 def Is_Admin():
 
-    users_session = mongo.db.users_session
+    users_session = mongo.db.users
     isUser        = None
     isAdmin       = False
 
@@ -78,8 +79,6 @@ def allowed_file(filename):
         filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-
-
 def uploadFile(file_, subdir_):
 
     filename_ = None
@@ -90,9 +89,6 @@ def uploadFile(file_, subdir_):
         print "      >>> file --%s-- saved in :" %(filename_), subdir_
 
     return filename_
-
-
-
 
 
 
@@ -114,6 +110,7 @@ def sitemap_users():
     return json_users
 
 
+'''
 @app.route('/add_user')
 def add_user():
 
@@ -123,9 +120,9 @@ def add_user():
 
     users = mongo.db.users
     # print users
-    users.insert({'name' : 'Julien test'})
+    users_session.insert({'name' : 'Julien test'})
     return "user added"
-
+'''
 
 
 
@@ -136,15 +133,120 @@ def add_user():
 @app.route('/')
 def index():
 
+    ### access mongodb collections ###
+    users_session = mongo.db.users
+    notices       = mongo.db.notices
+    exemplaires   = mongo.db.exemplaires
+
+    ### DEFAULT SESSION VALUES
+    isUser        = None
+    isAdmin       = False
+    sessionError  = None
+
+    ### FORMS FROM WTF
+    loginForm    = LoginForm()
+    registerForm = UserRegisterForm()
+
+    isUser, isAdmin  = Is_Admin()
+    print "----- session : user %s / isAdmin %s " % (session, isAdmin)
+
+    ### if REQUEST == POST is sent from a form : login / register / refresh site
+    if request.method == 'POST' :
+
+        print "-"*60
+
+        req_type = request.form['req_type'] ### always add as hidden input in forms
+        print "---- request.form : ", request.form
+
+        ### LOG IN or REGISTER
+        if req_type == 'log' or req_type == 'reg' or req_type == 'logout' :
+
+            userName     = request.form['userName'].encode('utf-8')
+            userCard     = request.form['userCard']
+            userPassword = request.form['userPassword'].encode('utf-8')
+
+            print "---- userName : ", userName
+            print "---- userCard : ", userCard
+            print "---- userPassword : ", userPassword
+
+            try :
+                existing_user = users_session.find_one({'username' : userName })
+            except :
+                existing_user = users_session.find_one({'n_carte' : userCard })
+            print "existing user : ", existing_user
+
+
+            ### if form == register
+            if existing_user is None and req_type == "reg":
+
+                form = UserRegisterForm(request.form)
+
+                userEmail     = form.userEmail.data
+                userStatus    = 'read'
+
+                if form.validate():
+
+                    ### create new user in MongoDB
+                    hashpass   = bcrypt.hashpw(userPassword, bcrypt.gensalt() )
+                    users_session.insert({'username' : userName,
+                                  'email'    : userEmail,
+                                  'n_carte'  : userCard,
+                                  'password' : hashpass,  ### or simply userPassword
+                                  'status'   : userStatus,
+                                  'parcours' : None
+                                  #'test'     : ["value1", "value2"]
+                                  })
+                    session['username'] = userName
+
+                    print "------- new user inserted in MongoDB / users_session -------- "
+
+                    flash(u'vous êtes connecté', "success")
+                    return redirect( url_for('index') )
+
+                else:
+                    sessionError = u'non enregistré - cette carte ou ce pseudo sont déjà utilisés ou mauvais password'
+                    flash(sessionError, "warning" )
+                    return redirect( url_for('index') )
+
+            ### if form == log in
+            elif existing_user and req_type == "log" :
+
+                form = LoginForm(request.form)
+                print "---- LoginForm : ", form.userName, form.userPassword, form.userPassword.data
+                print "---- LoginForm validation : ", form.validate() #, form.validate_on_submit()
+
+                if form.validate() and bcrypt.hashpw( userPassword, existing_user['password'].encode('utf-8') ) == existing_user['password'].encode('utf-8') :
+                    session['username'] = userName
+                    isUser              = session['username']
+                    flash(u'vous êtes connecté en tant que ' + userName, "success")
+                    return redirect(url_for('index') )
+
+                sessionError = u'non connecté - mauvais pseudo ou mauvais password'
+                flash(sessionError, "warning")
+                return redirect( url_for('index') )
+
+            ### no valid user REQUEST
+            else :
+                print "------------ problem filling the form, please try again ! --------------- "
+                sessionError = u"problème de connexion, merci de retenter"
+                flash(sessionError, "warning")
+                return redirect( url_for('index') )
+
+
     return render_template('index.html',
                            app_metas        = app_metas,
                            app_colors       = app_colors,
                            bootstrap_vars   = bootstrap_vars,
+                           isUser           = isUser,
+                           isAdmin          = isAdmin,
+                           sessionError     = sessionError,
+                           loginForm        = loginForm,
+                           registerForm     = registerForm,
     )
 
 ### LOGOUT ######
 @app.route('/logout', methods=['GET', 'POST'])
 def logout() :
     session.pop('username', None)
-    flash('you are now logged out', "success")
+    flash(u'vous êtes maintenant déconnecté', "success")
     return redirect( url_for('index') )
