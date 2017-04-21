@@ -6,6 +6,11 @@ from .app_db_settings import *
 import pandas as pd
 import numpy as np
 
+import json
+from   bson import json_util
+from   bson.objectid import ObjectId
+from   bson.json_util import dumps
+
 # current working directory
 # cwd = os.getcwd()
 
@@ -38,12 +43,17 @@ with app.app_context():
     notices_mongo     = mongo.db.notices
     exemplaires_mongo = mongo.db.exemplaires
 
+    mongoColls = {  "notices"     : notices_mongo,
+                    "exemplaires" : exemplaires_mongo,
+                    "users"       : users_session,
+                }
+
 
 class get_df_from_MySQL :
 
-    # def __init__ (self) :
+    def __init__ (self) :
         # cf : http://flask-mysqldb.readthedocs.io/en/latest/
-        # print "starting app --- mySQL catalogue connected"
+        print ">>> get_df_from_MySQL ---"
 
     def get_df_exemplaires(self) :
 
@@ -60,6 +70,7 @@ class get_df_from_MySQL :
         df_exemplaires_light = df_exemplaires_light.rename(columns = {key_exemplaires:key_synapse})
 
         mysql_catalogue.close()
+        print ">>> get_df_from_MySQL.get_df_exemplaires --- MySQL closed"
 
         return df_exemplaires_light
 
@@ -78,6 +89,7 @@ class get_df_from_MySQL :
         df_notices_light = df_notices_light.rename(columns = {key_notices:key_synapse})
 
         mysql_catalogue.close()
+        print ">>> get_df_from_MySQL.get_df_notices --- MySQL closed"
 
         return df_exemplaires_light
 
@@ -93,13 +105,14 @@ class mongodb_updates :
         self.static_filename      = json_filename
         self.static_filepath      = os.path.join( STATIC_DATA, self.static_filename )
 
-    def reset_coll(coll_mongo, df_mysql_light, key_ ) :
+    def reset_coll(coll_name, coll_mongo, df_mysql_light, key_ ) :
 
+        print ">>> mongodb_updates.reset_coll / for coll : ", coll_name
         ### remove all documents
         coll_mongo.drop()
 
         ### drop duplicated records
-        #print "df_mysql_light.shape : ", df_mysql_light.shape
+        # print "df_mysql_light.shape : ", df_mysql_light.shape
         df_records_light = df_mysql_light.copy().drop_duplicates(key_)
 
         ### to JSON
@@ -111,7 +124,9 @@ class mongodb_updates :
         # print "... coll_mongo reset"
         # print "... coll_mongo.count() : ", coll_mongo.count()
 
-    def check_write_new_records (old_db_mongo, new_df_mysql_light, id_ ) :
+    def check_write_new_records (coll_name, old_db_mongo, new_df_mysql_light, id_ ) :
+
+        print ">>> mongodb_updates.check_write_new_records / for coll : ", coll_name
 
         ### get existing "cab" exemplaires from old_db_mongo
         list_old_ids = old_db_mongo.distinct(id_)
@@ -142,24 +157,64 @@ class mongodb_updates :
 
         return new_records_ids
 
-    def reset_coll_exemplaires(self) :
-        reset_coll(exemplaires_mongo, self.df_exemplaires_light, key_barcode )
+    def reset_all_coll(self) :
+        reset_coll("exemplaires", exemplaires_mongo, self.df_exemplaires_light, key_barcode )
+        reset_coll("notices",     notices_mongo,     self.df_notices_light, key_synapse)
 
-    def reset_coll_notices(self) :
-        reset_coll(notices_mongo,     self.df_notices_light, key_synapse)
+    def update_all_coll(self) :
+        new_exemplaires = check_write_new_records("exemplaires", exemplaires_mongo, self.df_exemplaires_light, key_barcode )
+        new_notices     = check_write_new_records("notices",     notices_mongo,     self.df_notices_light,     key_synapse )
 
-    def update_all(self) :
-        new_exemplaires = check_write_new_records(exemplaires_mongo, self.df_exemplaires_light, key_barcode )
-        new_notices     = check_write_new_records(notices_mongo,     self.df_notices_light,     key_synapse )
+
+class mongodb_read :
+
+    def __init__(self,  coll, fields=None, limit=0, get_ligth=False) :
+
+        print ">>> mongodb_read --- "
+        self.coll = coll
+        self.mongoColl  = mongoColls[ self.coll ]
+
+        self.limit  = limit
+        self.fields = fields
+        self.query_fields = { "_id":0 }
+        self.get_ligth = get_ligth
+
+        if self.coll == "users" :
+            self.query_fields["password"] = 0
+
+        if self.fields != None :
+            for f in self.fields :
+                self.query_fields[f] = 1
+
+        if self.get_ligth == True :
+            if self.coll == "notices" :
+                self.query_fields = {"_id":0, key_synapse:1}
+            if self.coll == "exemplaires" :
+                self.query_fields = {"_id":0, key_barcode:1}
+
+
+        print ">>> mongodb_read --- coll : %s, limit : %s, fields : %s, get_ligth : %s "  %( coll, (self.limit if self.limit else "None"), (self.fields if self.fields!=[] else "None"), (self.get_ligth if self.get_ligth else "False"))
+
+
+    def get_coll_as_json(self):
+
+        coll_light = self.mongoColl.find( {}, self.query_fields ).limit(self.limit)
+
+        # elif self.get_ligth == False :
+        #
+        #     ### this file will be used to render the THREE.JS --> needs to be light --> only keep ID_O
+        #     # cf : https://docs.mongodb.com/manual/tutorial/project-fields-from-query-results/
+        #     coll_light = self.mongoColl.find( {}, self.query_fields ).limit(self.limit)
+
+        print ">>> mongodb_read --- get_coll_as_json / global count : %s documents " %(coll_light.count() )
+        return dumps(coll_light)
+
+
 
     def write_notices_json_file(self):
-        ### this file will be used to render the THREE.JS --> needs to be light --> only keep ID_O
-        # cf : https://docs.mongodb.com/manual/tutorial/project-fields-from-query-results/
-        notices_light = notices_mongo.find( {}, { "_id":0, key_synapse :1 } )
-        with open(self.static_filepath, "w") as f:
-            json.dump(list(notices_light), f)
 
-    def get_notices_json(self):
-        ### this file will be used to render the THREE.JS --> needs to be light --> only keep ID_O
-        notices_light = notices_mongo.find( {}, { "_id":0, key_synapse :1 } )
-        return json.dumps(notices_light)
+        coll_light = self.get_coll_as_json()
+
+        with open(self.static_filepath, "w") as f:
+            json.dump(list(coll_light), f)
+            f.close()

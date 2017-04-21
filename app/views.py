@@ -48,14 +48,14 @@ print "starting app --- mySQL catalogue connected"
 from scripts.app_settings import bootstrap_vars, app_colors, app_metas, ALLOWED_EXTENSIONS
 
 
-# import json
-# from   bson import json_util
-# from   bson.objectid import ObjectId
-# from   bson.json_util import dumps
-# import itertools
+import json
+from   bson import json_util
+from   bson.objectid import ObjectId
+from   bson.json_util import dumps
+import itertools
 
-import pandas as pd
-import numpy as np
+# import pandas as pd
+# import numpy as np
 
 ### global variables Pandas
 #idx = pd.IndexSlice
@@ -104,27 +104,60 @@ def uploadFile(file_, subdir_):
 
 ########################################################################################
 ### MONGODB ROUTES #####
-'''
+
 @app.route('/users')
 def get_users():
 
     print
-    print "test access mongoDB / users "
+    print "/// test access mongoDB / users "
 
-    users      = mongo.db.users.find()
+    users = mongo.db.users.find( {}, { "_id":0 , "password" : 0 })
 
-    # users_list = []
-    # for user in users :
-    #     users_list.append(user)
-
-    df_users   = pd.DataFrame(list(users))
-    print df_users
-
-    #json_users = json.dumps(df_users, default=json_util.default)
-    json_users = df_users.to_json(orient="records", default_handler=str)
+    json_users = dumps(users, default=json_util.default)
+    #json_users = df_users.to_json(orient="records", default_handler=str)
     return json_users
-    # return users
 
+
+# @app.route('/notices', defaults={'fields': [], 'limit': None})
+# @app.route('/notices/fields=<fields>+limit=<int:limit>')
+
+### REST API on pattern : .../?limit=3&field=auteur_princ&field=titre
+@app.route('/<coll>/', methods=['GET'] )
+def get_coll(coll):
+
+    isUser, isAdmin  = Is_Admin()
+
+    if isAdmin :
+        print
+
+        print "/// test access mongoDB / for coll : ", coll
+
+        # args_url = request.args.to_dict()
+        limit   = request.args.get("limit", 0)
+        if limit != 0 :
+            limit = int(limit)
+
+        print "---", request.args.get("field", None )
+        print "---", request.args.getlist("field", None )
+
+        fields  = request.args.getlist("field", None )
+        isLight = request.args.get("isLight", False)
+        if isLight == "True" :
+            isLight = True
+
+        print "/// get_coll variables / limit : %s, fields : %s, isLight : %s "  %( (limit if limit else "None"), (fields if fields!=None else "None"), (isLight if isLight else "False"))
+        mongoRead = mongodb_read( coll, fields=fields, limit=limit, get_ligth=isLight )
+
+        ### calling function from databases_operations.py
+        if coll in ["notices", "exemplaires", "users"] :
+            return mongoRead.get_coll_as_json()
+        else :
+            return redirect( url_for('index') )
+    else :
+        return redirect( url_for('index') )
+
+
+'''
 @app.route('/notices')
 def get_notices():
 
@@ -200,6 +233,8 @@ def index():
 
             try :
                 existing_user = users_session.find_one({'username' : userName })
+                if not existing_user:
+                    raise ValueError('empty string')
             except :
                 existing_user = users_session.find_one({'n_carte' : userCard })
             print "existing user : ", existing_user
@@ -210,20 +245,29 @@ def index():
 
                 form = UserRegisterForm(request.form)
 
+                userIsCard    = True
                 userEmail     = form.userEmail.data
                 userStatus    = 'read'
 
                 if form.validate():
+
+                    ### generate dummy card number if does not exist
+                    # Magalie : 915526
+                    if userCard == "" or len(userCard)!= 6 :
+                        userIsCard = False
+                        countNotRegistred = users_session.find( {"is_card": False} ).count()
+                        userCard = "X" + str(countNotRegistred+1)
 
                     ### create new user in MongoDB
                     hashpass   = bcrypt.hashpw(userPassword, bcrypt.gensalt() )
                     users_session.insert({'username' : userName,
                                   'email'    : userEmail,
                                   'n_carte'  : userCard,
+                                  'is_card'  : userIsCard,
                                   'password' : hashpass,  ### or simply userPassword
                                   'status'   : userStatus,
                                   'parcours' : [ ],
-                                  'test'     : ["value1", "value2"]
+                                  #'test'     : ["value1", "value2"]
                                   })
                     session['username'] = userName
 
@@ -245,9 +289,9 @@ def index():
                 print "---- LoginForm validation : ", form.validate() #, form.validate_on_submit()
 
                 if form.validate() and bcrypt.hashpw( userPassword, existing_user['password'].encode('utf-8') ) == existing_user['password'].encode('utf-8') :
-                    session['username'] = userName
+                    session['username'] = existing_user["username"]
                     isUser              = session['username']
-                    flash(u'vous êtes connecté en tant que ' + userName, "success")
+                    # flash(u'vous êtes connecté en tant que ' + isUser, "success")
                     return redirect(url_for('index') )
 
                 sessionError = u'non connecté - mauvais pseudo ou mauvais password'
@@ -257,7 +301,7 @@ def index():
             ### no valid user REQUEST
             else :
                 print "------------ problem filling the form, please try again ! --------------- "
-                sessionError = u"problème de connexion, merci de retenter"
+                sessionError = u"problème lors de votre login, merci de retenter"
                 flash(sessionError, "warning")
                 return redirect( url_for('index') )
 

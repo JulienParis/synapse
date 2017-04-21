@@ -11,7 +11,7 @@ from wtforms import StringField, BooleanField, TextAreaField, IntegerField, Pass
 from wtforms.fields.html5 import URLField, EmailField
 from wtforms.fields.core import SelectField, SelectMultipleField, RadioField, DateTimeField, DateField
 
-from wtforms.validators import DataRequired, Length, EqualTo, URL, Email
+from wtforms.validators import DataRequired, Length, EqualTo, URL, Email, Optional
 
 
 #ALLOWED_EXTENSIONS     = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
@@ -33,14 +33,14 @@ choices_type.sort( key=lambda art : art[0].lower() )
 ### forms classes/typologies
 
 class LoginForm(FlaskForm):
-    userName     = StringField   ( 'user name'    , validators = [  ],               render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre pseudo'}  )
-    userCard     = IntegerField  ( 'user card'    , validators = [  ],               render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre numéro de carte'}  )
+    userName     = StringField   ( 'user name'    , validators = [ Optional() ],     render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre pseudo'}  )
+    userCard     = IntegerField  ( 'user card'    , validators = [ Optional() ],     render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre numéro de carte'}  )
     userPassword = PasswordField ( 'user password', validators = [ DataRequired() ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre password'}  )
     #remember_me  = BooleanField  ( 'remember_me', default=False )
 
 class UserRegisterForm(FlaskForm):
     userName        = StringField   ( 'user name'    , validators = [ DataRequired(), Length(min=3, max=50) ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre pseudo'}  )
-    userCard        = IntegerField  ( 'user card'    , validators = [ ],                                       render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre numéro de carte'}  )
+    userCard        = IntegerField  ( 'user card'    , validators = [ Optional() ],                            render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre numéro de carte'}  )
     userEmail       = EmailField    ( 'user email'   , validators = [ DataRequired(), Length(min=7, max=50) ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre email'}  )
     userPassword    = PasswordField ( 'user password',
         [

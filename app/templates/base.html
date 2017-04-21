@@ -91,6 +91,7 @@
     {% include "modal_howto.html" %}
     {% include 'modal_login.html'%}
   	{% include 'modal_register.html'%}
+    {% include 'modal_update_user.html'%}
 
     {% with messages = get_flashed_messages(with_categories = true) %}
       {% if messages %}
@@ -126,6 +127,7 @@
     $(document).ready( function(){
 
       $('#mod_loader').modal('hide');
+      $('#mod_intro').modal('show');
       $(".dropdown-toggle").dropdown() ;
       $('.carousel').carousel(
         {interval: 5000}
