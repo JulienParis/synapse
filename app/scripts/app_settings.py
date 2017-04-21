@@ -1,12 +1,13 @@
 # -*- encoding: utf-8 -*-
 
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 ### vars for name application / metas
 app_metas = {
     "title"       : u"synapse",
     "subtitle"    : u"dataviz 3D",
     "version"     : u"beta 0.1",
-    "description" : u"Visualisation 3D du catalogue de la bibliothèque de St Herblain et des parcours de lecture",
+    "description" : u"Visualisation 3D du catalogue de la bibliothèque de St Herblain et des parcours de lecture des abonnés",
     "authors"     : u"Julien Paris",
     "licence"     : '...undefined yet...',
     "metas"       : u"""

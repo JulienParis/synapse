@@ -3,48 +3,56 @@
 
 import time, os
 import datetime
-import json
 
 from app   import app, socketio
 from flask import Flask, flash, render_template, url_for, request, session, redirect
+import bcrypt
+
 from flask_pymongo import PyMongo ### flask_pymongo instead of flask.ext.pymongo
 from flask_mysqldb import MySQL
 import zeep
-import bcrypt
 
 from flask_socketio import emit #, send
 
 from werkzeug.routing import Rule
 from werkzeug.utils   import secure_filename
 
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
-#ALLOWED_MODELS     = set(['obj', 'stl', 'js', 'json'])
 
 ### forms classes
 from .forms import LoginForm, UserRegisterForm
 
 
+### db classes and functions
+from scripts.databases_operations import *
 
-#### db : MongoDB connection /// PLACED IN CONFIG.PY AT ROOT ####
+
+'''
+### db : MongoDB connection /// PLACED IN CONFIG.PY AT ROOT ####
 # cf :
 mongo = PyMongo(app)
 print "starting app --- MongoDB connected"
+### access mongodb collections ###
+users_session = mongo.db.users
+notices       = mongo.db.notices
+exemplaires   = mongo.db.exemplaires
+
 
 #### distant DBs : MySQL and SOAP service
 # cf : http://flask-mysqldb.readthedocs.io/en/latest/
 mysql_catalogue = MySQL(app)
 print "starting app --- mySQL catalogue connected"
+'''
 
 
 
-from scripts.app_settings import bootstrap_vars, app_colors, app_metas
+from scripts.app_settings import bootstrap_vars, app_colors, app_metas, ALLOWED_EXTENSIONS
 
 
-import json
-from   bson import json_util
-from   bson.objectid import ObjectId
-from   bson.json_util import dumps
-import itertools
+# import json
+# from   bson import json_util
+# from   bson.objectid import ObjectId
+# from   bson.json_util import dumps
+# import itertools
 
 import pandas as pd
 import numpy as np
@@ -74,6 +82,7 @@ def Is_Admin():
     return isUser, isAdmin
 
 
+'''
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
@@ -89,28 +98,53 @@ def uploadFile(file_, subdir_):
         print "      >>> file --%s-- saved in :" %(filename_), subdir_
 
     return filename_
-
+'''
 
 
 
 ########################################################################################
 ### MONGODB ROUTES #####
+'''
 @app.route('/users')
-def sitemap_users():
+def get_users():
 
     print
-    print "test access mongoDB "
+    print "test access mongoDB / users "
 
-    users_list = []
     users      = mongo.db.users.find()
-    # print users
-    for user in users :
-        users_list.append(user)
-    json_users = json.dumps(users_list, default=json_util.default)
+
+    # users_list = []
+    # for user in users :
+    #     users_list.append(user)
+
+    df_users   = pd.DataFrame(list(users))
+    print df_users
+
+    #json_users = json.dumps(df_users, default=json_util.default)
+    json_users = df_users.to_json(orient="records", default_handler=str)
     return json_users
+    # return users
+
+@app.route('/notices')
+def get_notices():
+
+    print
+    print "test access mongoDB / notices"
+
+    notices      = mongo.db.notices.find()
+
+    # notices_list = []
+    # for notice in notices :
+    #     users_list.append(user)
+
+    df_notices   = pd.DataFrame(list(notices))
+
+    # json_notices = json.dumps(df_notices, default=json_util.default)
+    json_notices = df_notices.to_json(orient="records", default_handler=str)
+
+    return json_notices
 
 
-'''
 @app.route('/add_user')
 def add_user():
 
@@ -132,11 +166,6 @@ def add_user():
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/')
 def index():
-
-    ### access mongodb collections ###
-    users_session = mongo.db.users
-    notices       = mongo.db.notices
-    exemplaires   = mongo.db.exemplaires
 
     ### DEFAULT SESSION VALUES
     isUser        = None
@@ -193,8 +222,8 @@ def index():
                                   'n_carte'  : userCard,
                                   'password' : hashpass,  ### or simply userPassword
                                   'status'   : userStatus,
-                                  'parcours' : None
-                                  #'test'     : ["value1", "value2"]
+                                  'parcours' : [ ],
+                                  'test'     : ["value1", "value2"]
                                   })
                     session['username'] = userName
 
@@ -250,3 +279,32 @@ def logout() :
     session.pop('username', None)
     flash(u'vous êtes maintenant déconnecté', "success")
     return redirect( url_for('index') )
+
+
+
+########################################################################################
+### SOCKETTIO FUNCTIONS #######################
+
+@socketio.on('io_request_user')
+def return_user_data(request_client):
+
+    print
+    print "***** io_request_user / request from client : ", request_client
+
+    user_name  = request_client['user_name']
+    user_card  = request_client['user_card']
+
+    # find corresponding user
+    user_mongo = users_session.find( { "$or": [ { "n_carte": user_card }, { "username" : user_name } ] } )
+
+    # convert cursor to json
+    user_json  = json.dumps(user_mongo)
+
+    # send results
+    results = {
+            'request_sent' : request_client,
+            'user'         : user_json
+            }
+
+    ### emit the json
+    emit( 'io_user_from_server', results )
