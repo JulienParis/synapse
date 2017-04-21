@@ -25,7 +25,6 @@ from .forms import LoginForm, UserRegisterForm
 from scripts.databases_operations import *
 
 
-
 from scripts.app_settings import bootstrap_vars, app_colors, app_metas, ALLOWED_EXTENSIONS
 from scripts.app_db_settings import authorized_collections
 
