@@ -1,5 +1,7 @@
 # Created by https://www.gitignore.io/api/osx,python,komodoedit
 
+### CONGIG FILES
+config.py
 
 ### BOWER
 bower_components

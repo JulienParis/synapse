@@ -14,16 +14,6 @@ from   bson.json_util import dumps
 # current working directory
 # cwd = os.getcwd()
 
-'''
-# relations exemplaires-notices
-key_exemplaires = "id_origine"
-key_notices     = "identifiant_origine"
-key_synapse     = "id_o"
-
-# index(s) à garder
-indices_exemplaires = [ key_exemplaires, "emplacement", "section", "cote", "cab" ]
-indices_notices     = [ key_notices, "titre", "auteur_princ", "date_import", "deleted", "resume"] #, "provenance" ]
-'''
 
 #### distant DBs : MySQL and SOAP service
 import zeep
@@ -105,6 +95,7 @@ class mongodb_updates :
         self.static_filename      = json_filename
         self.static_filepath      = os.path.join( STATIC_DATA, self.static_filename )
 
+
     def reset_coll(coll_name, coll_mongo, df_mysql_light, key_ ) :
 
         print ">>> mongodb_updates.reset_coll / for coll : ", coll_name
@@ -123,6 +114,7 @@ class mongodb_updates :
 
         # print "... coll_mongo reset"
         # print "... coll_mongo.count() : ", coll_mongo.count()
+
 
     def check_write_new_records (coll_name, old_db_mongo, new_df_mysql_light, id_ ) :
 
@@ -157,9 +149,11 @@ class mongodb_updates :
 
         return new_records_ids
 
+
     def reset_all_coll(self) :
         reset_coll("exemplaires", exemplaires_mongo, self.df_exemplaires_light, key_barcode )
         reset_coll("notices",     notices_mongo,     self.df_notices_light, key_synapse)
+
 
     def update_all_coll(self) :
         new_exemplaires = check_write_new_records("exemplaires", exemplaires_mongo, self.df_exemplaires_light, key_barcode )
@@ -182,9 +176,12 @@ class mongodb_read :
         if self.coll == "users" :
             self.query_fields["password"] = 0
 
+
         if self.fields != None :
             for f in self.fields :
                 self.query_fields[f] = 1
+        elif self.fields == None and limit == 0 :
+            self.get_ligth = True
 
         if self.get_ligth == True :
             if self.coll == "notices" :
@@ -208,7 +205,6 @@ class mongodb_read :
 
         print ">>> mongodb_read --- get_coll_as_json / global count : %s documents " %(coll_light.count() )
         return dumps(coll_light)
-
 
 
     def write_notices_json_file(self):

@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 
 
+authorized_collections = ["notices", "exemplaires", "users"]
+
 # relations exemplaires-notices
 key_exemplaires = "id_origine"
 key_notices     = "identifiant_origine"

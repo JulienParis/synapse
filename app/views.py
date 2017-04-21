@@ -21,31 +21,13 @@ from werkzeug.utils   import secure_filename
 ### forms classes
 from .forms import LoginForm, UserRegisterForm
 
-
 ### db classes and functions
 from scripts.databases_operations import *
 
 
-'''
-### db : MongoDB connection /// PLACED IN CONFIG.PY AT ROOT ####
-# cf :
-mongo = PyMongo(app)
-print "starting app --- MongoDB connected"
-### access mongodb collections ###
-users_session = mongo.db.users
-notices       = mongo.db.notices
-exemplaires   = mongo.db.exemplaires
-
-
-#### distant DBs : MySQL and SOAP service
-# cf : http://flask-mysqldb.readthedocs.io/en/latest/
-mysql_catalogue = MySQL(app)
-print "starting app --- mySQL catalogue connected"
-'''
-
-
 
 from scripts.app_settings import bootstrap_vars, app_colors, app_metas, ALLOWED_EXTENSIONS
+from scripts.app_db_settings import authorized_collections
 
 
 import json
@@ -54,20 +36,13 @@ from   bson.objectid import ObjectId
 from   bson.json_util import dumps
 import itertools
 
-# import pandas as pd
-# import numpy as np
-
-### global variables Pandas
-#idx = pd.IndexSlice
-
-
 
 
 ########################################################################################
 ### INTERNAL FUNCTIONS  #####
 def Is_Admin():
 
-    users_session = mongo.db.users
+    # users_session = mongo.db.users
     isUser        = None
     isAdmin       = False
 
@@ -111,7 +86,7 @@ def get_users():
     print
     print "/// test access mongoDB / users "
 
-    users = mongo.db.users.find( {}, { "_id":0 , "password" : 0 })
+    users = users_session.find( {}, { "_id":0 , "password" : 0 })
 
     json_users = dumps(users, default=json_util.default)
     #json_users = df_users.to_json(orient="records", default_handler=str)
@@ -120,27 +95,27 @@ def get_users():
 
 # @app.route('/notices', defaults={'fields': [], 'limit': None})
 # @app.route('/notices/fields=<fields>+limit=<int:limit>')
-
-### REST API on pattern : .../?limit=3&field=auteur_princ&field=titre
+### REST API on pattern : .../notices/?limit=3&field=auteur_princ&field=titre
 @app.route('/<coll>/', methods=['GET'] )
 def get_coll(coll):
 
     isUser, isAdmin  = Is_Admin()
 
-    if isAdmin :
+    if isAdmin and coll in authorized_collections :
+
         print
 
         print "/// test access mongoDB / for coll : ", coll
 
+        ### get all the arguments back from URL route
         # args_url = request.args.to_dict()
         limit   = request.args.get("limit", 0)
         if limit != 0 :
             limit = int(limit)
 
-        print "---", request.args.get("field", None )
-        print "---", request.args.getlist("field", None )
-
         fields  = request.args.getlist("field", None )
+        if fields == []:
+            fields = None
         isLight = request.args.get("isLight", False)
         if isLight == "True" :
             isLight = True
@@ -149,47 +124,13 @@ def get_coll(coll):
         mongoRead = mongodb_read( coll, fields=fields, limit=limit, get_ligth=isLight )
 
         ### calling function from databases_operations.py
-        if coll in ["notices", "exemplaires", "users"] :
-            return mongoRead.get_coll_as_json()
-        else :
-            return redirect( url_for('index') )
+        return mongoRead.get_coll_as_json()
+
     else :
+        sessionError = u"vous n'avez pas accès à l'API ou à ce jeu de données"
+        flash(sessionError, "warning")
+
         return redirect( url_for('index') )
-
-
-'''
-@app.route('/notices')
-def get_notices():
-
-    print
-    print "test access mongoDB / notices"
-
-    notices      = mongo.db.notices.find()
-
-    # notices_list = []
-    # for notice in notices :
-    #     users_list.append(user)
-
-    df_notices   = pd.DataFrame(list(notices))
-
-    # json_notices = json.dumps(df_notices, default=json_util.default)
-    json_notices = df_notices.to_json(orient="records", default_handler=str)
-
-    return json_notices
-
-
-@app.route('/add_user')
-def add_user():
-
-    print
-    print "test access mongoDB "
-
-
-    users = mongo.db.users
-    # print users
-    users_session.insert({'name' : 'Julien test'})
-    return "user added"
-'''
 
 
 
