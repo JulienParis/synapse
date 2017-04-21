@@ -8,9 +8,6 @@ from app   import app, socketio
 from flask import Flask, flash, render_template, url_for, request, session, redirect
 import bcrypt
 
-from flask_pymongo import PyMongo ### flask_pymongo instead of flask.ext.pymongo
-from flask_mysqldb import MySQL
-import zeep
 
 from flask_socketio import emit #, send
 
