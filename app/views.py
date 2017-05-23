@@ -20,10 +20,14 @@ from .forms import LoginForm, UserRegisterForm
 
 ### db classes and functions
 from scripts.databases_operations import *
+import gc ### aka garbage collector
+
+### webservice classes and functions
+from scripts.webservice_operations import *
 
 
 from scripts.app_settings import bootstrap_vars, app_colors, app_metas, ALLOWED_EXTENSIONS
-from scripts.app_db_settings import authorized_collections
+from scripts.app_db_settings import authorized_collections, key_synapse
 
 
 import json
@@ -71,7 +75,130 @@ def uploadFile(file_, subdir_):
     return filename_
 '''
 
+########################################################################################
+### WEBSERVICE ROUTES #####
+@app.route('/WS_user/', methods=['GET'] )
+def WS_user_hist(card_number=None, password=None):
 
+    ### "/WS_users/?card_number=123456&password=PASSWORD"
+    # isUser, isAdmin  = Is_Admin()
+    # print isUser
+
+    print '--- WS_user --- session : ', session['username']
+
+    # check user status
+    isUser, isAdmin  = Is_Admin()
+    #print isUser
+
+    # if bcrypt.hashpw( userPassword, existing_user['password'].encode('utf-8') ) == existing_user['password'].encode('utf-8') :
+    #     pass
+
+    if isAdmin or isUser :
+
+        ### for internal use
+        if card_number is None and password is None :
+
+            ### user auth from args in URL
+            card_number = request.args.get("card_number", None )
+            password    = request.args.get("password", None )
+
+        print '--- WS_user --- card_number : %s / password : %s ' %(card_number, password)
+
+        ###### retrieve infos from WEBSERVICE ######
+        ### authentify user in WS
+        user_req = WS_user_infos_(card_number, password)#.get_infos()
+
+        ### retrieve user's history : exemplaires
+        #user_  = user_req.get_infos()
+        user_hist  = user_req.get_history()
+        user_hist_list_cab = []
+
+        for cab_ in user_hist.Entite.Donnees.Lignes :
+            cab = cab_.ValeursDonnees.string
+            #print cab[1]
+
+            ### get corresponding notice for each cab from exemplaires_mongo
+            try :
+                exemplaire = exemplaires_mongo.find_one( {key_barcode : cab[1]} )
+                #get id_o from exemplaire
+                id_o_ex = exemplaire[key_synapse]
+            except :
+                id_o_ex = None
+
+            ex_ = { key_barcode    : cab[1],
+                    key_rendu_date : cab[6] ,
+                    key_synapse    : id_o_ex ,
+                    #key_parcours_status : parcours_status["emprunt"]
+                    }
+
+            user_hist_list_cab.append(ex_)
+
+        print '--- WS_user --- user_hist_list_cab :  '
+        #print user_hist_list_cab
+        print
+
+        ###### write / update into MongoDB.users : users_session ######
+        user_mongo = users_session.find_one( {"n_carte" : card_number }, { "_id":0, "password":0 })
+        #print user_mongo
+
+        parcours_sub_dir = ".".join([ key_parcours,parcours_status_[0] ])
+        #print parcours_sub_dir
+
+        users_session.update_one(
+            {"n_carte" : card_number},
+            {"$set" : {  parcours_sub_dir : user_hist_list_cab } } ,
+            upsert = True
+        )
+
+    ### update user's "parcours"
+
+
+    print '--- WS_user --- END '
+    print '- '*70
+
+
+    return redirect( url_for('index') )
+
+
+########################################################################################
+### MYSQL ROUTES #####
+@app.route('/<update_reset>' )
+def update_coll(update_reset="update", secret_key_update=None):
+
+    isUser, isAdmin  = Is_Admin()
+
+    #if coll in authorized_collections :
+    print "/// update_coll / update_reset : ", update_reset
+
+    with app.app_context():
+        check_key_update = app.config["UPDATE_SECRET_KEY"]
+
+    ### use only if isAdmin or with internal use
+    if isAdmin or secret_key_update == check_key_update :
+
+        print "/// update_coll / access MYSQL " #"/ for coll : ", coll
+
+        ### update all mongoDB collections : notices and exemplaires
+
+        if update_reset == "update" :
+            mongodb_updates().update_all_coll()
+            print "/// update_coll / df_coll created "
+            flash(u'les collections sont mises à jour - update', "success")
+
+        elif update_reset == "reset":
+            mongodb_updates().reset_all_coll()
+            print "/// update_coll / df_coll created "
+            flash(u'les collections sont remises à jour - reset', "success")
+
+        ### update / rewrite json local static file
+        # mongodb_read('notices', get_ligth=True ).write_notices_json_file()
+        # flash(u'les collections sont réécrites en JSON en local ', "success")
+
+        return redirect( url_for('index') )
+
+    else :
+        print
+        return redirect( url_for('index') )
 
 ########################################################################################
 ### MONGODB ROUTES #####
@@ -82,11 +209,19 @@ def get_users():
     print
     print "/// test access mongoDB / users "
 
-    users = users_session.find( {}, { "_id":0 , "password" : 0 })
+    isUser, isAdmin  = Is_Admin()
 
-    json_users = dumps(users, default=json_util.default)
-    #json_users = df_users.to_json(orient="records", default_handler=str)
-    return json_users
+    if isAdmin :
+
+        users = users_session.find( {}, { "_id":0 } ) #, "password" : 0 })
+
+        json_users = dumps(users, default=json_util.default)
+        #json_users = df_users.to_json(orient="records", default_handler=str)
+        return json_users
+
+    else :
+        return redirect( url_for('index') )
+
 
 
 # @app.route('/notices', defaults={'fields': [], 'limit': None})
@@ -198,12 +333,16 @@ def index():
                     ### create new user in MongoDB
                     hashpass   = bcrypt.hashpw(userPassword, bcrypt.gensalt() )
                     users_session.insert({'username' : userName,
-                                  'email'    : userEmail,
-                                  'n_carte'  : userCard,
-                                  'is_card'  : userIsCard,
-                                  'password' : hashpass,  ### or simply userPassword
-                                  'status'   : userStatus,
-                                  'parcours' : [ ],
+                                  'email'      : userEmail,
+                                  'n_carte'    : userCard,
+                                  'is_card'    : userIsCard,
+                                  'password'   : hashpass,  ### or simply userPassword
+                                  'status'     : userStatus,
+                                  key_parcours : {
+                                    parcours_status_[0] : [],
+                                    parcours_status_[1] : [],
+                                    parcours_status_[2] : [],
+                                  } ,
                                   #'test'     : ["value1", "value2"]
                                   })
                     session['username'] = userName
@@ -257,6 +396,9 @@ def index():
 ### LOGOUT ######
 @app.route('/logout', methods=['GET', 'POST'])
 def logout() :
+    print "XXX"*50
+    print " XXX - EXIT - XXX "
+    print session
     session.pop('username', None)
     flash(u'vous êtes maintenant déconnecté', "success")
     return redirect( url_for('index') )

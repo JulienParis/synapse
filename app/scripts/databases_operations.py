@@ -1,9 +1,14 @@
 # -*- encoding: utf-8 -*-
 
-from .. import app, STATIC_DATA, SITE_STATIC, SITE_ROOT
+import os
+import gc ### aka garbage collector
+
+from .. import app, STATIC_DATA, SITE_STATIC, SITE_ROOT, json_filename #, mysql_catalogue
 from .app_db_settings import *
 
 import pandas as pd
+from pandas.io import sql
+
 import numpy as np
 
 import json
@@ -15,9 +20,9 @@ from   bson.json_util import dumps
 # cwd = os.getcwd()
 
 
-#### distant DBs : MySQL and SOAP service
-import zeep
+#### distant DBs : MySQL
 from   flask_mysqldb import MySQL
+#from flask.ext.mysqldb import MySQL
 
 
 #### local DBs : MongoDB
@@ -26,6 +31,20 @@ from   flask_pymongo import PyMongo ### flask_pymongo instead of flask.ext.pymon
 
 # set as OK to run with app.context()
 with app.app_context():
+
+    ### set mysql connection
+    mysql_catalogue = MySQL(app)
+
+    # cur = mysql_catalogue.connection.cursor()
+    # cur.execute('''SELECT * FROM exemplaires''')
+    # rows           = cur.fetchall()
+    # df_exemplaires = pd.DataFrame( [[ij for ij in i] for i in rows] )
+    # print df_exemplaires.head()
+
+
+    print "starting app --- mysql_catalogue connected"
+
+
     mongo = PyMongo(app)
     print "starting app --- MongoDB connected"
     ### access mongodb collections ###
@@ -39,49 +58,106 @@ with app.app_context():
                 }
 
 
-class get_df_from_MySQL :
 
-    def __init__ (self) :
-        # cf : http://flask-mysqldb.readthedocs.io/en/latest/
-        print ">>> get_df_from_MySQL ---"
+def get_df_from_MySQL(coll) :
 
-    def get_df_exemplaires(self) :
+    #def __init__ (self, coll) :
+    # cf : http://flask-mysqldb.readthedocs.io/en/latest/
+    print ">>> get_df_from_MySQL ---,  %s --- start " %(coll)
 
-        mysql_catalogue = MySQL(app)
-        print ">>> get_df_from_MySQL.get_df_exemplaires --- MySQL connected"
+    #self.coll = coll
 
-        # connect to MYSQL
-        df_exemplaires = pd.read_sql('SELECT * FROM exemplaires', con=mysql_catalogue)
+    #cf = app.config
+    #print cf
 
-        # reduce information / columns
-        df_exemplaires_light = df_exemplaires[indices_exemplaires].copy()
+    ### connect to distant MySQL
+    #with app.app_context():
+    # mysql_catalogue = MySQL(app)
+    #mysql_catalogue = MySQL().init_app(app)
+    #mysql_catalogue = MySQL.connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB)
+    #mysql_catalogue = MySQL.connect(cf['MYSQL_HOST'], cf['MYSQL_USER'], cf['MYSQL_PASSWORD'], cf['MYSQL_DB'])
 
-        # rename id_origine
-        df_exemplaires_light = df_exemplaires_light.rename(columns = {key_exemplaires:key_synapse})
+    #with app.app_context():
 
-        mysql_catalogue.close()
-        print ">>> get_df_from_MySQL.get_df_exemplaires --- MySQL closed"
+    query_string = '''SELECT * FROM %s''' %(coll)
+    print ">>> get_df_from_MySQL --- query_string : ", query_string
+    print ">>> get_df_from_MySQL --- indices_mysql[ coll ]['ind'] : ",indices_mysql[ coll ]['ind']
+    cur = mysql_catalogue.connection.cursor()
 
-        return df_exemplaires_light
+    print '>>> get_df_from_MySQL --- df_sql', '--'*50
+    df_sql = pd.read_sql( query_string , con=mysql_catalogue.connection)
+    print df_sql.head(3)
 
-    def get_df_notices(self) :
 
-        mysql_catalogue = MySQL(app)
-        print ">>> get_df_from_MySQL.get_df_notices --- MySQL connected"
+    print '>>> get_df_from_MySQL --- df_sql_light', '--'*50
 
-        # connect to MYSQL
-        df_notices = pd.read_sql('SELECT * FROM notices', con=mysql_catalogue)
+    # cur.execute(query_string)
+    # rows           = cur.fetchall()
+    # df_sql = pd.DataFrame( [[ij for ij in i] for i in rows] )
+    # print df_sql.head()
 
-        # reduce information / columns
-        df_notices_light = df_notices[indices_notices].copy()
+    # reduce information / columns
+    df_sql_light = df_sql[ indices_mysql[ coll ]['ind'] ].copy()
+    print df_sql_light.head(3)
 
-        # rename id_origine
-        df_notices_light = df_notices_light.rename(columns = {key_notices:key_synapse})
+    ### trying to empty memory for better performance
+    del df_sql
+    gc.collect()
+    print '>>> get_df_from_MySQL --- EMPTYING MEMORY', '--'*50
 
-        mysql_catalogue.close()
-        print ">>> get_df_from_MySQL.get_df_notices --- MySQL closed"
+    print '>>> get_df_from_MySQL ---  df_sql_light renamed', '--'*50
 
-        return df_exemplaires_light
+    # rename id_origine
+    df_sql_light = df_sql_light.rename(columns = { indices_mysql[coll ]['key'] : key_synapse})
+    print df_sql_light.head(3)
+
+    # mysql_catalogue.close()
+    # print ">>> get_df_from_MySQL.get_df_notices --- MySQL closed"
+
+    print ">>> get_df_from_MySQL --- %s --- finished" %(coll)
+    print
+
+    return df_sql_light
+
+
+
+
+    # def get_df_exemplaires(self) :
+    #
+    #     print ">>> get_df_from_MySQL.get_df_exemplaires --- MySQL connected"
+    #
+    #     # connect to MYSQL
+    #     #df_exemplaires = pd.read_sql('SELECT * FROM exemplaires', con=mysql_catalogue)
+    #
+    #     # reduce information / columns
+    #     df_exemplaires_light = df_exemplaires[indices_exemplaires].copy()
+    #
+    #     # rename id_origine
+    #     df_exemplaires_light = df_exemplaires_light.rename(columns = {key_exemplaires:key_synapse})
+    #
+    #     mysql_catalogue.close()
+    #     print ">>> get_df_from_MySQL.get_df_exemplaires --- MySQL closed"
+    #
+    #     return df_exemplaires_light
+    #
+    #
+    # def get_df_notices(self) :
+    #
+    #     print ">>> get_df_from_MySQL.get_df_notices --- MySQL connected"
+    #
+    #     # connect to MYSQL
+    #     df_notices = pd.read_sql('SELECT * FROM notices', con=mysql_catalogue)
+    #
+    #     # reduce information / columns
+    #     df_notices_light = df_notices[indices_notices].copy()
+    #
+    #     # rename id_origine
+    #     df_notices_light = df_notices_light.rename(columns = {key_notices:key_synapse})
+    #
+    #     mysql_catalogue.close()
+    #     print ">>> get_df_from_MySQL.get_df_notices --- MySQL closed"
+    #
+    #     return df_exemplaires_light
 
 
 class mongodb_updates :
@@ -90,13 +166,11 @@ class mongodb_updates :
 
         print ">>> mongodb_updates --- "
 
-        self.df_exemplaires_light = get_df_from_MySQL.df_exemplaires()
-        self.df_notices_light     = get_df_from_MySQL.df_notices()
-        self.static_filename      = json_filename
-        self.static_filepath      = os.path.join( STATIC_DATA, self.static_filename )
+        self.df_exemplaires_light = get_df_from_MySQL('exemplaires')
+        # self.df_notices_light     = get_df_from_MySQL('notices')
 
 
-    def reset_coll(coll_name, coll_mongo, df_mysql_light, key_ ) :
+    def reset_coll(self, coll_name, coll_mongo, df_mysql_light, key_ ) :
 
         print ">>> mongodb_updates.reset_coll / for coll : ", coll_name
         ### remove all documents
@@ -116,7 +190,7 @@ class mongodb_updates :
         # print "... coll_mongo.count() : ", coll_mongo.count()
 
 
-    def check_write_new_records (coll_name, old_db_mongo, new_df_mysql_light, id_ ) :
+    def check_write_new_records (self, coll_name, old_db_mongo, new_df_mysql_light, id_ ) :
 
         print ">>> mongodb_updates.check_write_new_records / for coll : ", coll_name
 
@@ -142,22 +216,36 @@ class mongodb_updates :
             new_records_json = json.loads(df_new_records_light.T.to_json()).values()
             # print "..."
 
-            ### insert JSON exemplaires_new_records to mongoDB
+            ### insert new_records_json to mongoDB
             old_db_mongo.insert_many(new_records_json)
-
-            # print "df_new_records_light inserted to old_db_mongo"
+            print ">>> mongodb_updates.check_write_new_records / df_new_records_light inserted to old_db_mongo"
+            print
 
         return new_records_ids
 
 
+
     def reset_all_coll(self) :
-        reset_coll("exemplaires", exemplaires_mongo, self.df_exemplaires_light, key_barcode )
-        reset_coll("notices",     notices_mongo,     self.df_notices_light, key_synapse)
+        self.reset_coll("exemplaires", exemplaires_mongo, self.df_exemplaires_light, key_barcode )
+        self.reset_coll("notices",     notices_mongo,     self.df_notices_light, key_synapse)
 
 
     def update_all_coll(self) :
-        new_exemplaires = check_write_new_records("exemplaires", exemplaires_mongo, self.df_exemplaires_light, key_barcode )
-        new_notices     = check_write_new_records("notices",     notices_mongo,     self.df_notices_light,     key_synapse )
+        new_exemplaires = self.check_write_new_records("exemplaires", exemplaires_mongo, self.df_exemplaires_light, key_barcode )
+        print  ">>> mongodb_updates.update_all_coll / new_exemplaires : ", new_exemplaires
+
+        ### trying to empty memory for better performance
+        del self.df_exemplaires_light
+        gc.collect()
+        print  ">>> mongodb_updates.update_all_coll / EMPTYING MEMORY : "
+
+        # new_notices     = self.check_write_new_records("notices",     notices_mongo,     self.df_notices_light,     key_synapse )
+        print  ">>> mongodb_updates.update_all_coll / new_notices : ", new_notices
+
+        ### trying to empty memory for better performance
+        # del self.df_exemplaires_light
+        # gc.collect()
+        # print  ">>> mongodb_updates.update_all_coll / EMPTYING MEMORY : "
 
 
 class mongodb_read :
@@ -175,6 +263,7 @@ class mongodb_read :
 
         if self.coll == "users" :
             self.query_fields["password"] = 0
+            self.query_fields["email"] = 0
 
 
         if self.fields != None :
@@ -203,14 +292,18 @@ class mongodb_read :
         #     # cf : https://docs.mongodb.com/manual/tutorial/project-fields-from-query-results/
         #     coll_light = self.mongoColl.find( {}, self.query_fields ).limit(self.limit)
 
-        print ">>> mongodb_read --- get_coll_as_json / global count : %s documents " %(coll_light.count() )
+        print ">>> mongodb_read --- get_coll_as_json / global count : %s documents " %( coll_light.count() )
         return dumps(coll_light)
 
 
     def write_notices_json_file(self):
 
-        coll_light = self.get_coll_as_json()
+        coll_light      = self.get_coll_as_json()
+        static_filename = json_filename
+        static_filepath = os.path.join( STATIC_DATA, static_filename )
 
-        with open(self.static_filepath, "w") as f:
+        with open(static_filepath, "w") as f :
             json.dump(list(coll_light), f)
             f.close()
+
+        print ">>> mongodb_read --- write_notices_json_file / finished "

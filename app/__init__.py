@@ -4,7 +4,7 @@
 --------------------------------------------
 
 ---------------------------------------------
-licence
+licence :
 ---------------------------------------------
 project by : Julien Paris
 
@@ -18,6 +18,8 @@ from flask_socketio import SocketIO
 import eventlet
 eventlet.monkey_patch()
 
+from   flask_mysqldb import MySQL
+
 
 ### local static dir name
 static_dir = '/static'
@@ -29,6 +31,7 @@ URLroot_ = 'flask'
 SITE_ROOT             = os.path.realpath(os.path.dirname(__file__))
 SITE_STATIC           = SITE_ROOT   +  static_dir
 STATIC_DATA           = SITE_STATIC + '/data'
+json_filename         = "notices_raw.json"
 
 #app = Flask(__name__)
 app = Flask(__name__, static_path = SITE_STATIC ) ### change static directory adress to custom address for Flask
