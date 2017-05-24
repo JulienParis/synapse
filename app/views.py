@@ -49,8 +49,10 @@ def Is_Admin():
     if 'username' in session:
         print '**** Is_Admin **** you are logged in as : ' + session['username']
         isUser        = session['username']
+
         existing_user = users_session.find_one({'username' : session['username'] })
         print '**** Is_Admin ****  existing_user : ', existing_user
+
         if existing_user['status'] == 'admin' :
             isAdmin = True
 
@@ -88,10 +90,17 @@ def WS_user_hist(card_number=None, password=None):
 
     # check user status
     isUser, isAdmin  = Is_Admin()
-    #print isUser
+    print '--- WS_user --- isUser : ', isUser
 
-    # if bcrypt.hashpw( userPassword, existing_user['password'].encode('utf-8') ) == existing_user['password'].encode('utf-8') :
-    #     pass
+    WS_user = users_session.find_one( {'username' : session['username'] } )
+
+    print '--- WS_user --- WS_user from mongoDB : ', WS_user
+    print '--- WS_user --- WS_user password : ',     WS_user["password"]
+    print
+
+
+    print u'~ '*70
+
 
     if isAdmin or isUser :
 
@@ -101,6 +110,20 @@ def WS_user_hist(card_number=None, password=None):
             ### user auth from args in URL
             card_number = request.args.get("card_number", None )
             password    = request.args.get("password", None )
+
+            WS_user_ = users_session.find_one( {'n_carte' : card_number } )
+            print bcrypt.hashpw( password, WS_user['password'].encode('utf-8') )
+            print WS_user['password'].encode('utf-8')
+            print bcrypt.hashpw( userPassword, existing_user['password'].encode('utf-8') ) == WS_user['password'].encode('utf-8')
+
+
+        ### for common use
+        else :
+            ### get user from mongoDB
+            WS_user     = users_session.find_one( {'username' : session['username'] } )
+            card_number = WS_user["n_carte"]
+            password    = WS_user["password"]
+
 
         print '--- WS_user --- card_number : %s / password : %s ' %(card_number, password)
 
@@ -141,12 +164,16 @@ def WS_user_hist(card_number=None, password=None):
         user_mongo = users_session.find_one( {"n_carte" : card_number }, { "_id":0, "password":0 })
         #print user_mongo
 
-        parcours_sub_dir = ".".join([ key_parcours,parcours_status_[0] ])
+        parcours_sub_dir = ".".join([ key_parcours, parcours_status_[0] ])
         #print parcours_sub_dir
 
         users_session.update_one(
             {"n_carte" : card_number},
-            {"$set" : {  parcours_sub_dir : user_hist_list_cab } } ,
+            {"$set" : {
+                parcours_sub_dir : user_hist_list_cab,
+                key_lastupdate   : datetime.datetime.now()
+                }
+            } ,
             upsert = True
         )
 
@@ -177,6 +204,7 @@ def update_coll(update_reset="update", secret_key_update=None):
     if isAdmin or secret_key_update == check_key_update :
 
         print "/// update_coll / access MYSQL " #"/ for coll : ", coll
+        print
 
         ### update all mongoDB collections : notices and exemplaires
 
@@ -190,18 +218,22 @@ def update_coll(update_reset="update", secret_key_update=None):
             print "/// update_coll / df_coll created "
             flash(u'les collections sont remises à jour - reset', "success")
 
-        ### update / rewrite json local static file
-        # mongodb_read('notices', get_ligth=True ).write_notices_json_file()
-        # flash(u'les collections sont réécrites en JSON en local ', "success")
+        elif update_reset == "reset" or update_reset == "reset" or update_reset == "rewrite_JSON" :
+            ### update / rewrite json local static file
+            mongodb_read('notices', get_ligth=True ).write_notices_json_file( nested=True , debug=True )
+            flash(u'les collections sont réécrites en JSON en local ', "success")
 
+        print
         return redirect( url_for('index') )
 
     else :
         print
         return redirect( url_for('index') )
 
+
+
 ########################################################################################
-### MONGODB ROUTES #####
+### MONGODB ROUTES BACKDOORS #####
 
 @app.route('/users')
 def get_users():
@@ -299,8 +331,8 @@ def index():
             userCard     = request.form['userCard']
             userPassword = request.form['userPassword'].encode('utf-8')
 
-            print "---- userName : ", userName
-            print "---- userCard : ", userCard
+            print "---- userName : ",     userName
+            print "---- userCard : ",     userCard
             print "---- userPassword : ", userPassword
 
             try :

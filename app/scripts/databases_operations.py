@@ -3,7 +3,7 @@
 import os
 import gc ### aka garbage collector
 
-from .. import app, STATIC_DATA, SITE_STATIC, SITE_ROOT, json_filename #, mysql_catalogue
+from .. import app, STATIC_DATA, SITE_STATIC, SITE_ROOT #, mysql_catalogue
 from .app_db_settings import *
 
 import pandas as pd
@@ -19,6 +19,7 @@ from   bson.json_util import dumps
 # current working directory
 # cwd = os.getcwd()
 
+from pprint import pprint
 
 #### distant DBs : MySQL
 from   flask_mysqldb import MySQL
@@ -63,7 +64,7 @@ def get_df_from_MySQL(coll) :
 
     #def __init__ (self, coll) :
     # cf : http://flask-mysqldb.readthedocs.io/en/latest/
-    print ">>> get_df_from_MySQL ---,  %s --- start " %(coll)
+    print ">>> get_df_from_MySQL ---,  %s --- start " %(coll), "--"*50
 
     #self.coll = coll
 
@@ -84,12 +85,12 @@ def get_df_from_MySQL(coll) :
     print ">>> get_df_from_MySQL --- indices_mysql[ coll ]['ind'] : ",indices_mysql[ coll ]['ind']
     cur = mysql_catalogue.connection.cursor()
 
-    print '>>> get_df_from_MySQL --- df_sql', '--'*50
+    print '>>> get_df_from_MySQL --- %s --- df_sql' %(coll), '--'*50
     df_sql = pd.read_sql( query_string , con=mysql_catalogue.connection)
     print df_sql.head(3)
 
 
-    print '>>> get_df_from_MySQL --- df_sql_light', '--'*50
+    print '>>> get_df_from_MySQL --- %s --- df_sql_light' %(coll), '--'*50
 
     # cur.execute(query_string)
     # rows           = cur.fetchall()
@@ -105,7 +106,7 @@ def get_df_from_MySQL(coll) :
     gc.collect()
     print '>>> get_df_from_MySQL --- EMPTYING MEMORY', '--'*50
 
-    print '>>> get_df_from_MySQL ---  df_sql_light renamed', '--'*50
+    print '>>> get_df_from_MySQL --- %s --- df_sql_light renamed' %(coll), '--'*50
 
     # rename id_origine
     df_sql_light = df_sql_light.rename(columns = { indices_mysql[coll ]['key'] : key_synapse})
@@ -167,7 +168,27 @@ class mongodb_updates :
         print ">>> mongodb_updates --- "
 
         self.df_exemplaires_light = get_df_from_MySQL('exemplaires')
-        # self.df_notices_light     = get_df_from_MySQL('notices')
+        self.df_notices_light_    = get_df_from_MySQL('notices')
+
+        ### add emplacements codes in df_exemplaires_light
+        self.df_exemplaires_light[key_group_level_1] = self.df_exemplaires_light['emplacement'].map(dict_emplacements_C1)
+        self.df_exemplaires_light[key_group_level_2] = self.df_exemplaires_light['emplacement'].map(dict_emplacements_C2)
+
+        ### add emplacements codes in df_notices_light by merging
+        self.df_exemplaires_mini = self.df_exemplaires_light[[ key_synapse, 'C1', 'C2']].copy()
+        self.df_notices_light    = pd.merge(self.df_notices_light_, self.df_exemplaires_mini, on='id_o')
+
+        print '>>> mongodb_updates --- df_exemplaires_mini ', '--'*50
+        print self.df_exemplaires_mini.sample(3)
+        print '>>> mongodb_updates --- df_notices_light_ ', '--'*50
+        print self.df_notices_light_.sample(3)
+
+        ### empty memory from cache dataframes for performance issues
+        print '>>> mongodb_updates --- EMPTYING MEMORY', '--'*50
+        del self.df_exemplaires_mini
+        del self.df_notices_light_
+        gc.collect()
+
 
 
     def reset_coll(self, coll_name, coll_mongo, df_mysql_light, key_ ) :
@@ -186,7 +207,8 @@ class mongodb_updates :
         ### insert JSON exemplaires_new_records to mongoDB
         coll_mongo.insert_many(records_json)
 
-        # print "... coll_mongo reset"
+        print ">>> mongodb_updates.reset_coll / RESET FINISHED / for coll : ", coll_name
+        print
         # print "... coll_mongo.count() : ", coll_mongo.count()
 
 
@@ -227,7 +249,16 @@ class mongodb_updates :
 
     def reset_all_coll(self) :
         self.reset_coll("exemplaires", exemplaires_mongo, self.df_exemplaires_light, key_barcode )
+        ### trying to empty memory for better performance
+        del self.df_exemplaires_light
+        gc.collect()
+        print  ">>> mongodb_updates.update_all_coll / EMPTYING MEMORY : "
+
         self.reset_coll("notices",     notices_mongo,     self.df_notices_light, key_synapse)
+        ### trying to empty memory for better performance
+        del self.df_notices_light
+        gc.collect()
+        print  ">>> mongodb_updates.update_all_coll / EMPTYING MEMORY : "
 
 
     def update_all_coll(self) :
@@ -239,13 +270,16 @@ class mongodb_updates :
         gc.collect()
         print  ">>> mongodb_updates.update_all_coll / EMPTYING MEMORY : "
 
-        # new_notices     = self.check_write_new_records("notices",     notices_mongo,     self.df_notices_light,     key_synapse )
+        new_notices     = self.check_write_new_records("notices",     notices_mongo,     self.df_notices_light,     key_synapse )
         print  ">>> mongodb_updates.update_all_coll / new_notices : ", new_notices
 
         ### trying to empty memory for better performance
-        # del self.df_exemplaires_light
-        # gc.collect()
-        # print  ">>> mongodb_updates.update_all_coll / EMPTYING MEMORY : "
+        del self.df_notices_light
+        gc.collect()
+        print  ">>> mongodb_updates.update_all_coll / EMPTYING MEMORY : "
+
+
+
 
 
 class mongodb_read :
@@ -293,17 +327,108 @@ class mongodb_read :
         #     coll_light = self.mongoColl.find( {}, self.query_fields ).limit(self.limit)
 
         print ">>> mongodb_read --- get_coll_as_json / global count : %s documents " %( coll_light.count() )
-        return dumps(coll_light)
+        return coll_light
 
 
-    def write_notices_json_file(self):
+    def write_notices_json_file(self, nested=True, debug=False):
 
-        coll_light      = self.get_coll_as_json()
+        print ">>> mongodb_read --- write_notices_json_file / start / nested = %s " %(nested)
+        print
+
         static_filename = json_filename
-        static_filepath = os.path.join( STATIC_DATA, static_filename )
+
+        if nested == True :
+
+            static_filename += "_nested"
+            nodes_JSON = {}
+
+            ### iterate through dict_emplacements_ to  create nested json
+
+            for parent, values in dict_emplacements_.iteritems():
+                name_parent             = values["PARENT"]
+                nodes_JSON[name_parent] = { "CODE"     : parent,
+                                            "CHILDREN" : [] ,
+                                            "STATS"    : 0 }
+
+                children_list           = nodes_JSON[name_parent]["CHILDREN"]
+
+                print ">>> mongodb_read --- write_notices_json_file / nested : ", parent,"/", name_parent
+                print
+
+                ### iterate through CHILDREN
+                for child in values["CHILDREN"] :
+
+                    # print child, "/", child.keys()[0]
+                    child_dict = { "NAME"    : child.values()[0],
+                                   "CODE"    : child.keys()[0],
+                                   "NOTICES" : [],
+                                   "STATS"   : 0 }
+
+                    ### get all notices for sub-group
+                    for code, name in child.iteritems():
+                        ### get notices from mongoDB with just their id_o
+                        notices_     = notices_mongo.find( { key_group_level_2 : code }, self.query_fields )
+                        notices_list = list(notices_)
+                        ### add notices to child_dict
+                        child_dict["NOTICES"]             = notices_list
+
+                        # print "number notices for %s : %s" %( name, len(notices_list) )
+
+                        # update stats
+                        len_child_notices                 = len(notices_list)
+                        child_dict["STATS"]               = len_child_notices
+                        nodes_JSON[name_parent]["STATS"] += len_child_notices
+
+                        # append child_dict to children_list
+                        children_list.append(child_dict)
+
+
+
+                        #print
+
+                # print "-"*25
+
+            print ">>> mongodb_read --- write_notices_json_file / in NESTED iteration / EMPTYING MEMORY "
+            del children_list
+            gc.collect()
+
+            ### print in console for debugging purposes
+            if debug == True :
+                print
+                print ">>> mongodb_read --- write_notices_json_file / nested : recap  "
+                print
+
+                for k, v in nodes_JSON.iteritems() :
+                    print "code parent : %s / name parent : %s / stats : %s " %( v["CODE"], k, v["STATS"])
+                    print
+
+                    for e in v["CHILDREN"] :
+                        print "    code : %s / name child : %s / len : %s / sample : %s " %(e["CODE"], e["NAME"], e["STATS"], e["NOTICES"][0])
+
+                    print "-"*50
+                    print
+
+
+
+
+        elif nested == False :
+
+            static_filename += "_raw"
+
+            coll_light = self.get_coll_as_json()
+            nodes_JSON = list(coll_light)
+
+
+        static_filepath = os.path.join( STATIC_DATA, static_filename + json_extension )
 
         with open(static_filepath, "w") as f :
-            json.dump(list(coll_light), f)
+            json.dump( nodes_JSON , f)
             f.close()
 
+        print ">>> mongodb_read --- write_notices_json_file / after writing JSON / EMPTYING MEMORY "
+        del nodes_JSON
+        gc.collect()
+
+
         print ">>> mongodb_read --- write_notices_json_file / finished "
+        print "- "*70
