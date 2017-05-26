@@ -2,7 +2,7 @@
 
 
 <div class="modal fade" id="update_user_form" tabindex="-1" role="dialog" aria-labelledby="update_user_form_label">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
 
       <div class="modal-header">
@@ -11,7 +11,7 @@
         </button>
 
         <h3 class="modal-title text-center"
-            id="update_user_form_label">
+            id="update_user_form">
           mettre à jour vos informations
         </h3>
 
@@ -20,66 +20,156 @@
       <div class="modal-body">
 
 
-        <!--FORM REGISTER-->
-        <form class  = "form-horizontal"
-              action = "{{ url_for('index') }}"
-              method = "post"
-              name   = "register">
 
-          {{ registerForm.hidden_tag() }}
-          <input type="hidden" name="req_type" value="reg">
 
-          <div class="form-group">
-            <label for="userName" class="col-sm-3 control-label">pseudo</label>
-            <div class="col-sm-9">
-              {{ registerForm.userName }}
+        <!-- INFOS USER FROM user_data -->
+        <button class="btn btn-primary btn-block"
+                type="button"
+                data-toggle="collapse"
+                data-target="#collapse_user_infos"
+                aria-expanded="true"
+                aria-controls="collapse_user_infos">
+          mes infos
+        </button>
+
+        <div class="collapse" id="collapse_user_infos">
+
+          <table class="table">
+            <tbody>
+
+              {% for key, value in user_data.iteritems() %}
+                <tr>
+                  <th> {{ key|safe }}   </th>
+                  <td> {{ value|safe }} </td>
+                </tr>
+              {% endfor %}
+
+            <tbody>
+          </table>
+
+        </div>
+        <br>
+
+
+
+
+        <button class="btn btn-primary btn-block"
+                type="button"
+                data-toggle="collapse"
+                data-target="#collapse_update_parcours"
+                aria-expanded="false"
+                aria-controls="collapse_update_parcours">
+          mon parcours
+        </button>
+
+        <div class="collapse" id="collapse_update_parcours">
+
+          <table class="table">
+            <tbody>
+
+              <thead>
+                <tr>
+                  <th> type </th>
+
+                  {% for index in parcours_indexes %}
+                    <th> {{ index }} </th>
+                  {% endfor %}
+
+                </tr>
+              </thead>
+
+              {% for key, values in user_parcours.iteritems() %}
+                {% for val in values %}
+                <tr>
+                    <th> {{ key|safe }}   </th>
+                    {% for index in parcours_indexes %}
+                      <td> {{ val[index]|safe }} </td>
+                    {% endfor %}
+                    <td> </td>
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+
+            <tbody>
+          </table>
+
+        </div>
+        <br>
+
+
+        <button class="btn btn-primary btn-block"
+                type="button"
+                data-toggle="collapse"
+                data-target="#collapse_update_infos"
+                aria-expanded="false"
+                aria-controls="collapse_update_infos">
+          mettre à jour mes informations
+        </button>
+
+        <div class="collapse" id="collapse_update_infos">
+          <br>
+          <!--FORM REGISTER-->
+          <form class  = "form-horizontal"
+                action = "{{ url_for('index') }}"
+                method = "post"
+                name   = "register">
+
+            {{ registerForm.hidden_tag() }}
+            <input type="hidden" name="req_type" value="reg">
+
+            <div class="form-group">
+              <label for="userName" class="col-sm-3 control-label">pseudo</label>
+              <div class="col-sm-9">
+                {{ registerForm.userName }}
+              </div>
             </div>
-          </div>
 
-          <div class="form-group">
-            <label for="userCard" class="col-sm-3 control-label">n° de carte</label>
-            <div class="col-sm-9">
-              {{ registerForm.userCard }}
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="userEmail" class="col-sm-3 control-label">email</label>
-            <div class="col-sm-9">
-              <!-- <input type="email" class="form-control" name="userEmail" placeholder="your email"> -->
-              {{ registerForm.userEmail }}
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="userPassword" class="col-sm-3 control-label">nouveau password</label>
-            <div class="col-sm-9">
-              <!-- <input type="password" class="form-control" name="userPassword" placeholder="your password"> -->
-              {{ registerForm.userPassword }}
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="confirmPassword" class="col-sm-3 control-label">répéter votre nouveau password</label>
-            <div class="col-sm-9">
-              <!-- <input type="password" class="form-control" name="confirmPassword" placeholder="repeat your password"> -->
-              {{ registerForm.confirmPassword }}
-            </div>
-          </div>
-
-          <div class="form-group">
-
-            <div class="col-sm-offset-3 col-sm-9"> <!-- REGISTER AND LOG IN -->
-              <button type="submit"
-                      class="btn btn-info btn-block">
-                valider et mettre à jour
-              </button>
+            <div class="form-group">
+              <label for="userCard" class="col-sm-3 control-label">n° de carte</label>
+              <div class="col-sm-9">
+                {{ registerForm.userCard }}
+              </div>
             </div>
 
+            <div class="form-group">
+              <label for="userEmail" class="col-sm-3 control-label">email</label>
+              <div class="col-sm-9">
+                <!-- <input type="email" class="form-control" name="userEmail" placeholder="your email"> -->
+                {{ registerForm.userEmail }}
+              </div>
+            </div>
 
-          </div>
+            <div class="form-group">
+              <label for="userPassword" class="col-sm-3 control-label">password</label>
+              <div class="col-sm-9">
+                <!-- <input type="password" class="form-control" name="userPassword" placeholder="your password"> -->
+                {{ registerForm.userPassword }}
+              </div>
+            </div>
 
-        </form>
+            <div class="form-group">
+              <label for="confirmPassword" class="col-sm-3 control-label">répéter votre nouveau password</label>
+              <div class="col-sm-9">
+                <!-- <input type="password" class="form-control" name="confirmPassword" placeholder="repeat your password"> -->
+                {{ registerForm.confirmPassword }}
+              </div>
+            </div>
+
+            <div class="form-group">
+
+              <div class="col-sm-offset-3 col-sm-9"> <!-- REGISTER AND LOG IN -->
+                <button type="submit"
+                        class="btn btn-info btn-block">
+                  mettre à jour mes informations
+                </button>
+              </div>
+
+
+            </div>
+
+          </form>
+
+        </div>
 
 
       </div>

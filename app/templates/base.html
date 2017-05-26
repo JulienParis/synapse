@@ -91,7 +91,11 @@
     {% include "modal_howto.html" %}
     {% include 'modal_login.html'%}
   	{% include 'modal_register.html'%}
-    {% include 'modal_update_user.html'%}
+
+    {% if isUser %}
+      {% include 'modal_update_aloes.html'%}
+      {% include 'modal_update_user.html'%}
+    {% endif %}
 
     {% with messages = get_flashed_messages(with_categories = true) %}
       {% if messages %}

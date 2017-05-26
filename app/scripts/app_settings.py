@@ -18,6 +18,11 @@ app_metas = {
         """
     }
 
+app_bib_infos = {
+    "biblio"  : u"la bibliothèque de Saint Herblain",
+    "contact" : u"Magalie Badion"
+}
+
 ### variables for app colors
 colors = {
             "grey_"   : {"hex" : "#e7e7e7"},

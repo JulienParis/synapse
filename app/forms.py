@@ -53,6 +53,10 @@ class UserRegisterForm(FlaskForm):
     confirmPassword = PasswordField ('repeat Password', render_kw={'class': HTMLclass_form_control, 'placeholder':u'répéter votre password'} )
     #remember_me     = BooleanField  ( 'remember_me', default=False )
 
+class UserHistoryAloesForm(FlaskForm):
+    cardPassword = PasswordField ( 'user password', validators = [ DataRequired() ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre password'}  )
+
+
 '''
 class MultipleCheckboxField(SelectMultipleField):
     widget        = widgets.ListWidget(prefix_label=False)

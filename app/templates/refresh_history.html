@@ -1,0 +1,44 @@
+
+
+<div>
+  <h4 class="text-center">
+    bonjour {{ session_u["username"] }}
+  </h4>
+  <ul class="list-group text-center">
+    <li class="list-group-item">votre numéro de carte est : <strong>{{ session_u["n_carte"] }} </strong> </li>
+  </ul>
+</div>
+
+<!--FORM ALOES-->
+<form class  = "form-horizontal"
+      action = "{{ url_for('index') }}"
+      method = "post"
+      name   = "register">
+
+  {{ aloesForm.hidden_tag() }}
+  <input type="hidden" name="req_type" value="update_history">
+
+
+  <div class="form-group">
+    <label for="cardPassword" class="col-sm-3 control-label">le password de votre carte de bibliothèque</label>
+    <div class="col-sm-9">
+      <!-- <input type="password" class="form-control" name="userPassword" placeholder="your password"> -->
+      {{ aloesForm.cardPassword }}
+    </div>
+  </div>
+
+
+
+  <div class="form-group">
+
+    <div class="col-sm-offset-3 col-sm-9"> <!-- REGISTER AND LOG IN -->
+      <button type="submit"
+              class="btn btn-info btn-block">
+        cliquer pour mettre à jour la liste de vos emprunts
+      </button>
+    </div>
+
+
+  </div>
+
+</form>

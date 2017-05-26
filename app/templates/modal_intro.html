@@ -31,6 +31,19 @@
 
       <div class="modal-body">
 
+        {% if isUser %}
+          {% include "refresh_history.html" %}
+
+        {% else %}
+          <div>
+            <h3 class="text-center">
+              vous pouvez vous connecter (ou pas)
+            </h3>
+            <br>
+          </div>
+          {% include "login.html" %}
+
+        {% endif %}
 
 
       </div>

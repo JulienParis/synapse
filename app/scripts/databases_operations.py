@@ -49,13 +49,13 @@ with app.app_context():
     mongo = PyMongo(app)
     print "starting app --- MongoDB connected"
     ### access mongodb collections ###
-    users_session     = mongo.db.users
+    users_mongo       = mongo.db.users
     notices_mongo     = mongo.db.notices
     exemplaires_mongo = mongo.db.exemplaires
 
     mongoColls = {  "notices"     : notices_mongo,
                     "exemplaires" : exemplaires_mongo,
-                    "users"       : users_session,
+                    "users"       : users_mongo,
                 }
 
 
