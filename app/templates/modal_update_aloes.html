@@ -20,23 +20,37 @@
 
       <div class="modal-body">
 
-        {% if isAdmin%}
-          <div>
-            <a class="btn btn-block btn-warning" href="/update" role="button">
-            update MySQl
-            </a>
-          </div>
-          <br>
-          <div>
-            <a class="btn btn-block btn-danger" href="/reset" role="button">
-              reset all MySQl
-            </a>
-          </div>
-        {% endif%}
+
+
+        <div>
+          <ul class="list-group text-center">
+            <li class="list-group-item">bonjour <strong>{{ session_u["username"] }} </strong> </li>
+            <li class="list-group-item">votre numéro de carte est : <strong>{{ session_u["n_carte"] }} </strong> </li>
+          </ul>
+        </div>
+
+        {% include "refresh_history.html" %}
 
         <hr>
 
-        {% include "refresh_history.html" %}
+        {% if isAdmin%}
+        <h3 class="text-center">
+          FONCTIONNALITES RESERVEES AUX ADMINISTRATEURS/TRICES
+        </h3>
+        <div>
+          <a class="btn btn-block btn-warning close_n_load" href="/update" role="button">
+          update MySQl
+          </a>
+        </div>
+        <br>
+        <div>
+          <a class="btn btn-block btn-danger close_n_load" href="/reset" role="button">
+            reset all MySQl
+          </a>
+        </div>
+
+        {% endif%}
+
 
       </div>
 

@@ -50,50 +50,22 @@
         </div>
         <br>
 
-
-
-
         <button class="btn btn-primary btn-block"
                 type="button"
                 data-toggle="collapse"
                 data-target="#collapse_update_parcours"
-                aria-expanded="false"
+                aria-expanded="true"
                 aria-controls="collapse_update_parcours">
           mon parcours
         </button>
 
-        <div class="collapse" id="collapse_update_parcours">
+        <div  class="collapse in"
+              id="collapse_update_parcours"
+              >
 
-          <table class="table">
-            <tbody>
-
-              <thead>
-                <tr>
-                  <th> type </th>
-
-                  {% for index in parcours_indexes %}
-                    <th> {{ index }} </th>
-                  {% endfor %}
-
-                </tr>
-              </thead>
-
-              {% for key, values in user_parcours.iteritems() %}
-                {% for val in values %}
-                <tr>
-                    <th> {{ key|safe }}   </th>
-                    {% for index in parcours_indexes %}
-                      <td> {{ val[index]|safe }} </td>
-                    {% endfor %}
-                    <td> </td>
-                  {% endfor %}
-                </tr>
-              {% endfor %}
-
-            <tbody>
-          </table>
-
+          {% include "table_parcours.html" %}
         </div>
+
         <br>
 
 

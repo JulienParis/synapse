@@ -13,6 +13,8 @@ from flask_socketio import emit #, send
 
 from werkzeug.routing import Rule
 from werkzeug.utils   import secure_filename
+
+### cache system
 from werkzeug.contrib.cache import SimpleCache
 
 
@@ -95,7 +97,7 @@ cache = SimpleCache()
 def set_cache( data, cache_name="parcours" ) :
     print
     print "++++ set_cache ++++ ", cache_name
-    cache.set( cache_name, data)
+    cache.set( cache_name, data, timeout = 60 * 10) ### default_timeout=300 time in seconds
     print
 
 def get_cache( cache_name="parcours" ) :
@@ -445,9 +447,10 @@ def index():
                     # print "---- INDEX ---- ex_id_o : ", ex_id_o
 
                     try :
-                        ex_rendu  = emprunt_data[key_rendu_date]
+                        ex_rendu_ = emprunt_data[key_rendu_date]
+                        ex_rendu  = datetime.datetime.strptime( ex_rendu_, '%d/%m/%Y').strftime('%Y/%m/%d')
                     except :
-                        ex_rendu  = "."
+                        ex_rendu  = None
 
                     ### retrieve infos from notices
                     try :
@@ -466,8 +469,8 @@ def index():
                     # print "---- %s - %s - %s - %s " %( ex_cab, ex_C2, ex_author, ex_title )
                     # print "---- %s - %s - " %( ex_cab, ex_C2 ), ex_keep
                     ex_dict   = {
-                        key_title        : ex_author,
-                        key_author       : ex_title,
+                        key_title        : ex_title,
+                        key_author       : ex_author,
                         key_group_name_1 : ex_C1,
                         key_group_name_2 : ex_C2,
                         key_barcode      : ex_cab,
@@ -494,7 +497,7 @@ def index():
             # print "---- FAKE user_parcours_ : %s " %(user_parcours_)
             # print "---- FAKE user_parcours_ ---- isinstance(user_parcours_, str) :",  isinstance(user_parcours_, str)
 
-            set_cache(user_parcours_, cache_name="parcours")
+            set_cache(user_parcours, cache_name="parcours")
 
             ########## TOO BIG FOR COOKIE ####### SWITCH TO CACHE !!!!
             print "---- INDEX ---- is_userdata : FALSE ---- setcookie(user_parcours_) "
@@ -516,12 +519,18 @@ def index():
 
             print "---- INDEX ---- is_userdata : TRUE  "
             # user_parcours_ = getcookie( cookie_name="parcours" )
-            user_parcours_ = get_cache( cache_name="parcours" )
+            user_parcours = get_cache( cache_name="parcours" )
+            # print user_parcours
 
-            print "---- INDEX ---- is_userdata : TRUE ---- user_parcours_ "
-            user_parcours  = json.loads(user_parcours_)
+            if user_parcours != None :
+                print "---- INDEX ---- is_userdata : TRUE ---- user_parcours_ != None "
+                # user_parcours  = json.loads(user_parcours_)
+                print
 
-            print
+            else :
+                print "---- INDEX ---- is_userdata : TRUE ---- user_parcours_ == None "
+                session["is_userdata"] = False
+                return redirect( url_for('index') )
 
     else :
         user_data     = None
@@ -547,6 +556,9 @@ def index():
             ### flash and redirect if no valid card
             if len(card_number)!= 6 :
                 flash( u"vous n'avez pas de carte valide à " + app_bib_infos["biblio"], "warning")
+                session["is_userdata"] = False
+                flash( u"seules vos lectures et vos envies ont été mises à jour ", "warning")
+                return redirect( url_for('index') )
 
             else :
                 form = UserHistoryAloesForm(request.form)

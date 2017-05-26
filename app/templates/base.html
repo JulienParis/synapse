@@ -19,11 +19,14 @@
 
     <!-- JQUERY  -->
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script> -->
 
     <!-- LODASH -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.6/lodash.min.js"></script> -->
 
   	<!-- BOOTSTRAP  -->
+    <!-- <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
     <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
   	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
 
@@ -37,6 +40,18 @@
   	<link rel="shortcut icon" href="{{ url_for('static', filename='images/elements/favicon.ico') }}">
   	<link href="{{ url_for( 'static', filename='css/custom_styles.css' ) }}" rel="stylesheet">
 
+    <!-- DATATABLES DYNAMIC / cf : https://datatables.net -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.css"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js"></script>
+
+    <!-- BOOTSTRAP SELECT BUTTONS FOR TABLE -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+    <!-- (Optional) Latest compiled and minified JavaScript translation files -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/i18n/defaults-*.min.js"></script> -->
+
 
   	<style>
 
@@ -46,12 +61,8 @@
 
   </head>
 
-
-
-
+    <!-- MODAL LOADER -->
     {% include "modal_loader.html" %}
-
-
 
 
   <header>
@@ -88,14 +99,19 @@
   	<!-- MODALS --------------------------------------------------------------------- -->
 
     {% include "modal_intro.html" %}
+    {% include "modal_intro.html" %}
     {% include "modal_howto.html" %}
     {% include 'modal_login.html'%}
   	{% include 'modal_register.html'%}
 
+
     {% if isUser %}
       {% include 'modal_update_aloes.html'%}
       {% include 'modal_update_user.html'%}
+      {% include 'modal_add_item.html' %}
     {% endif %}
+
+
 
     {% with messages = get_flashed_messages(with_categories = true) %}
       {% if messages %}
@@ -117,6 +133,8 @@
       {% endif %}
     {% endwith %}
 
+
+
   </body>
 
 
@@ -127,15 +145,73 @@
     // loader
     $('#mod_loader').modal('show');
 
-    // activate bootstrap dropdown / carousel
+
     $(document).ready( function(){
 
+      // activate bootstrap dropdown / carousel
       $('#mod_loader').modal('hide');
       $('#mod_intro').modal('show');
       $(".dropdown-toggle").dropdown() ;
       $('.carousel').carousel(
         {interval: 5000}
       );
+
+      // close all modals and show loader on click on button .close_n_load
+      function close_n_load(){
+        // console.log("--- close_n_load ---");
+        $(".modal").modal("hide");
+        $('#mod_loader').modal('show');
+      };
+
+      $(".close_n_load").click(function(){
+        close_n_load();
+        }
+      );
+
+      // dynamic tables
+      var table = $('.tableParcours').DataTable( {
+
+        "language": {
+                    "lengthMenu": "montrer _MENU_ ouvrages par page",
+                    "zeroRecords": "Rien trouvé - sorry",
+                    "info": "page _PAGE_ de _PAGES_",
+                    "infoEmpty": "pas d'info disponible",
+                    "infoFiltered": "(filtré sur _MAX_ entrées)",
+                    "search":         "rechercher :",
+                    "paginate": {
+                        "first":      "première page",
+                        "last":       "dernière",
+                        "next":       "suivante",
+                        "previous":   "précédente"
+                    },
+                },
+
+        initComplete: function () {
+         this.api().columns().every( function () {
+             var column = this;
+             var select = $( '<select class="selectpicker" data-size="15" data-width="75px" title="filter" data-style="btn-info"><option value=""> - FILTRER - </option></select>' )
+                 .appendTo( $(column.footer()).empty() )
+                 .on( 'change', function () {
+                     var val = $.fn.dataTable.util.escapeRegex(
+                         $(this).val()
+                     );
+                     column
+                         .search( val ? '^'+val+'$' : '', true, false )
+                         .draw();
+                 } );
+
+             column.data().unique().sort().each( function ( d, j ) {
+                 select.append( '<option value="'+d+'">'+d+'</option>' )
+             } );
+         } );
+       }
+            // buttons: [ 'copy', 'excel', 'pdf', 'colvis' ]
+            // "scrollY"       : "250px",
+            // "scrollCollapse": true,
+            // "paging"        : true,
+            // "columnDefs"    : [ "order"  : [ [ 5, "desc" ] ]  ],
+
+      });
 
     });
 
@@ -178,6 +254,9 @@
     }, 4000);
 
 
+
+
+
     // tooltip with image inside
     $('.tooltip_img').tooltip({
         animated : 'fade',
@@ -188,10 +267,11 @@
 
     //change app scale if view on mobile screen :
     var screen_width = window.innerWidth;
-    console.log("$(document).ready / screen_width : ", screen_width);
+    // console.log("$(document).ready / screen_width : ", screen_width);
     if (screen_width < 600 ) {
     // if (navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i)) {
-      console.log("--- !!! --- small screen_width < 600px  ");
+      // console.log("--- !!! --- small screen_width < 600px  ");
+
       // var viewportmeta = document.querySelector('meta[name="viewport"]');
       // if (viewportmeta) {
       //   viewportmeta.content = 'width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=0.35';
@@ -203,7 +283,7 @@
       $("meta[name='viewport']").attr("content", "width=device-width, initial-scale=0.35");
     }
     else if (screen_width < 800 ) {
-      console.log("--- !!! --- small screen_width < 800px  ");
+      // console.log("--- !!! --- small screen_width < 800px  ");
       $("meta[name='viewport']").attr("content", "width=device-width, initial-scale=0.7");
 
     }

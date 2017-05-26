@@ -52,10 +52,12 @@ with app.app_context():
     users_mongo       = mongo.db.users
     notices_mongo     = mongo.db.notices
     exemplaires_mongo = mongo.db.exemplaires
+    stats_mongo       = mongo.db.stats
 
     mongoColls = {  "notices"     : notices_mongo,
                     "exemplaires" : exemplaires_mongo,
                     "users"       : users_mongo,
+                    "stats"       : stats_mongo
                 }
 
 
@@ -190,7 +192,6 @@ class mongodb_updates :
         gc.collect()
 
 
-
     def reset_coll(self, coll_name, coll_mongo, df_mysql_light, key_ ) :
 
         print ">>> mongodb_updates.reset_coll / for coll : ", coll_name
@@ -246,7 +247,6 @@ class mongodb_updates :
         return new_records_ids
 
 
-
     def reset_all_coll(self) :
         self.reset_coll("exemplaires", exemplaires_mongo, self.df_exemplaires_light, key_barcode )
         ### trying to empty memory for better performance
@@ -277,8 +277,6 @@ class mongodb_updates :
         del self.df_notices_light
         gc.collect()
         print  ">>> mongodb_updates.update_all_coll / EMPTYING MEMORY : "
-
-
 
 
 
@@ -432,3 +430,12 @@ class mongodb_read :
 
         print ">>> mongodb_read --- write_notices_json_file / finished "
         print "- "*70
+
+
+class mongodb_stats :
+
+    def __init__(self) :
+
+        print ">>> mongodb_stats --- "
+
+        self.stats_mongo = stats_mongo
