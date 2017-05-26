@@ -39,7 +39,7 @@
 
               {% for key, value in user_data.iteritems() %}
                 <tr>
-                  <th> {{ key|safe }}   </th>
+                  <th> {{ dict_db_user[key]|safe }}   </th>
                   <td> {{ value|safe }} </td>
                 </tr>
               {% endfor %}
@@ -48,27 +48,9 @@
           </table>
 
         </div>
-        <br>
 
-        <button class="btn btn-primary btn-block"
-                type="button"
-                data-toggle="collapse"
-                data-target="#collapse_update_parcours"
-                aria-expanded="true"
-                aria-controls="collapse_update_parcours">
-          mon parcours
-        </button>
-
-        <div  class="collapse in"
-              id="collapse_update_parcours"
-              >
-
-          {% include "table_parcours.html" %}
-        </div>
 
         <br>
-
-
         <button class="btn btn-primary btn-block"
                 type="button"
                 data-toggle="collapse"
@@ -88,6 +70,9 @@
 
             {{ registerForm.hidden_tag() }}
             <input type="hidden" name="req_type" value="reg">
+
+
+
 
             <div class="form-group">
               <label for="userName" class="col-sm-3 control-label">pseudo</label>
@@ -127,6 +112,9 @@
               </div>
             </div>
 
+
+
+
             <div class="form-group">
 
               <div class="col-sm-offset-3 col-sm-9"> <!-- REGISTER AND LOG IN -->
@@ -141,6 +129,25 @@
 
           </form>
 
+        </div>
+
+
+
+        <br>
+        <button class="btn btn-primary btn-block"
+                type="button"
+                data-toggle="collapse"
+                data-target="#collapse_update_parcours"
+                aria-expanded="true"
+                aria-controls="collapse_update_parcours">
+          mon parcours
+        </button>
+
+        <div  class="collapse in"
+              id="collapse_update_parcours"
+              >
+
+          {% include "table_parcours.html" %}
         </div>
 
 

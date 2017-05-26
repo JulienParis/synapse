@@ -136,8 +136,8 @@ def WS_user_hist(card_number=None, password=None):
     isUser, isAdmin  = Is_Admin()
     print '~ ~ ~ WS_user_hist --- isUser  : ', isUser
     # print '--- WS_user_hist --- session : ', session
-    print '~ ~ ~ WS_user_hist --- session["username"] : ', session['username']
-    print '~ ~ ~ WS_user_hist --- session["n_carte"]  : ', session['n_carte']
+    print '~ ~ ~ WS_user_hist --- session["username"] : ', session[key_username]
+    print '~ ~ ~ WS_user_hist --- session["n_carte"]  : ', session[key_n_carte]
     print u'~ '*70
 
 
@@ -155,12 +155,12 @@ def WS_user_hist(card_number=None, password=None):
                 password    = request.args.get("password", None )
 
                 ### get user info from users_mongo
-                WS_user_ = users_mongo.find_one( {'n_carte' : card_number } )
-                print '~ ~ ~ WS_user_hist --- username        : ', WS_user_['username']
-                print '~ ~ ~ WS_user_hist --- password mongo  : ', WS_user_['password'].encode('utf-8')
+                WS_user_ = users_mongo.find_one( {key_n_carte : card_number } )
+                print '~ ~ ~ WS_user_hist --- username        : ', WS_user_[key_username]
+                print '~ ~ ~ WS_user_hist --- password mongo  : ', WS_user_[key_password].encode('utf-8')
 
-                print '~ ~ ~ WS_user_hist --- bcrypt password : ', bcrypt.hashpw( password.encode('utf-8'), WS_user_['password'].encode('utf-8') )
-                check_pw = bcrypt.hashpw( password.encode('utf-8'), WS_user_['password'].encode('utf-8') ) == WS_user_['password'].encode('utf-8')
+                print '~ ~ ~ WS_user_hist --- bcrypt password : ', bcrypt.hashpw( password.encode('utf-8'), WS_user_[key_password].encode('utf-8') )
+                check_pw = bcrypt.hashpw( password.encode('utf-8'), WS_user_[key_password].encode('utf-8') ) == WS_user_[key_password].encode('utf-8')
                 print '~ ~ ~ WS_user_hist --- check_pw        : ', check_pw
                 print
 
@@ -415,7 +415,7 @@ def index():
 
         is_userdata = session["is_userdata"]
 
-        user_rawdata  = users_mongo.find_one( { "n_carte" : session["n_carte"] }, { "_id":0, "password":0, "status":0 } )
+        user_rawdata  = users_mongo.find_one( { key_n_carte : session[key_n_carte] }, { "_id":0, "password":0, "status":0 } )
         user_data = { key : user_rawdata[key] for key in user_rawdata.keys() if key not in ["parcours"] }
         print "---- INDEX ---- is_userdata ---- user_data :", user_data
         print "---- INDEX ---- is_userdata :", is_userdata
@@ -551,7 +551,7 @@ def index():
         ### UPDATE USER EMPRUNTS HISTORY FROM FORM
         if req_type == "update_history" and isUser :
 
-            card_number   = session['n_carte']
+            card_number   = session[key_n_carte]
 
             ### flash and redirect if no valid card
             if len(card_number)!= 6 :
@@ -589,12 +589,14 @@ def index():
             print "---- INDEX ---- userPassword : ", userPassword
 
             try :
-                existing_user = users_mongo.find_one({'username' : userName })
+                existing_user = users_mongo.find_one( { key_n_carte : userCard } )
                 if not existing_user:
                     raise ValueError('empty string')
             except :
-                existing_user = users_mongo.find_one({'n_carte' : userCard })
-            print "---- INDEX ---- existing user : ", existing_user["username"]
+                existing_user = users_mongo.find_one( { key_username : userName } )
+
+            if existing_user != None :
+                print "---- INDEX ---- existing user : ", existing_user[ key_username ]
 
 
             ### if form == register
@@ -612,17 +614,18 @@ def index():
                     # Magalie : 915526
                     if userCard == "" or len(userCard)!= 6 :
                         userIsCard        = False
-                        countNotRegistred = users_mongo.find( {"is_card": False} ).count()
+                        countNotRegistred = users_mongo.find( { key_is_card : False} ).count()
                         userCard          = "X" + str(countNotRegistred+1)
 
                     ### create new user in MongoDB
                     hashpass   = bcrypt.hashpw(userPassword, bcrypt.gensalt() )
-                    users_mongo.insert({'username' : userName,
-                                  'email'      : userEmail,
-                                  'n_carte'    : userCard,
-                                  'is_card'    : userIsCard,
-                                  'password'   : hashpass,  ### or simply userPassword
-                                  'status'     : userStatus,
+                    users_mongo.insert({
+                                  key_username   : userName,
+                                  key_email      : userEmail,
+                                  key_n_carte    : userCard,
+                                  key_is_card    : userIsCard,
+                                  key_password   : hashpass,  ### or simply userPassword
+                                  key_status     : userStatus,
                                   key_parcours : {
                                     parcours_status_[0] : [],
                                     parcours_status_[1] : [],
@@ -630,8 +633,8 @@ def index():
                                   } ,
                                   #'test'     : ["value1", "value2"]
                                   })
-                    session['username'] = userName
-                    session['n_carte']  = userCard
+                    session[key_username] = userName
+                    session[key_n_carte]  = userCard
 
                     print "---- INDEX ---- new user inserted in MongoDB / users_mongo -------- "
 
@@ -651,8 +654,8 @@ def index():
                 print "---- INDEX ---- LoginForm validation : ", form.validate() #, form.validate_on_submit()
 
                 if form.validate() and bcrypt.hashpw( userPassword, existing_user['password'].encode('utf-8') ) == existing_user['password'].encode('utf-8') :
-                    session['username']    = existing_user["username"]
-                    session['n_carte']     = existing_user["n_carte"]
+                    session[key_username]    = existing_user[key_username]
+                    session[key_n_carte]     = existing_user[key_n_carte]
                     # session["is_userdata"] = False
                     # isUser                 = session['username']
                     # flash(u'vous êtes connecté en tant que ' + isUser, "success")
@@ -676,6 +679,7 @@ def index():
                            app_metas            = app_metas,
                            app_colors           = app_colors,
                            app_bib_infos        = app_bib_infos,
+                           dict_db_user         = dict_db_user,
                            bootstrap_vars       = bootstrap_vars,
                            session_u            = session,
 
@@ -720,11 +724,11 @@ def return_user_data(request_client):
     print
     print "***** io_request_user / request from client : ", request_client
 
-    user_name  = request_client['user_name']
-    user_card  = request_client['user_card']
+    user_name  = request_client[key_user_name]
+    user_card  = request_client[key_user_card]
 
     # find corresponding user
-    user_mongo = users_mongo.find( { "$or": [ { "n_carte": user_card }, { "username" : user_name } ] } )
+    user_mongo = users_mongo.find( { "$or": [ { key_n_carte : user_card }, { key_username : user_name } ] } )
 
     # convert cursor to json
     user_json  = json.dumps(user_mongo)

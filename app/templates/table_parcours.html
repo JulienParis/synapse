@@ -1,59 +1,61 @@
 
 <br>
 
-<div>
+<div class="col-sm-6 col-sm-offset-3">
   <button type="button"
           class="btn btn-warning btn-block"
           data-toggle="modal"
           data-target="#modal_add_item">
     ajouter un ouvrage à mon parcours
   </button>
-
-
 </div>
 
-<br>
 
-<table  id="tableParcours"
-        class="table tableParcours table-striped table-bordered"
-        cellspacing="0"
-        width="100%"
-        >
-    <thead>
-      <tr>
-        <th> type </th>
+<br><br>
 
-        {% for index in parcours_indexes %}
-        <th> {{ index }} </th>
-        {% endfor %}
+<div>
+  <table  id="tableParcours"
+          class="table tableParcours table-striped table-bordered"
+          cellspacing="0"
+          width="100%"
+          >
+      <thead>
+        <tr>
+          <th> type </th>
 
-      </tr>
-    </thead>
-
-    <tfoot>
-      <tr>
-        <th> type </th>
-
-        {% for index in parcours_indexes %}
-        <th> {{ index }} </th>
-        {% endfor %}
-
-      </tr>
-    </tfoot>
-
-    <tbody>
-
-    {% for key, values in user_parcours.iteritems() %}
-      {% for val in values %}
-      <tr>
-          <th> {{ key|safe }}   </th>
           {% for index in parcours_indexes %}
-            <td> {{ val[index]|safe }} </td>
+          <th> {{ index }} </th>
           {% endfor %}
-        {% endfor %}
-      </tr>
-    {% endfor %}
 
-  </tbody>
+        </tr>
+      </thead>
 
-</table>
+      <tfoot>
+        <tr>
+          <th> type </th>
+
+          {% for index in parcours_indexes %}
+          <th> {{ index }} </th>
+          {% endfor %}
+
+        </tr>
+      </tfoot>
+
+      <tbody>
+
+      {% for key, values in user_parcours.iteritems() %}
+        {% for val in values %}
+        <tr>
+            <th> {{ key|safe }}   </th>
+            {% for index in parcours_indexes %}
+              <td> {{ val[index]|safe }} </td>
+            {% endfor %}
+          {% endfor %}
+        </tr>
+      {% endfor %}
+
+    </tbody>
+
+  </table>
+  
+</div>

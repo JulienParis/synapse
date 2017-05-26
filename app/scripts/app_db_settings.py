@@ -1,5 +1,24 @@
 # -*- encoding: utf-8 -*-
 
+key_username   = u'username'
+key_email      = u'email'
+key_n_carte    = u'n_carte'
+key_is_card    = u'is_card'
+key_password   = u'password'
+key_status     = u'status'
+key_lastupdate = u"last_update"
+
+dict_db_user = {
+              key_username   : u"pseudo",
+              key_email      : u"email",
+              key_n_carte    : u"n° de carte",
+              key_is_card    : u"carte de la bibliothèque",
+              key_password   : u"password",
+              key_status     : u"autorisation",
+              key_lastupdate : u"dernière mise à jour"
+              }
+dict_user_db = { u:d for d, u in dict_db_user.iteritems() }
+
 
 authorized_collections = [u"notices", u"exemplaires", u"users"]
 
@@ -16,7 +35,6 @@ key_barcode         = u"cab"
 key_parcours        = u"parcours"
 key_parcours_status = u"read_status"
 key_rendu_date      = u"date_rendu"
-key_lastupdate      = u"last_update"
 key_title           = u"titre"
 key_author          = u"auteur_princ"
 key_keep            = u"keep"

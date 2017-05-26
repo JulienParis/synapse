@@ -14,6 +14,9 @@ from wtforms.fields.core import SelectField, SelectMultipleField, RadioField, Da
 from wtforms.validators import DataRequired, Length, EqualTo, URL, Email, Optional
 
 
+from scripts.app_db_settings import * #dict_db_user, dict_user_db
+
+
 #ALLOWED_EXTENSIONS     = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 ALLOWED_IMAGES         = ['png', 'jpg', 'jpeg', 'gif']
 
@@ -33,28 +36,28 @@ choices_type.sort( key=lambda art : art[0].lower() )
 ### forms classes/typologies
 
 class LoginForm(FlaskForm):
-    userName     = StringField   ( 'user name'    , validators = [ Optional() ],     render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre pseudo'}  )
-    userCard     = IntegerField  ( 'user card'    , validators = [ Optional() ],     render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre numéro de carte'}  )
-    userPassword = PasswordField ( 'user password', validators = [ DataRequired() ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre password'}  )
+    userName     = StringField   ( 'user name'    , validators = [ Optional() ],     render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_username] }  )
+    userCard     = IntegerField  ( 'user card'    , validators = [ Optional() ],     render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_n_carte]  }  )
+    userPassword = PasswordField ( 'user password', validators = [ DataRequired() ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_password] }  )
     #remember_me  = BooleanField  ( 'remember_me', default=False )
 
 class UserRegisterForm(FlaskForm):
-    userName        = StringField   ( 'user name'    , validators = [ DataRequired(), Length(min=3, max=50) ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre pseudo'}  )
-    userCard        = IntegerField  ( 'user card'    , validators = [ Optional() ],                            render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre numéro de carte'}  )
-    userEmail       = EmailField    ( 'user email'   , validators = [ DataRequired(), Length(min=7, max=50) ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre email'}  )
+    userName        = StringField   ( 'user name'    , validators = [ DataRequired(), Length(min=3, max=50) ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_username] }  )
+    userCard        = IntegerField  ( 'user card'    , validators = [ Optional() ],                            render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_n_carte]  }  )
+    userEmail       = EmailField    ( 'user email'   , validators = [ DataRequired(), Length(min=7, max=50) ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_email]    }  )
     userPassword    = PasswordField ( 'user password',
         [
         validators.DataRequired(),
-        validators.EqualTo('confirmPassword', message=u'les deux passwords doivent être identiques'),
+        validators.EqualTo('confirmPassword', message=u'les deux mots de passe doivent être identiques'),
         Length(min=4, max=100)
         ],
-        render_kw={'class': HTMLclass_form_control, 'placeholder': u'votre password'}
+        render_kw={'class': HTMLclass_form_control, 'placeholder': u'votre ' + dict_db_user[key_password] }
     )
-    confirmPassword = PasswordField ('repeat Password', render_kw={'class': HTMLclass_form_control, 'placeholder':u'répéter votre password'} )
+    confirmPassword = PasswordField ('repeat Password', render_kw={'class': HTMLclass_form_control, 'placeholder':u'répéter votre ' + dict_db_user[key_password] } )
     #remember_me     = BooleanField  ( 'remember_me', default=False )
 
 class UserHistoryAloesForm(FlaskForm):
-    cardPassword = PasswordField ( 'user password', validators = [ DataRequired() ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre password'}  )
+    cardPassword = PasswordField ( 'user password', validators = [ DataRequired() ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_password] }  )
 
 
 '''
