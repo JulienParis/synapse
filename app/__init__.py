@@ -18,7 +18,7 @@ from flask_socketio import SocketIO
 import eventlet
 eventlet.monkey_patch()
 
-from   flask_mysqldb import MySQL
+# from   flask_mysqldb import MySQL
 
 
 ### local static dir name

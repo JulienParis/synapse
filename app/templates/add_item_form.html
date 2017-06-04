@@ -1,0 +1,40 @@
+<div>
+  <!--FORM ADD ITEM -->
+  <form class="form-horizontal"
+        action = "{{ url_for('index') }}"
+        method = "post"
+        name   = "add_item">
+
+    <input type="hidden" name="req_type" value="add_item">
+    {{ requestCabForm.hidden_tag() }}
+
+    <div class="form-group">
+      <label for="cab_code" class="col-sm-3 control-label">code barre</label>
+      <div class="col-sm-9">
+        {{ requestCabForm.cab_code }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="categ" class="col-sm-3 control-label">catégorie</label>
+      <div class="col-sm-9">
+        {{ requestCabForm.categ }}
+      </div>
+    </div>
+
+
+    <div class="form-group">
+
+      <div class="col-sm-12"> <!-- ADD ITEM BUTTON  -->
+        <button type="submit"
+                class="btn btn-warning btn-block close_n_load">
+          ajouter l'ouvrage
+        </button>
+      </div>
+
+    </div>
+
+
+  </form>
+
+</div>

@@ -37,6 +37,7 @@ key_parcours_status = u"read_status"
 key_rendu_date      = u"date_rendu"
 key_title           = u"titre"
 key_author          = u"auteur_princ"
+key_resume          = u"resume"
 key_keep            = u"keep"
 
 unknown_notice      = u"notice introuvable"

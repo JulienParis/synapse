@@ -36,24 +36,30 @@
         {% if isUser %}
 
 
-          <button class="btn btn-primary btn-block"
+          <br>
+          {% include "button_add_item.html" %}
+          <br>
+
+          <button class="btn btn-default btn-block"
                   type="button"
                   data-toggle="collapse"
                   data-target="#collapse_refresh_history"
-                  aria-expanded="true"
+                  aria-expanded="false"
                   aria-controls="collapse_refresh_history">
             mettre à jour à partir de mes emprunts enregistrés sur Aloes
           </button>
 
-          <div  class="collapse in"
+
+          <div  class="collapse"
                 id="collapse_refresh_history"
                 >
           <br>
           {% include "refresh_history.html" %}
           </div>
-          <br>
 
-          <button class="btn btn-primary btn-block"
+
+          <br>
+          <button class="btn btn-default btn-block"
                   type="button"
                   data-toggle="collapse"
                   data-target="#collapse_update_parcours_intro"
@@ -87,10 +93,10 @@
 
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-info btn-sm custom-btn" data-dismiss="modal">
+        <!-- <button type="button" class="btn btn-info btn-sm custom-btn" data-dismiss="modal">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
           Fermer
-        </button>
+        </button> -->
       </div>
 
     </div> <!-- end modal-content -->

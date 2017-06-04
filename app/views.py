@@ -20,7 +20,7 @@ from werkzeug.contrib.cache import SimpleCache
 
 
 ### forms classes
-from .forms import LoginForm, UserRegisterForm, UserHistoryAloesForm
+from .forms import LoginForm, UserRegisterForm, UserUpdateForm, UserHistoryAloesForm, RequestCabForm
 
 ### db classes and functions
 from scripts.databases_operations import *
@@ -61,6 +61,8 @@ def Is_Admin():
 
         if existing_user['status'] == 'admin' :
             isAdmin = True
+        else:
+            isAdmin = False
 
     else :
         isUser        = None
@@ -400,9 +402,11 @@ def index():
 
 
     ### FORMS FROM WTF
-    loginForm    = LoginForm()
-    registerForm = UserRegisterForm()
-    aloesForm    = UserHistoryAloesForm()
+    loginForm      = LoginForm()
+    registerForm   = UserRegisterForm()
+    aloesForm      = UserHistoryAloesForm()
+    userUpdateForm = UserUpdateForm()
+    requestCabForm = RequestCabForm()
 
     isUser, isAdmin  = Is_Admin()
     print "---- INDEX ---- isAdmin : %s " % ( isAdmin )
@@ -413,16 +417,27 @@ def index():
     ### RETRIEVE COMPLETE DATA PARCOURS AND STORE IT IF USER
     if isUser :
 
-        is_userdata = session["is_userdata"]
+        ### prepopulating userUpdateForm
+        userUpdateForm = UserUpdateForm()
+        userUpdateForm.new_userName.data  = session[key_username]
+        userUpdateForm.new_userCard.data  = session[key_n_carte]
+        userUpdateForm.new_userEmail.data = session[key_email]
 
-        user_rawdata  = users_mongo.find_one( { key_n_carte : session[key_n_carte] }, { "_id":0, "password":0, "status":0 } )
-        user_data = { key : user_rawdata[key] for key in user_rawdata.keys() if key not in ["parcours"] }
-        print "---- INDEX ---- is_userdata ---- user_data :", user_data
+        is_userdata = session["is_userdata"]
         print "---- INDEX ---- is_userdata :", is_userdata
 
+        ### get user informations from users_mongo
+        # user_rawdata  = users_mongo.find_one( { key_n_carte : session[key_n_carte] }, { "_id":0, "password":0, "status":0 } )
+        # user_data = { key : user_rawdata[key] for key in user_rawdata.keys() if key not in ["parcours"] }
+        session_light = [ 'csrf_token', '_flashes', 'is_userdata' ]
+        user_data = { key : val for key, val in session.iteritems() if not key in session_light }
 
+        ### get user's parcours
         if is_userdata == False :
 
+            user_rawdata  = users_mongo.find_one( { key_n_carte : session[key_n_carte] }, { "_id":0, "password":0, "status":0 } )
+
+            print "---- INDEX ---- is_userdata ---- user_data :", user_data
             print "---- INDEX ---- is_userdata : FALSE  "
 
             session["is_userdata"]   = True
@@ -439,7 +454,6 @@ def index():
                 user_parcours[parcours_type] = []
 
                 for emprunt_data in emprunts_list :
-
 
                     ex_id_o   = emprunt_data[key_synapse]
                     ex_cab    = emprunt_data[key_barcode]
@@ -542,15 +556,126 @@ def index():
     ### if REQUEST == POST is sent from a form : login / register / refresh site
     if request.method == 'POST' :
 
-        print "-"*60
+        print "V "*60
+        print
 
         req_type = request.form['req_type'] ### always add as hidden input in forms
-        print "---- INDEX ---- request.form : ", request.form
+        print "---- INDEX / POST ---- request.form : ", request.form
+
+
+        if req_type == "update_user" and isUser :
+
+            print "---- INDEX / POST / update_user "
+            new_userName     = request.form['new_userName'].encode('utf-8')
+            new_userCard     = request.form['new_userCard'].encode('utf-8')
+            new_userEmail    = request.form['new_userEmail']
+            new_userPassword = request.form['new_userPassword'].encode('utf-8')
+
+            print "---- INDEX / POST / update_user ---- session[key_n_carte] : ", session[key_n_carte]
+
+            form = UserUpdateForm(request.form)
+            # for d in form :
+            #     print " %s : %s " %(d.name, d.data)
+            # print "---- INDEX / POST / update_user ---- form.new_userName.data : ",     form.new_userName.data
+            # print "---- INDEX / POST / update_user ---- form.new_userCard.data : ",     form.new_userCard.data
+            # print "---- INDEX / POST / update_user ---- form.new_userEmail.data : ",    form.new_userEmail.data
+            # print "---- INDEX / POST / update_user ---- form.new_userPassword.data : ", form.new_userPassword.data
+            # print "---- INDEX / POST / update_user ---- form.confirmPassword.data : ",  form.confirmPassword.data
+            # print "---- INDEX / POST / update_user ---- form.errors.data : ",           form.errors.items()
+
+            if form.validate() : ###################
+                existing_user = users_mongo.find_one( { key_n_carte : session[key_n_carte] }, {"_id" : 0 , "parcours" : 0 } )
+                print "---- INDEX / POST / update_user ---- retrieving existing_user : ", existing_user
+                new_userPassword_crypt = existing_user[key_password]
+
+                ### encrypt new_userPassword if changed
+                if new_userPassword != "":
+                    new_userPassword_crypt = bcrypt.hashpw(new_userPassword, bcrypt.gensalt() )
+
+                print "new password not encrypted : " , new_userPassword
+                print "new password     encrypted : " , new_userPassword_crypt
+                print "old password     encrypted : " , existing_user[key_password]
+
+                ### update user's informations
+                new_userInfos_dict = {
+                    key_username : new_userName,
+                    key_n_carte  : new_userCard,
+                    key_email    : new_userEmail,
+                    key_password : new_userPassword_crypt,
+                }
+                print new_userInfos_dict
+                users_mongo.update_one( { key_n_carte : session[key_n_carte] },
+                                        { '$set'      : new_userInfos_dict   },
+                                        upsert=False
+                                      )
+
+                ### update session
+                session[key_username] = new_userName
+                session[key_n_carte]  = new_userCard
+                session[key_email]    = new_userEmail
+
+                print
+                sessionError = u"vos informations personnelles sont à jour"
+                flash(sessionError, "success" )
+                return redirect( url_for('index') )
+
+            else :
+                print "---- INDEX / POST / update_user ---- ERROR "
+                print
+                sessionError = u'formulaire non valide'
+                flash(sessionError, "warning" )
+                return redirect( url_for('index') )
+
+
+        ### ADD ITEM TO USER'S PARCOURS
+        elif req_type == "add_item" and isUser :
+
+            print "---- INDEX / POST / add_item ----  "
+            form = RequestCabForm(request.form)
+
+            item_cab     = request.form['cab_code']
+            item_categ   = request.form['categ'].encode('utf-8')
+
+            if form.validate() :
+                print "---- INDEX / POST / add_item ---- adding item - item_cab : %s / item_categ : %s" %(item_cab, item_categ)
+                # existing_user = users_mongo.find_one( { key_n_carte : session[key_n_carte] } )
+                item_ex  = exemplaires_mongo.find_one( { key_barcode : item_cab } )
+                item_ido = item_ex[key_synapse]
+                item_not = notices_mongo.find_one ( { key_synapse : item_ido } )
+
+                print "---- INDEX / POST / add_item ---- HEY DAMLA ! CA Y EST CA MARCHE !!!! "
+                print "---- INDEX / POST / add_item ---- adding item - title  : %s " %(item_not[key_title])
+                print "---- INDEX / POST / add_item ---- adding item - author : %s " %(item_not[key_author])
+                print "---- INDEX / POST / add_item ---- adding item - resume : %s " %(item_not[key_resume])
+
+                item_dict = {
+                    key_barcode    : item_cab,
+                    key_synapse    : item_ido,
+                    key_keep       : True,
+                    key_rendu_date : None
+                }
+                print "---- INDEX / POST / add_item ---- adding item - item_dict : %s" %(item_dict)
+
+                sessionError = u"l'ouvrage a été ajouté à votre parcours"
+                flash(sessionError, "success" )
+
+                ### select which categ to update
+
+                # users_mongo.update_one( { key_n_carte : session[key_n_carte] },
+                #                         { '$set'      : new_userInfos_dict   },
+                #                         upsert=True
+                #                       )
+
+            else :
+                sessionError = u'code barre non valide'
+                flash(sessionError, "warning" )
+                return redirect( url_for('index') )
 
 
         ### UPDATE USER EMPRUNTS HISTORY FROM FORM
-        if req_type == "update_history" and isUser :
+        elif req_type == "update_history" and isUser :
 
+            print "---- INDEX / POST / update_history "
             card_number   = session[key_n_carte]
 
             ### flash and redirect if no valid card
@@ -564,6 +689,7 @@ def index():
                 form = UserHistoryAloesForm(request.form)
 
                 if form.validate():
+                    print "---- INDEX / POST / update_history ---- form valid : request WS_user_hist() "
                     card_password = request.form['cardPassword']
 
                     WS_user_hist(card_number=card_number, password=card_password)
@@ -584,10 +710,11 @@ def index():
 
             session["is_userdata"] = False
 
-            print "---- INDEX ---- userName : ",     userName
-            print "---- INDEX ---- userCard : ",     userCard
-            print "---- INDEX ---- userPassword : ", userPassword
+            print "---- INDEX / POST / log-reg-logout ---- userName : ",     userName
+            print "---- INDEX / POST / log-reg-logout ---- userCard : ",     userCard
+            print "---- INDEX / POST / log-reg-logout ---- userPassword : ", userPassword
 
+            print "---- INDEX / POST / log-reg-logout ---- searching for existing user "
             try :
                 existing_user = users_mongo.find_one( { key_n_carte : userCard } )
                 if not existing_user:
@@ -596,7 +723,7 @@ def index():
                 existing_user = users_mongo.find_one( { key_username : userName } )
 
             if existing_user != None :
-                print "---- INDEX ---- existing user : ", existing_user[ key_username ]
+                print "---- INDEX / POST / log-reg-logout ---- existing user : ", existing_user[ key_username ]
 
 
             ### if form == register
@@ -635,10 +762,11 @@ def index():
                                   })
                     session[key_username] = userName
                     session[key_n_carte]  = userCard
+                    session[key_email]    = userEmail
 
-                    print "---- INDEX ---- new user inserted in MongoDB / users_mongo -------- "
+                    print "---- INDEX / POST / reg ---- new user inserted in MongoDB / users_mongo -------- "
 
-                    flash(u'vous êtes connecté', "success")
+                    flash(u'vous êtes connecté(e)', "success")
                     return redirect( url_for('index') )
 
                 else:
@@ -650,12 +778,13 @@ def index():
             elif existing_user and req_type == "log" :
 
                 form = LoginForm(request.form)
-                print "---- INDEX ---- LoginForm : ", form.userName, form.userPassword, form.userPassword.data
-                print "---- INDEX ---- LoginForm validation : ", form.validate() #, form.validate_on_submit()
+                print "---- INDEX / POST / log ---- LoginForm : ", form.userName, form.userPassword, form.userPassword.data
+                print "---- INDEX / POST / log ---- LoginForm validation : ", form.validate() #, form.validate_on_submit()
 
                 if form.validate() and bcrypt.hashpw( userPassword, existing_user['password'].encode('utf-8') ) == existing_user['password'].encode('utf-8') :
                     session[key_username]    = existing_user[key_username]
                     session[key_n_carte]     = existing_user[key_n_carte]
+                    session[key_email]       = existing_user[key_email]
                     # session["is_userdata"] = False
                     # isUser                 = session['username']
                     # flash(u'vous êtes connecté en tant que ' + isUser, "success")
@@ -667,7 +796,7 @@ def index():
 
             ### no valid user REQUEST
             else :
-                print "---- INDEX ---- problem filling the form, please try again ! --------------- "
+                print "---- INDEX / POST ---- problem filling the form, please try again ! --------------- "
                 sessionError = u"problème lors de votre login, merci de retenter"
                 flash(sessionError, "warning")
                 return redirect( url_for('index') )
@@ -690,24 +819,27 @@ def index():
                            isUser               = isUser,
                            isAdmin              = isAdmin,
                            sessionError         = sessionError,
+
                            loginForm            = loginForm,
                            registerForm         = registerForm,
                            aloesForm            = aloesForm,
+                           userUpdateForm       = userUpdateForm,
+                           requestCabForm       = requestCabForm
     )
 
 ### LOGOUT ######
 @app.route('/logout', methods=['GET', 'POST'])
 def logout() :
     print "XXX"*50
-    print " XXX - EXIT - XXX "
-    # print " XXX - EXIT - before popping session : ", session
+    print " XXXX - EXIT - XXXX "
+    # print "XXXX - EXIT - before popping session : ", session
 
     session.clear()
     cache.clear()
 
     # session.pop('username', None)
     # session.pop('n_carte', None)
-    print " XXX - EXIT - before popping session : ", session
+    print " XXXX - EXIT - session : ", session
     print "XXX"*50
 
     flash(u'vous êtes maintenant déconnecté(e)', "success")
@@ -718,26 +850,84 @@ def logout() :
 ########################################################################################
 ### SOCKETTIO FUNCTIONS #######################
 
-@socketio.on('io_request_user')
-def return_user_data(request_client):
+@socketio.on('connect_')
+def test_connect():
+    print "***** socket io >>> CONNECTED "
+    # emit('my response', {'data': 'Connected'})
 
+
+@socketio.on('io_request_infos_list')
+def return_infos_list(request_client):
+    print "***** socket_io >>> return_infos_list / request_client : ", request_client
+
+    inp_type = request_client["inp_type"]
+    print "***** socket_io >>> return_infos_list / inp_type : ", inp_type
+    query    = u".*" + request_client["data"] + u".*"
+    print "***** socket_io >>> return_infos_list / query : ", query
+
+    if inp_type == "inp_titles" :
+        key_src = key_title
+
+    elif inp_type == "inp_authors" :
+        key_src = key_author
+
+    list_infos_ = notices_mongo.find(   { key_src : { "$regex" : query, "$options" : "i" } },
+                                        { "_id" : 0, key_src : 1 } )
+    # print "***** socket_io >>> return_titles_list / list_titles_.distinct(key_title) : ", list_titles_.distinct( key_title )
+    # list_titles  = list(list_titles_)
+    # list_titles  = [ v[key_title] for v in list_titles ]
+    list_infos  = list_infos_.distinct( key_src )
+    print "***** socket_io >>> return_infos_list / list_titles : ", list_infos[:5], "..."
     print
-    print "***** io_request_user / request from client : ", request_client
 
-    user_name  = request_client[key_user_name]
-    user_card  = request_client[key_user_card]
+    emit('io_resp_infos_list', { 'data': list_infos, "resp_type" : inp_type } )
 
-    # find corresponding user
-    user_mongo = users_mongo.find( { "$or": [ { key_n_carte : user_card }, { key_username : user_name } ] } )
 
-    # convert cursor to json
-    user_json  = json.dumps(user_mongo)
+@socketio.on('io_request_cab')
+def return_cab(request_client):
 
-    # send results
-    results = {
-            'request_sent' : request_client,
-            'user'         : user_json
-            }
+    print "***** socket_io >>> return_cab / request_client : ", request_client
 
-    ### emit the json
-    emit( 'io_user_from_server', results )
+    title         = request_client["data"]
+    notice_       = notices_mongo.find_one( { key_title : title } )
+    notice_author = notice_[key_author]
+    print "***** socket_io >>> return_cab / notice_ : ", notice_
+
+    notice_ido = notice_[ key_synapse ]
+    ex_        = exemplaires_mongo.find_one({ key_synapse : notice_ido })
+    print "***** socket_io >>> return_cab / ex_ : ", ex_
+
+    ex_cab     = ex_[ key_barcode ]
+
+    print "***** socket_io >>> return_cab / ex_cab : ", ex_cab
+    print
+
+    emit( 'io_resp_cab', { 'cab' : ex_cab, 'author' : notice_author } )
+
+
+@socketio.on('io_request_refs')
+def return_refs_list(request_client):
+
+    print "***** socket_io >>> return_refs_list / request_client : ", request_client
+
+    author     = request_client["data"]
+    refs_list_ = notices_mongo.find( { key_author : author }, { "_id" : 0, key_title : 1, key_synapse : 1 } )
+    unique_titles  = refs_list_.distinct(key_title)
+    unique_titles.sort()
+    print "***** socket_io >>> return_refs_list / refs_list : ", unique_titles
+
+    refs = []
+    for ref in unique_titles :
+        not_ = notices_mongo.find_one( { key_title : ref} )
+        ex_  = exemplaires_mongo.find_one( { key_synapse : not_[key_synapse] } )
+        cab = ex_[ key_barcode ]
+        ref_dict = {}
+        ref_dict[key_group_level_2] = dict_reverse_C2[not_[key_group_level_2]]
+        ref_dict[key_barcode] = cab
+        ref_dict[key_title]   = ref
+        refs.append(ref_dict)
+
+    print "***** socket_io >>> return_refs_list / refs : ", refs
+    print
+
+    emit( 'io_resp_refs', { 'refs_list' : refs , "author" : author , 'unique_titles' : unique_titles } )

@@ -23,7 +23,7 @@
 
 
         <!-- INFOS USER FROM user_data -->
-        <button class="btn btn-primary btn-block"
+        <button class="btn btn-default btn-block"
                 type="button"
                 data-toggle="collapse"
                 data-target="#collapse_user_infos"
@@ -36,8 +36,7 @@
 
           <table class="table">
             <tbody>
-
-              {% for key, value in user_data.iteritems() %}
+              {% for key, value in user_data.iteritems()  %}
                 <tr>
                   <th> {{ dict_db_user[key]|safe }}   </th>
                   <td> {{ value|safe }} </td>
@@ -51,7 +50,7 @@
 
 
         <br>
-        <button class="btn btn-primary btn-block"
+        <button class="btn btn-default btn-block"
                 type="button"
                 data-toggle="collapse"
                 data-target="#collapse_update_infos"
@@ -62,53 +61,50 @@
 
         <div class="collapse" id="collapse_update_infos">
           <br>
-          <!--FORM REGISTER-->
+          <!-- FORM UPDATE USER -->
           <form class  = "form-horizontal"
                 action = "{{ url_for('index') }}"
                 method = "post"
-                name   = "register">
+                name   = "update_user">
 
-            {{ registerForm.hidden_tag() }}
-            <input type="hidden" name="req_type" value="reg">
+            {{ userUpdateForm.hidden_tag() }}
+            <input type="hidden" name="req_type" value="update_user">
 
 
 
 
             <div class="form-group">
-              <label for="userName" class="col-sm-3 control-label">pseudo</label>
+              <label for="new_userName" class="col-sm-3 control-label">pseudo</label>
               <div class="col-sm-9">
-                {{ registerForm.userName }}
+                {{ userUpdateForm.new_userName }}
               </div>
             </div>
 
             <div class="form-group">
-              <label for="userCard" class="col-sm-3 control-label">n° de carte</label>
+              <label for="new_userCard" class="col-sm-3 control-label">n° de carte</label>
               <div class="col-sm-9">
-                {{ registerForm.userCard }}
+                {{ userUpdateForm.new_userCard }}
               </div>
             </div>
 
             <div class="form-group">
-              <label for="userEmail" class="col-sm-3 control-label">email</label>
+              <label for="new_userEmail" class="col-sm-3 control-label">email</label>
               <div class="col-sm-9">
-                <!-- <input type="email" class="form-control" name="userEmail" placeholder="your email"> -->
-                {{ registerForm.userEmail }}
+                {{ userUpdateForm.new_userEmail }}
               </div>
             </div>
 
             <div class="form-group">
-              <label for="userPassword" class="col-sm-3 control-label">password</label>
+              <label for="new_userPassword" class="col-sm-3 control-label">password</label>
               <div class="col-sm-9">
-                <!-- <input type="password" class="form-control" name="userPassword" placeholder="your password"> -->
-                {{ registerForm.userPassword }}
+                {{ userUpdateForm.new_userPassword }}
               </div>
             </div>
 
             <div class="form-group">
               <label for="confirmPassword" class="col-sm-3 control-label">répéter votre nouveau password</label>
               <div class="col-sm-9">
-                <!-- <input type="password" class="form-control" name="confirmPassword" placeholder="repeat your password"> -->
-                {{ registerForm.confirmPassword }}
+                {{ userUpdateForm.confirmPassword }}
               </div>
             </div>
 
@@ -131,10 +127,11 @@
 
         </div>
 
-
+        <br>
+        {% include "button_add_item.html" %}
 
         <br>
-        <button class="btn btn-primary btn-block"
+        <button class="btn btn-default btn-block"
                 type="button"
                 data-toggle="collapse"
                 data-target="#collapse_update_parcours"
@@ -148,6 +145,7 @@
               >
 
           {% include "table_parcours.html" %}
+          
         </div>
 
 
