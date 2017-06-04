@@ -15,6 +15,15 @@ $(document).ready(function(){
 
   var table_c = $("#search_results");
 
+  function hide_empty_resultsTable(){
+    $("#search_results_table").css("display", "none") ;
+    table_c.empty();
+  };
+
+  function show_resultsTable() {
+    $("#search_results_table").css("display", "") ;
+  };
+
   // INITIATE SOCKET IO CONNECTION
   var socket = io.connect('http://' + document.domain + ':' + location.port);
   socket.on('connect', function() {
@@ -22,6 +31,8 @@ $(document).ready(function(){
   });
 
 
+
+  /////////////////////////////////////
   // EMIT REQUEST INFOS LISTS TO SERVER
   function EmitRequestInfos(string_, inp_type) {
     console.log(" *** EmitRequestInfos / string_ : ", string_, " / inp_type : ", inp_type );
@@ -32,34 +43,14 @@ $(document).ready(function(){
                 );
   };
 
-  // EMIT REQUEST CAB TO SERVER
-  function EmitRequestCab(string_) {
-    console.log(" *** EmitRequestCab / string_ : ", string_ );
-    socket.emit(  'io_request_cab',
-                  { data     : string_ ,
-                  }
-                );
-  };
-
-  // EMIT REQUEST AUTHOR'S REFS TO SERVER
-  function EmitRequestRefs(author_name) {
-    console.log(" *** EmitRequestRefs / author_name : ", author_name );
-    // $('#mod_loader').modal('show');
-    socket.emit(  'io_request_refs',
-                  { data     : author_name ,
-                  }
-                );
-  };
-
-
-
   // GET VALUES INPUT ON CHANGE
   $("#input_title").on("input", function() {
 
     // clean previous inputs
     $("#cab_code").val("") ;
     $("#input_author").val("") ;
-    table_c.empty();
+    //table_c.empty();
+    hide_empty_resultsTable();
 
     inp = $("#input_title").val();
     console.log(" --- input : ", inp);
@@ -76,7 +67,9 @@ $(document).ready(function(){
     $("#input_title").val("") ;
 
     inp = $("#input_author").val();
-    table_c.empty();
+    //table_c.empty();
+    hide_empty_resultsTable();
+
     console.log(" --- input : ", inp);
     if (inp.length >= 3 ) {
       // emit request to server
@@ -85,26 +78,6 @@ $(document).ready(function(){
     }
   );
 
-  // get cab from title
-  $("#ckeck_title").on("click", function() {
-    title = $("#input_title").val();
-    console.log(" --- search button for / title :", title );
-    EmitRequestCab(title) ;
-  });
-
-  // get refs list from author
-  $("#ckeck_author_refs").on("click", function() {
-    author = $("#input_author").val();
-    console.log(" --- search button for / author :", author );
-    EmitRequestRefs(author) ;
-  });
-
-  // get data from clickable rows
-  $("#search_results tr").on("click", function() {
-    console.log("getting cab from table... ");
-    // var cab_a = $(this).attr("value");
-    // console.log("href text : ", cab_a);
-  });
 
   // RECEIVE RESPONSE TITLES_LIST FROM SERVER
   socket.on('io_resp_infos_list', function(infos) {
@@ -129,6 +102,116 @@ $(document).ready(function(){
 
   });
 
+
+  //////////////////////////////
+  // EMIT REQUEST CAB TO SERVER
+  function EmitRequestCab(string_) {
+    console.log(" *** EmitRequestCab / string_ : ", string_ );
+    socket.emit(  'io_request_cab',
+                  { data     : string_ ,
+                  }
+                );
+  };
+
+  // get cab from title
+  $("#ckeck_title").on("click", function() {
+    title = $("#input_title").val();
+    console.log(" --- search button for / title :", title );
+    EmitRequestCab(title) ;
+  });
+
+
+
+
+  ///////////////////////////////////////
+  // EMIT REQUEST AUTHOR'S REFS TO SERVER
+  function EmitRequestRefs(author_name) {
+    console.log(" *** EmitRequestRefs / author_name : ", author_name );
+    socket.emit(  'io_request_refs',
+                  { data     : author_name ,
+                  }
+                );
+  };
+
+  // get refs list from author
+  $("#ckeck_author_refs").on("click", function() {
+    author = $("#input_author").val();
+    console.log(" --- search button for / author :", author );
+
+    var $btn = $(this).button('loading');
+    EmitRequestRefs(author) ;
+  });
+
+
+
+  //////////////////////////////////////////
+  // EMIT REQUEST AUTHOR AND TITLE TO SERVER
+  function EmitRequestOneRef(cab) {
+    console.log(" *** EmitRequestOneRef / cab : ", cab );
+    socket.emit(  'io_request_oneref',
+                  { data     : cab ,
+                  }
+                );
+  };
+
+  $("#cab_code").on("input", function() {
+
+    $("#input_author").val("") ;
+    $("#input_title").val("") ;
+    //table_c.empty();
+    hide_empty_resultsTable();
+
+  });
+
+  // get infos from cab
+  $("#ckeck_oneref").on("click", function() {
+  //function Check_OneRef() {
+    cab = $("#cab_code").val();
+    console.log(" --- search button for / cab :", cab );
+    EmitRequestOneRef(cab) ;
+  });
+
+  // RECEIVE RESPONSE ONEREF FROM SERVER
+  socket.on('io_resp_oneref', function(infos_ref) {
+
+    console.log(" *** io_resp_oneref / infos_ref : ", infos_ref );
+    oneref_author  = infos_ref.author ;
+    oneref_title   = infos_ref.title ;
+
+    $("#input_author").focus()  ;
+    $("#input_author").val(oneref_author) ;
+
+    $("#input_title").focus()    ;
+    $("#input_title").val(oneref_title) ;
+
+    $("#ckeck_author_refs").click();
+
+  });
+
+
+
+
+
+
+  ////////////////////////////////
+  // get data from clickable rows
+  $("#search_results").on("click", "tr", function() {
+    console.log( "getting cab from table... ", $(this) );
+    var infos_ref = $(this).find('td');
+    // console.log( "getting cab from table... / infos_ref : ", infos_ref.eq(0).text() );
+    var title = infos_ref.eq(0).text() ;
+    var cab   = infos_ref.eq(2).text() ;
+    console.log("getting cab from table... / cab : ", cab );
+
+    $("#cab_code").focus()  ;
+    $("#cab_code").val(cab) ;
+
+    $("#input_title").focus()    ;
+    $("#input_title").val(title) ;
+
+  });
+
+
   // RECEIVE RESPONSE CAB AND AUTHOR FROM SERVER
   socket.on("io_resp_cab", function(ref) {
     console.log(" *** io_resp_cab / ref : ", ref );
@@ -137,18 +220,25 @@ $(document).ready(function(){
     // console.log(" *** io_resp_cab / cab_ : ", cab_ );
     // copy cab_ to input in form
     $("#cab_code").focus()   ;
-    // $("#cab_code").click()   ;
     $("#cab_code").val(cab_) ;
 
     $("#input_author").focus()   ;
     $("#input_author").val(author_) ;
 
+    // var prev_author = $("#input_author").val() ;
+    //console.log(" *** io_resp_cab / prev_author : ", prev_author );
+    // if (author_ != prev_author) {
+    $("#ckeck_author_refs").click();
+    // };
+
   });
 
   // RECEIVE RESPONSE REFS FROM SERVER
   socket.on("io_resp_refs", function(refs) {
+
     console.log(" *** io_resp_refs / refs : ", refs );
-    // $('#mod_loader').modal('hide');
+
+    $("#ckeck_author_refs").button('reset') ;
 
     var refs_list  = refs.refs_list ;
     console.log(" *** io_resp_refs / refs_list : ", refs_list );
@@ -160,9 +250,11 @@ $(document).ready(function(){
     // });
 
     table_c.empty();
+    show_resultsTable();
+
     var k = "" ;
     for(i = 0; i < refs_list.length; i++){
-      k+= '<tr value="' + refs_list[i].cab + '">';
+      k+= '<tr>'; //value="' + refs_list[i].cab + '"
       // k+= '<td class="col-xs-3">' + refs.author + '</td>';
       k+= '<td>' + refs_list[i].titre + '</td>';
       k+= '<td>' + refs_list[i].C2 + '</td>';

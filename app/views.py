@@ -890,17 +890,23 @@ def return_cab(request_client):
 
     title         = request_client["data"]
     notice_       = notices_mongo.find_one( { key_title : title } )
-    notice_author = notice_[key_author]
-    print "***** socket_io >>> return_cab / notice_ : ", notice_
 
-    notice_ido = notice_[ key_synapse ]
-    ex_        = exemplaires_mongo.find_one({ key_synapse : notice_ido })
-    print "***** socket_io >>> return_cab / ex_ : ", ex_
+    if notice_ != None :
+        notice_author = notice_[key_author]
+        print "***** socket_io >>> return_cab / notice_ : ", notice_
 
-    ex_cab     = ex_[ key_barcode ]
+        notice_ido = notice_[ key_synapse ]
+        ex_        = exemplaires_mongo.find_one({ key_synapse : notice_ido })
+        print "***** socket_io >>> return_cab / ex_ : ", ex_
 
-    print "***** socket_io >>> return_cab / ex_cab : ", ex_cab
-    print
+        ex_cab     = ex_[ key_barcode ]
+
+        print "***** socket_io >>> return_cab / ex_cab : ", ex_cab
+        print
+
+    else :
+        ex_cab        = unknown_cab
+        notice_author = unknown_author
 
     emit( 'io_resp_cab', { 'cab' : ex_cab, 'author' : notice_author } )
 
@@ -931,3 +937,26 @@ def return_refs_list(request_client):
     print
 
     emit( 'io_resp_refs', { 'refs_list' : refs , "author" : author , 'unique_titles' : unique_titles } )
+
+
+@socketio.on('io_request_oneref')
+def return_oneref(request_client):
+
+    print "***** socket_io >>> return_oneref / request_client : ", request_client
+    cab     = request_client["data"]
+    ref     = exemplaires_mongo.find_one( { key_barcode : cab })
+    print "***** socket_io >>> return_oneref / ref : ", ref
+
+    if ref != None :
+        ref_ido = ref[key_synapse]
+        notice  = notices_mongo.find_one({ key_synapse : ref_ido })
+        author  = notice[key_author]
+        title   = notice[key_title]
+    else:
+        author = unknown_author
+        title  = unknown_title
+
+    print "***** socket_io >>> return_oneref / cab : %s / author : %s / title : %s " %( cab, author, title )
+    print
+
+    emit( 'io_resp_oneref', { "author" : author , 'title' : title } )

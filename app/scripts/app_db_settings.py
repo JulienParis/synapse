@@ -41,6 +41,10 @@ key_resume          = u"resume"
 key_keep            = u"keep"
 
 unknown_notice      = u"notice introuvable"
+unknown_author      = u"aucun auteur trouvé"
+unknown_title       = u"aucun titre trouvé"
+unknown_cab         = u"aucun code barre trouvé"
+
 
 parcours_status = {
     u"emprunt" : 0,

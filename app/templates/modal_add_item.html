@@ -95,14 +95,19 @@
             </div>
             <div class="row">
               <div class="col-sm-9 col-sm-offset-3">
-                <button role="button" class="btn btn-block btn-default btn-sm" id="ckeck_author_refs" data-loading-text="recherche..." >
-                  rechercher les ouvrages
+                <button role="button"
+                        class="btn btn-block btn-default btn-sm"
+                        id="ckeck_author_refs"
+                        data-loading-text="recherche..."
+                        >
+                  rechercher les ouvrages de cet auteur
                 </button>
               </div>
             </div>
 
 
-            <div class="col-sm-offset-3 col-sm-9">
+            <div class="col-sm-offset-3 col-sm-9" id="search_results_table" style="display:none">
+              <br>
               <table class="table table-striped table-condensed able-bordered" >
                   <thead>
                     <tr>
@@ -117,13 +122,14 @@
                   </tbody>
 
                 </table>
+                <br>
+
 
             </div>
-            <br><br>
 
 
 
-            <br><br>
+            <br>
 
             <div class="row"> <!-- <div class="form-group"> -->
               <label for="input_title" class="col-sm-3 control-label text-right">par titre</label>
@@ -144,8 +150,12 @@
 
         <div class="row">
           <div class="col-sm-9 col-sm-offset-3">
-            <button role="button" class="btn btn-block btn-default btn-sm" id="ckeck_title" data-loading-text="recherche..." >
-              rechercher le code barre
+            <button role="button"
+                    class="btn btn-block btn-default btn-sm"
+                    id="ckeck_title"
+                    data-loading-text="recherche..."
+                    >
+              rechercher le code barre et l'auteur
             </button>
           </div>
         </div>
