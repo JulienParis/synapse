@@ -2,6 +2,7 @@
 <div>
   <!--FORM LOGIN-->
   <form class="form-horizontal"
+        id="form_login"
         action = "{{ url_for('index') }}"
         method = "post"
         name   = "login">
@@ -38,9 +39,12 @@
     <div class="form-group">
 
       <div class="col-sm-offset-2 col-sm-10"> <!-- LOG IN -->
-        <button type="submit"
-                class="btn btn-success btn-block close_n_load">
-          Log in
+        <button type="button"
+                id="login_button"
+                class="btn btn-success btn-block"
+                data-loading-text="connection et récupération de vos données..."
+                >
+          Se connecter <!-- type="submit" -->
         </button>
       </div>
 

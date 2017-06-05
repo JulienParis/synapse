@@ -16,6 +16,7 @@ $(document).ready(function(){
   var table_c = $("#search_results");
 
   function hide_empty_resultsTable(){
+    $("#oneref_resume").css("display", "none") ;
     $("#search_results_table").css("display", "none") ;
     table_c.empty();
   };
@@ -24,11 +25,6 @@ $(document).ready(function(){
     $("#search_results_table").css("display", "") ;
   };
 
-  // INITIATE SOCKET IO CONNECTION
-  var socket = io.connect('http://' + document.domain + ':' + location.port);
-  socket.on('connect', function() {
-    socket.emit( 'connect_' );
-  });
 
 
 
@@ -180,6 +176,8 @@ $(document).ready(function(){
     console.log(" *** io_resp_oneref / infos_ref : ", infos_ref );
     oneref_author  = infos_ref.author ;
     oneref_title   = infos_ref.title ;
+    oneref_resume  = infos_ref.resume ;
+
 
     $("#input_author").focus()  ;
     $("#input_author").val(oneref_author) ;
@@ -188,6 +186,9 @@ $(document).ready(function(){
     $("#input_title").val(oneref_title) ;
 
     $("#ckeck_author_refs").click();
+
+    AddResume(oneref_resume);
+
 
   });
 
@@ -200,6 +201,9 @@ $(document).ready(function(){
   // get data from clickable rows
   $("#search_results").on("click", "tr", function() {
     console.log( "getting cab from table... ", $(this) );
+    var resume    = $(this).attr("resume") ;
+    console.log( "getting cab from table... resume :  ", resume );
+
     var infos_ref = $(this).find('td');
     // console.log( "getting cab from table... / infos_ref : ", infos_ref.eq(0).text() );
     var title = infos_ref.eq(0).text() ;
@@ -212,6 +216,8 @@ $(document).ready(function(){
     $("#input_title").focus()    ;
     $("#input_title").val(title) ;
 
+    AddResume(resume);
+
   });
 
 
@@ -220,6 +226,7 @@ $(document).ready(function(){
     console.log(" *** io_resp_cab / ref : ", ref );
     var cab_    = ref.cab ;
     var author_ = ref.author ;
+    var resume_ = ref.resume ;
     // console.log(" *** io_resp_cab / cab_ : ", cab_ );
     // copy cab_ to input in form
     $("#cab_code").focus()   ;
@@ -234,7 +241,22 @@ $(document).ready(function(){
     $("#ckeck_author_refs").click();
     // };
 
+    AddResume(resume_);
+
   });
+
+
+  function AddResume(resume) {
+
+    $("#oneref_resume").css("display", "");
+
+    if (resume != "") {
+      $("#_resume").html(resume) ;
+    } else {
+      $("#_resume").html("pas de résumé") ;      
+    };
+
+  };
 
   // RECEIVE RESPONSE REFS FROM SERVER
   socket.on("io_resp_refs", function(refs) {
@@ -257,7 +279,7 @@ $(document).ready(function(){
 
     var k = "" ;
     for(i = 0; i < refs_list.length; i++){
-      k+= '<tr>'; //value="' + refs_list[i].cab + '"
+      k+= '<tr resume="' + refs_list[i].resume + '"></td>'; //value="' + refs_list[i].cab + '"
       // k+= '<td class="col-xs-3">' + refs.author + '</td>';
       k+= '<td>' + refs_list[i].titre + '</td>';
       k+= '<td>' + refs_list[i].C2 + '</td>';

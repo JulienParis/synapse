@@ -45,6 +45,7 @@ unknown_notice      = u"notice introuvable"
 unknown_author      = u"aucun auteur trouvé"
 unknown_title       = u"aucun titre trouvé"
 unknown_cab         = u"aucun code barre trouvé"
+unknown_resume      = u"aucun résumé"
 
 
 key_parc_emprunts = u"emprunts"

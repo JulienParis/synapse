@@ -914,6 +914,7 @@ def return_cab(request_client):
 
     if notice_ != None :
         notice_author = notice_[key_author]
+        notice_resume = notice_[ key_resume ]
         print "***** socket_io >>> return_cab / notice_ : ", notice_
 
         notice_ido = notice_[ key_synapse ]
@@ -928,8 +929,9 @@ def return_cab(request_client):
     else :
         ex_cab        = unknown_cab
         notice_author = unknown_author
+        notice_resume = unknown_resume
 
-    emit( 'io_resp_cab', { 'cab' : ex_cab, 'author' : notice_author } )
+    emit( 'io_resp_cab', { 'cab' : ex_cab, 'author' : notice_author, 'resume' : notice_resume } )
 
 
 @socketio.on('io_request_refs')
@@ -945,13 +947,15 @@ def return_refs_list(request_client):
 
     refs = []
     for ref in unique_titles :
-        not_ = notices_mongo.find_one( { key_title : ref} )
-        ex_  = exemplaires_mongo.find_one( { key_synapse : not_[key_synapse] } )
-        cab = ex_[ key_barcode ]
+        not_   = notices_mongo.find_one( { key_title : ref} )
+        resume = not_[key_resume]
+        ex_    = exemplaires_mongo.find_one( { key_synapse : not_[key_synapse] } )
+        cab    = ex_[ key_barcode ]
         ref_dict = {}
         ref_dict[key_group_level_2] = dict_reverse_C2[not_[key_group_level_2]]
         ref_dict[key_barcode] = cab
         ref_dict[key_title]   = ref
+        ref_dict[key_resume]  = resume
         refs.append(ref_dict)
 
     print "***** socket_io >>> return_refs_list / refs : ", refs
@@ -973,11 +977,13 @@ def return_oneref(request_client):
         notice  = notices_mongo.find_one({ key_synapse : ref_ido })
         author  = notice[key_author]
         title   = notice[key_title]
+        resume  = notice[key_resume]
     else:
         author = unknown_author
         title  = unknown_title
+        resume = unknown_resume
 
     print "***** socket_io >>> return_oneref / cab : %s / author : %s / title : %s " %( cab, author, title )
     print
 
-    emit( 'io_resp_oneref', { "author" : author , 'title' : title } )
+    emit( 'io_resp_oneref', { "author" : author , 'title' : title , 'resume' : resume } )
