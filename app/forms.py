@@ -76,7 +76,7 @@ class UserHistoryAloesForm(FlaskForm):
 
 class RequestCabForm(FlaskForm):
     cab_code     = IntegerField  ( u'barcode',       validators = [ DataRequired() ],       render_kw={'class': HTMLclass_form_control, 'placeholder':u"le code barre de l'ouvrage ", "onfocus":u"this.placeholder = ''"}  )
-    categ        = RadioField    ( u'catégorie',     choices=[ (u'envie',u'envie de lire'),(u'val2',u'ouvrage lu') ], render_kw={'class': HTMLclass_radio_line}, default=u'envie' )
+    categ        = RadioField    ( u'catégorie',     choices=[ (key_parc_envies,u'envie de lire'),(key_parc_lus,u'ouvrage lu') ], render_kw={'class': HTMLclass_radio_line}, default=key_parc_envies )
 
 
 '''

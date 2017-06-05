@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 key_username   = u'username'
+key_user_id    = u'_id'
 key_email      = u'email'
 key_n_carte    = u'n_carte'
 key_is_card    = u'is_card'
@@ -46,15 +47,20 @@ unknown_title       = u"aucun titre trouvé"
 unknown_cab         = u"aucun code barre trouvé"
 
 
+key_parc_emprunts = u"emprunts"
+key_parc_envies   = u"envies"
+key_parc_lus      = u"lus"
+
 parcours_status = {
-    u"emprunt" : 0,
-    u"envie"   : 1,
-    u"lu"      : 2
+    key_parc_emprunts : 0,
+    key_parc_envies   : 1,
+    key_parc_lus      : 2
 }
+parcours_status_ = [ key_parc_emprunts, key_parc_envies, key_parc_lus ]
+
 
 parcours_indexes = [ key_author, key_title, key_group_name_1, key_group_name_2, key_rendu_date, key_keep ]
 
-parcours_status_ = [u"emprunts",u"envies",u"lus"]
 
 # index(s) to keep
 indices_exemplaires = [ key_exemplaires, u"emplacement", u"cote", key_barcode ] #, "section"

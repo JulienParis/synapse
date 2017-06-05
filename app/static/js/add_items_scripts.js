@@ -117,7 +117,9 @@ $(document).ready(function(){
   $("#ckeck_title").on("click", function() {
     title = $("#input_title").val();
     console.log(" --- search button for / title :", title );
-    EmitRequestCab(title) ;
+    if (title != "" ) {
+      EmitRequestCab(title) ;
+    };
   });
 
 
@@ -137,9 +139,10 @@ $(document).ready(function(){
   $("#ckeck_author_refs").on("click", function() {
     author = $("#input_author").val();
     console.log(" --- search button for / author :", author );
-
-    var $btn = $(this).button('loading');
-    EmitRequestRefs(author) ;
+    if (author != "") {
+      var $btn = $(this).button('loading');
+      EmitRequestRefs(author) ;
+    };
   });
 
 

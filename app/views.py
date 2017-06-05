@@ -92,7 +92,7 @@ def getcookie( cookie_name="parcours" ):
     print
     return data_cookie
 
-### CACHES
+### CACHES FOR user's parcours in session
 ### cf; : http://werkzeug.pocoo.org/docs/0.12/contrib/cache/#werkzeug.contrib.cache.BaseCache.set
 cache = SimpleCache()
 
@@ -244,8 +244,8 @@ def WS_user_hist(card_number=None, password=None):
             #print parcours_sub_dir
 
             users_mongo.update_one(
-                {"n_carte" : card_number},
-                {"$set" : {
+                {key_n_carte : card_number},
+                {"$set"      : {
                     parcours_sub_dir : user_hist_list_cab,
                     key_lastupdate   : datetime.datetime.now()
                     }
@@ -633,38 +633,56 @@ def index():
             print "---- INDEX / POST / add_item ----  "
             form = RequestCabForm(request.form)
 
-            item_cab     = request.form['cab_code']
+            item_cab     = str(request.form['cab_code'])
             item_categ   = request.form['categ'].encode('utf-8')
 
             if form.validate() :
+
                 print "---- INDEX / POST / add_item ---- adding item - item_cab : %s / item_categ : %s" %(item_cab, item_categ)
-                # existing_user = users_mongo.find_one( { key_n_carte : session[key_n_carte] } )
                 item_ex  = exemplaires_mongo.find_one( { key_barcode : item_cab } )
-                item_ido = item_ex[key_synapse]
-                item_not = notices_mongo.find_one ( { key_synapse : item_ido } )
 
-                print "---- INDEX / POST / add_item ---- HEY DAMLA ! CA Y EST CA MARCHE !!!! "
-                print "---- INDEX / POST / add_item ---- adding item - title  : %s " %(item_not[key_title])
-                print "---- INDEX / POST / add_item ---- adding item - author : %s " %(item_not[key_author])
-                print "---- INDEX / POST / add_item ---- adding item - resume : %s " %(item_not[key_resume])
+                if item_ex != None :
 
-                item_dict = {
-                    key_barcode    : item_cab,
-                    key_synapse    : item_ido,
-                    key_keep       : True,
-                    key_rendu_date : None
-                }
-                print "---- INDEX / POST / add_item ---- adding item - item_dict : %s" %(item_dict)
+                    item_ido   = item_ex[key_synapse]
+                    item_not   = notices_mongo.find_one ( { key_synapse : item_ido } )
+                    item_rendu = datetime.datetime.now()
 
-                sessionError = u"l'ouvrage a été ajouté à votre parcours"
-                flash(sessionError, "success" )
+                    print "---- INDEX / POST / add_item ---- adding item - title  : %s " %(item_not[key_title])
+                    print "---- INDEX / POST / add_item ---- adding item - author : %s " %(item_not[key_author])
+                    print "---- INDEX / POST / add_item ---- adding item - resume : %s " %(item_not[key_resume])
 
-                ### select which categ to update
+                    item_dict = {
+                        key_barcode    : item_cab,
+                        key_synapse    : item_ido,
+                        key_keep       : True,
+                        key_rendu_date : item_rendu.strftime('%d/%m/%Y')
+                    }
+                    print "---- INDEX / POST / add_item ---- adding item - item_dict : %s" %(item_dict)
 
-                # users_mongo.update_one( { key_n_carte : session[key_n_carte] },
-                #                         { '$set'      : new_userInfos_dict   },
-                #                         upsert=True
-                #                       )
+                    sessionError = u"l'ouvrage a été ajouté à votre parcours"
+                    flash(sessionError, "success" )
+
+                    ### select which categ to update
+                    parcours_sub_dir = ".".join([ key_parcours, item_categ ])
+                    print "---- INDEX / POST / add_item ---- adding item - parcours_sub_dir :", parcours_sub_dir
+
+                    ### check if item already in list
+
+
+                    ### update user's parcours adding item
+                    users_mongo.update_one(
+                        {key_n_carte : session[key_n_carte] },
+                        {"$push"     : {
+                            parcours_sub_dir : item_dict,
+                            }
+                        }
+                        # upsert = True
+                    )
+
+                    ### reset user's data
+                    session["is_userdata"] = False
+                    return redirect( url_for('index') )
+
 
             else :
                 sessionError = u'code barre non valide'
@@ -763,6 +781,7 @@ def index():
                     session[key_username] = userName
                     session[key_n_carte]  = userCard
                     session[key_email]    = userEmail
+                    session[key_user_id]  = str(users_mongo.find_one({ key_n_carte : userCard })[key_user_id])
 
                     print "---- INDEX / POST / reg ---- new user inserted in MongoDB / users_mongo -------- "
 
@@ -785,6 +804,7 @@ def index():
                     session[key_username]    = existing_user[key_username]
                     session[key_n_carte]     = existing_user[key_n_carte]
                     session[key_email]       = existing_user[key_email]
+                    session[key_user_id]     = str(existing_user[key_user_id])
                     # session["is_userdata"] = False
                     # isUser                 = session['username']
                     # flash(u'vous êtes connecté en tant que ' + isUser, "success")
@@ -848,7 +868,7 @@ def logout() :
 
 
 ########################################################################################
-### SOCKETTIO FUNCTIONS #######################
+### SOCKETIO FUNCTIONS #######################
 
 @socketio.on('connect_')
 def test_connect():
@@ -858,6 +878,7 @@ def test_connect():
 
 @socketio.on('io_request_infos_list')
 def return_infos_list(request_client):
+
     print "***** socket_io >>> return_infos_list / request_client : ", request_client
 
     inp_type = request_client["inp_type"]
