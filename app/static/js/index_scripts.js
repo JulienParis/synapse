@@ -13,16 +13,33 @@ $(document).ready( function(){
 
 
   // please wait at login script
-  $("#login_button").on("click", function() {
+  $(".login_button").on("click", function() {
+
     $(this).button('loading') ;
+    console.log("--- login button : ", $(this));
+
+    var parent_form = $(this).closest('.form_login') ;
+    console.log("--- login form : ", parent_form);
+
     setTimeout(function(){
-      $("#form_login").submit() ;
+      //$("#form_login").submit() ;
+      parent_form.submit();
     }, 100) ;
   });
 
   // activate bootstrap dropdown / carousel
   $('#mod_loader').modal('hide');
-  $('#mod_intro').modal('show');
+
+
+  var isUser_data = $("#meta_isUser").attr("data") ;
+  console.log("--- check if isUser / isUser_data : ", isUser_data);
+  if (isUser_data == "None"){
+    $('#mod_intro').modal('show');
+  } else {
+    $('#update_user_form').modal('show');
+  };
+
+
   $(".dropdown-toggle").dropdown() ;
   $('.carousel').carousel(
     {interval: 5000}

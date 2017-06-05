@@ -1,49 +1,62 @@
 
 
-
-<br><br>
+<br>
 
 
 <div>
   <table  id="tableParcours"
-          class="table tableParcours table-striped table-bordered"
+          class="table tableParcours table-striped table-bordered table-condensed table-hover table-responsive"
           cellspacing="0"
           width="100%"
           >
-      <thead>
-        <tr>
-          <th> type </th>
 
+
+    <div class="text-center">
+      <button class="btn btn-danger btn_delete_items"
+              id="btn_delete_items"
+              type="button"
+              >
+        effacer les références sélectionnées de mon parcours
+      </button>
+    </div>
+    <br>
+
+
+
+    <thead>
+      <tr>
+        <th> type </th>
+
+        {% for index in parcours_indexes %}
+        <th> {{ index }} </th>
+        {% endfor %}
+
+      </tr>
+    </thead>
+
+    <tfoot>
+      <tr>
+        <th> type </th>
+
+        {% for index in parcours_indexes %}
+        <th> {{ index }} </th>
+        {% endfor %}
+
+      </tr>
+    </tfoot>
+
+    <tbody>
+
+    {% for key, values in user_parcours.iteritems() %}
+      {% for val in values %}
+      <tr id="{{ val['cab'] }}">
+          <th> {{ key|safe }}   </th>
           {% for index in parcours_indexes %}
-          <th> {{ index }} </th>
+            <td> {{ val[index]|safe }} </td>
           {% endfor %}
-
-        </tr>
-      </thead>
-
-      <tfoot>
-        <tr>
-          <th> type </th>
-
-          {% for index in parcours_indexes %}
-          <th> {{ index }} </th>
-          {% endfor %}
-
-        </tr>
-      </tfoot>
-
-      <tbody>
-
-      {% for key, values in user_parcours.iteritems() %}
-        {% for val in values %}
-        <tr>
-            <th> {{ key|safe }}   </th>
-            {% for index in parcours_indexes %}
-              <td> {{ val[index]|safe }} </td>
-            {% endfor %}
-          {% endfor %}
-        </tr>
-      {% endfor %}
+        {% endfor %}
+      </tr>
+    {% endfor %}
 
     </tbody>
 

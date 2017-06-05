@@ -53,13 +53,13 @@ def Is_Admin():
     print
 
     if 'username' in session:
-        print '**** Is_Admin **** you are logged in as : ' + session['username']
-        isUser        = session['username']
+        print '**** Is_Admin **** you are logged in as : ' + session[key_username]
+        isUser        = session[key_username]
 
-        existing_user = users_mongo.find_one({'n_carte' : session['n_carte'] })
+        existing_user = users_mongo.find_one({ key_n_carte : session[key_n_carte] })
         print '**** Is_Admin ****  existing_user : ', isUser
 
-        if existing_user['status'] == 'admin' :
+        if existing_user[key_status] == 'admin' :
             isAdmin = True
         else:
             isAdmin = False
@@ -503,13 +503,13 @@ def index():
             # else :
             #     pass
 
-            user_parcours_ = json.dumps( user_parcours )
-            # print "---- REAL user_parcours_ : %s " %(user_parcours_)
-            print "---- REAL user_parcours_ ---- isinstance(user_parcours_, str) :",  isinstance(user_parcours_, str)
+            print "---- INDEX ---- user_parcours : ",  user_parcours
 
-            # user_parcours_ = json.dumps({"Test" : 1, "nest" : [ {"A" : False }, {"B" : None } ] })
-            # print "---- FAKE user_parcours_ : %s " %(user_parcours_)
-            # print "---- FAKE user_parcours_ ---- isinstance(user_parcours_, str) :",  isinstance(user_parcours_, str)
+
+            # user_parcours_ = json.dumps( user_parcours )
+            # # print "---- REAL user_parcours_ : %s " %(user_parcours_)
+            # print "---- REAL user_parcours_ ---- isinstance(user_parcours_, str) :",  isinstance(user_parcours_, str)
+
 
             set_cache(user_parcours, cache_name="parcours")
 
@@ -987,3 +987,32 @@ def return_oneref(request_client):
     print
 
     emit( 'io_resp_oneref', { "author" : author , 'title' : title , 'resume' : resume } )
+
+
+@socketio.on('io_delete_from_parcours')
+def delete_items_list(request_client):
+
+    print "***** socket_io >>> delete_items_list / request_client : ", request_client["data"]
+    cab_dict = request_client["data"]
+
+    user_id  = ObjectId( session[ key_user_id ] )
+    print "***** socket_io >>> delete_items_list / user_id : ", user_id
+
+    # user_mongo = users_mongo.find_one({key_user_id : user_id})
+    # print "***** socket_io >>> delete_items_list / user_mongo['username'] : ", user_mongo[key_username]
+    for item_categ, cab_list in cab_dict.iteritems() :
+        parcours_sub_dir = ".".join( [ key_parcours, item_categ ] )
+        print "***** socket_io >>> delete_items_list / parcours_sub_dir : ", parcours_sub_dir
+        # remove items corresponding to cab_list from user's data in mongodb
+        users_mongo.update(  { key_user_id : user_id },
+                             { "$pull" : {  parcours_sub_dir : {
+                                            key_barcode : { "$in" : cab_list }
+                                            }
+                                        }
+                             },
+                            #  { "multi" : True }
+                        )
+
+    session["is_userdata"] = False
+    flash(u'les références ont bien été effacées de votre parcours', "success")
+    return redirect( url_for('index') )

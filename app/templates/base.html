@@ -16,6 +16,7 @@
     <meta name="keywords"    content="{{ app_metas.metas }}">
     <meta name="author"      content="{{ app_metas.authors }}">
     <meta name="description" content="{{ app_metas.description }}">
+    <meta id="meta_isUser"   data={{ isUser }} >
 
     <!-- JQUERY  -->
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -41,8 +42,10 @@
   	<link href="{{ url_for( 'static', filename='css/custom_styles.css' ) }}" rel="stylesheet">
 
     <!-- DATATABLES DYNAMIC / cf : https://datatables.net -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.css"/>
-    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.css"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.15/datatables.min.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.15/b-1.3.1/cr-1.3.3/fh-3.1.2/r-2.1.1/sc-1.4.2/se-1.2.2/datatables.min.css"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.15/b-1.3.1/cr-1.3.3/fh-3.1.2/r-2.1.1/sc-1.4.2/se-1.2.2/datatables.min.js"></script>
 
     <!-- BOOTSTRAP SELECT BUTTONS FOR TABLE -->
     <!-- Latest compiled and minified CSS -->
@@ -105,17 +108,17 @@
 
   	<!-- MODALS --------------------------------------------------------------------- -->
 
-    {% include "modal_intro.html" %}
-    {% include "modal_intro.html" %}
     {% include "modal_howto.html" %}
-    {% include 'modal_login.html'%}
-  	{% include 'modal_register.html'%}
 
 
     {% if isUser %}
       {% include 'modal_update_aloes.html'%}
       {% include 'modal_update_user.html'%}
       {% include 'modal_add_item.html' %}
+    {% else %}
+      {% include "modal_intro.html" %}
+      {% include 'modal_login.html'%}
+      {% include 'modal_register.html'%}
     {% endif %}
 
 

@@ -50,11 +50,19 @@ paramSession = {   "NomMachine"    : NOM_MACHINE,
 ### param transport : session / cache / timeout
 session_  = Session()
 transport = Transport(session=session_, cache=SqliteCache(), timeout=2)
-client_   = zeep.Client(wsdl=WSDL, transport=transport, plugins=[history])
-session_  = client_.service.OuvrirSession(Param=paramSession)
-GUID      = session_.GUIDSession
 
-print "starting app --- connect to webservice Aloes --- OK with GUID : ", GUID
+try :
+    client_   = zeep.Client(wsdl=WSDL, transport=transport, plugins=[history])
+    session_  = client_.service.OuvrirSession(Param=paramSession)
+    GUID      = session_.GUIDSession
+    print "starting app --- connect to webservice Aloes --- OK with GUID : ", GUID
+
+except :
+    print "------------------------------------------------------------"
+    print "starting app --- PROBLEM connecting to webservice Aloes --- "
+    print "------------------------------------------------------------"
+
+
 
 
 # ### WORKING !!!!

@@ -12,7 +12,7 @@
 
         <h3 class="modal-title text-center"
             id="update_user_form">
-          mettre à jour vos informations
+          bienvenue {{ isUser }}
         </h3>
 
       </div>
@@ -128,9 +128,32 @@
         </div>
 
         <br>
-        {% include "button_add_item.html" %}
+
+
+        <button class="btn btn-default btn-block"
+                type="button"
+                data-toggle="collapse"
+                data-target="#collapse_refresh_history"
+                aria-expanded="false"
+                aria-controls="collapse_refresh_history">
+          mettre à jour à partir de mes emprunts enregistrés sur Aloes
+        </button>
+
+
+        <div  class="collapse"
+              id="collapse_refresh_history"
+              >
+          <br>
+          {% include "refresh_history.html" %}
+        </div>
+
+
 
         <br>
+        {% include "button_add_item.html" %}
+        <br>
+
+
         <button class="btn btn-default btn-block"
                 type="button"
                 data-toggle="collapse"
@@ -145,7 +168,7 @@
               >
 
           {% include "table_parcours.html" %}
-          
+
         </div>
 
 
@@ -158,4 +181,4 @@
 
     </div>
   </div>
-</div>
+</div><!-- END MODAL UPDATE_USER_FORM -->
