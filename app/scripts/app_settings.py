@@ -41,6 +41,8 @@ app_colors = {
     'navbar_text'   : colors['grey_']['hex'],
     'navbar_select' : colors['ocre_']['hex'],
 
+    'three_background' : colors['water_']['hex'],
+
     'jumbotron'     : colors['water_']['hex'],
 
     'btn_primary' : colors['green_']['hex'],

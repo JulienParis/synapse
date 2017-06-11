@@ -866,6 +866,14 @@ def logout() :
     return redirect( url_for('index') )
 
 
+@app.route('/view_3D')
+def view_3D():
+
+    print
+    print "/// test access mongoDB / users "
+    return render_template('synapse_3D.html')
+    # return render_template('snippet_3D.html')
+
 
 ########################################################################################
 ### SOCKETIO FUNCTIONS #######################
@@ -1010,7 +1018,6 @@ def delete_items_list(request_client):
                                             }
                                         }
                              },
-                            #  { "multi" : True }
                         )
 
     session["is_userdata"] = False

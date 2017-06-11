@@ -2,6 +2,7 @@
 body {
     /*background-color: teal ;*/
     /* azure darcyan honeydew lightcyan lightseagreen mintcream teal   */
+    overflow: hidden;
 }
 
 hr {
@@ -61,7 +62,7 @@ a.aFake {
 
 /* NAVBAR & DROPDOWNS */
 .navbar {
-    background-color: {{ app_colors.navbar }} ;
+    /*background-color: {{ app_colors.navbar }} ;*/
     border-radius : 0px ;
 }
 #navbar-text {
