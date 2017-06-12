@@ -16,7 +16,9 @@
 div.dg.ac {
   top : 8%
 }
-/*#info {
+
+/*
+#info {
 	position: absolute;
 	top: 0px; width: 100%;
 	padding: 5px;
@@ -24,7 +26,8 @@ div.dg.ac {
 
 a {
 	color: #0080ff;
-}*/
+}
+*/
 
 
 </style>
@@ -41,11 +44,47 @@ a {
 <script type="text/javascript" src="{{ url_for('static', filename='js/threejs/libs/dat.gui.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/threejs/libs/stats.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/threejs/controls/OrbitControls.js') }}"></script>
+<!-- <script type="text/javascript" src="{{ url_for('static', filename='js/threejs/controls/TrackballControls.js') }}"></script> -->
 
 
 
 <div id="canvas3D">
 </div>
+
+
+<!-- vertex shader cf : https://www.clicktorelease.com/blog/vertex-displacement-noise-3d-webgl-glsl-three-js/ -->
+<!-- cf too  : http://blog.2pha.com/experimenting-threejs-shaders-and-shadermaterial  -->
+<!-- cf also :  https://github.com/Jam3/jam3-lesson-webgl-shader-threejs -->
+<script id="vertexShader" type="x-shader/x-vertex">
+
+  attribute vec3 position;
+
+  uniform float time ;
+
+  uniform mat4 projectionMatrix;
+  uniform mat4 modelViewMatrix;
+
+  void main () {
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+
+</script>
+
+
+<script type="x-shader/x-vertex" id="fragmentShader">
+
+
+  void main() {
+
+    // colour is RGBA: u, v, 0, 1
+    gl_FragColor = vec4( 0., 0., 0. , 1. );
+
+  }
+
+</script>
+
+
+
 
 
 <script>
@@ -76,33 +115,65 @@ a {
       console.log( json_notices );
 
 
-
+      var start = Date.now() ;
 
       var group;
-  		var container, controls, stats;
-  		var particlesData = [];
-  		var camera, scene, renderer;
-  		var positions, colors;
-  		var particles;
-  		var pointCloud;
-  		var particlePositions;
-  		var linesMesh;
+  		var container, controls, stats ;
+  		var particlesData = [] ;
+  		var camera, scene, renderer ;
+      var raycaster, mouse;
 
 
-  		var maxParticleCount = 1000;
-  		var particleCount = 500;
+  		var positions, colors ;
+  		var particles  ;
+  		var pointCloud ;
+  		var particlePositions ;
+  		var linesMesh ;
+
+
+  		var maxParticleCount = 3000;
+  		var particleCount = 300;
   		var r = 800;
   		var rHalf = r / 2;
 
+      var velocityFactor = 1.1 ;
 
   		var effectController = {
   			showDots: true,
   			showLines: true,
-  			minDistance: 150,
-  			limitConnections: false,
-  			maxConnections: 20,
-  			particleCount: 500
+  			minDistance: 120,
+  			limitConnections: true,
+  			maxConnections: 10,
+  			particleCount: particleCount,
+        velocityFactor: 1
   		};
+
+
+
+      // custom particles material vertex shader
+      var materialPoints_shader = new THREE.RawShaderMaterial( {
+
+
+        uniforms: {
+          color: { type: "c", value: new THREE.Color( 0xffffff ) },
+          size : { type: "f", value: []  },
+          time : { type: "f", value: 0.0 }
+        },
+
+        vertexShader   : document.getElementById( 'vertexShader' ).textContent,
+        fragmentShader : document.getElementById( 'fragmentShader' ).textContent
+
+      } );
+
+
+      var materialPoints = new THREE.PointsMaterial( {
+        color: 0xFFFFFF,
+        size: 3,
+        blending: THREE.AdditiveBlending,
+        transparent: true,
+        sizeAttenuation: false
+      } );
+
 
   		init();
   		animate();
@@ -112,6 +183,7 @@ a {
   			gui.add( effectController, "showDots" ).onChange( function( value ) { pointCloud.visible = value; } );
   			gui.add( effectController, "showLines" ).onChange( function( value ) { linesMesh.visible = value; } );
   			gui.add( effectController, "minDistance", 10, 300 );
+        gui.add( effectController, "velocityFactor", 0, 10 );
   			gui.add( effectController, "limitConnections" );
   			gui.add( effectController, "maxConnections", 0, 30, 1 );
   			gui.add( effectController, "particleCount", 0, maxParticleCount, 1 ).onChange( function( value ) {
@@ -128,28 +200,35 @@ a {
       	// set scene
   			camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 4000 );
   			camera.position.z = 1750;
-  			controls = new THREE.OrbitControls( camera, container );
   			scene = new THREE.Scene();
-  			group = new THREE.Group();
+        scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
+
+
+
+
+
+
+
+        group = new THREE.Group();
   			scene.add( group );
 
-        var helper = new THREE.BoxHelper( new THREE.Mesh( new THREE.BoxGeometry( r, r, r ) ) );
-  			helper.material.color.setHex( 0x080808 );
-  			helper.material.blending = THREE.AdditiveBlending;
-  			helper.material.transparent = true;
-  			group.add( helper );
+        // var helper = new THREE.BoxHelper( new THREE.Mesh( new THREE.BoxGeometry( r, r, r ) ) );
+  			// helper.material.color.setHex( 0x080808 );
+  			// helper.material.blending = THREE.AdditiveBlending;
+  			// helper.material.transparent = true;
+  			// group.add( helper );
 
         var segments = maxParticleCount * maxParticleCount;
   			positions = new Float32Array( segments * 3 );
   			colors = new Float32Array( segments * 3 );
-  			var pMaterial = new THREE.PointsMaterial( {
-  				color: 0xFFFFFF,
-  				size: 3,
-  				blending: THREE.AdditiveBlending,
-  				transparent: true,
-  				sizeAttenuation: false
-  			} );
-  			particles = new THREE.BufferGeometry();
+
+
+
+
+
+
+
+        particles = new THREE.BufferGeometry();
   			particlePositions = new Float32Array( maxParticleCount * 3 );
   			for ( var i = 0; i < maxParticleCount; i++ ) {
   				var x = Math.random() * r - r / 2;
@@ -160,27 +239,31 @@ a {
   				particlePositions[ i * 3 + 2 ] = z;
   				// add it to the geometry
   				particlesData.push( {
-  					velocity: new THREE.Vector3( -1 + Math.random() * 2, -1 + Math.random() * 2,  -1 + Math.random() * 2 ),
+  					velocity: new THREE.Vector3( -1 + Math.random() , -1 + Math.random(),  -1 + Math.random() ),
   					numConnections: 0
   				} );
   			}
   			particles.setDrawRange( 0, particleCount );
   			particles.addAttribute( 'position', new THREE.BufferAttribute( particlePositions, 3 ).setDynamic( true ) );
 
-        // create the particle system
-  			pointCloud = new THREE.Points( particles, pMaterial );
+        // create the particle system with material
+  			pointCloud = new THREE.Points( particles, materialPoints );
   			group.add( pointCloud );
-  			var geometry = new THREE.BufferGeometry();
+
+
+        var geometry = new THREE.BufferGeometry();
   			geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ).setDynamic( true ) );
-  			geometry.addAttribute( 'color', new THREE.BufferAttribute( colors, 3 ).setDynamic( true ) );
+  			geometry.addAttribute( 'color'   , new THREE.BufferAttribute( colors, 3 ).setDynamic( true ) );
   			geometry.computeBoundingSphere();
   			geometry.setDrawRange( 0, 0 );
-  			var material = new THREE.LineBasicMaterial( {
+
+
+        var materialLines = new THREE.LineBasicMaterial( {
   				vertexColors: THREE.VertexColors,
-  				blending: THREE.AdditiveBlending,
-  				transparent: true
+  				blending    : THREE.AdditiveBlending,
+  				transparent : true
   			} );
-  			linesMesh = new THREE.LineSegments( geometry, material );
+  			linesMesh = new THREE.LineSegments( geometry, materialLines );
   			group.add( linesMesh );
 
         //
@@ -191,14 +274,33 @@ a {
   			renderer.gammaOutput = true;
   			container.appendChild( renderer.domElement );
 
+
+        controls = new THREE.OrbitControls( camera, container );
+
+        // controls = new THREE.TrackballControls( camera, renderer.domElement );
+  			controls.minDistance = 100.0;
+  			controls.maxDistance = 3000.0;
+  			controls.dampingFactor = 0.1;
+
         // set stats box
   			// stats = new Stats();
   			// container.appendChild( stats.dom );
 
-        window.addEventListener( 'resize', onWindowResize, false );
+
+        // raycasting for mouse interaction
+				raycaster = new THREE.Raycaster();
+				mouse     = new THREE.Vector2();
+
+        window.addEventListener(   'resize',    onWindowResize, false );
+        document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
       }
 
+      function onDocumentMouseMove( event ) {
+      				event.preventDefault();
+      				mouse.x =   ( event.clientX / window.innerWidth )  * 2 - 1;
+      				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+      			}
 
       function onWindowResize() {
   			camera.aspect = window.innerWidth / window.innerHeight;
@@ -206,7 +308,7 @@ a {
   			renderer.setSize( window.innerWidth, window.innerHeight );
   		}
 
-
+      //
   		function animate() {
 
         var vertexpos = 0;
@@ -220,9 +322,9 @@ a {
 
           // get the particle
   				var particleData = particlesData[i];
-  				particlePositions[ i * 3     ] += particleData.velocity.x;
-  				particlePositions[ i * 3 + 1 ] += particleData.velocity.y;
-  				particlePositions[ i * 3 + 2 ] += particleData.velocity.z;
+  				particlePositions[ i * 3     ] += particleData.velocity.x * effectController.velocityFactor ;
+  				particlePositions[ i * 3 + 1 ] += particleData.velocity.y * effectController.velocityFactor ;
+  				particlePositions[ i * 3 + 2 ] += particleData.velocity.z * effectController.velocityFactor ;
 
           if ( particlePositions[ i * 3 + 1 ] < -rHalf || particlePositions[ i * 3 + 1 ] > rHalf )
   					particleData.velocity.y = -particleData.velocity.y;
@@ -276,9 +378,24 @@ a {
 
 
   		function render() {
+
   			var time = Date.now() * 0.001;
+
+        materialPoints_shader.uniforms.time.value = 0.001 * ( Date.now() - start );
+
+
+				raycaster.setFromCamera( mouse, camera );
+				var intersects = raycaster.intersectObject( group );
+        if ( intersects.length > 0 ) {
+          console.log( "-X- intersecting");
+        } else {
+
+        }
+
+
   			// group.rotation.y = time * 0.1;
   			renderer.render( scene, camera );
+
   		}
 
 
