@@ -57,6 +57,7 @@ a {
 <!-- cf also :  https://github.com/Jam3/jam3-lesson-webgl-shader-threejs -->
 <script type="x-shader/x-vertex" id="vertexshader">
 	// uniform float amplitude;
+	uniform   float time;
 	attribute float size;
 	attribute vec3  customColor;
 	varying   vec3  vColor;
@@ -64,8 +65,10 @@ a {
 		vColor          = customColor;
 		vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 
-		gl_PointSize    = size * ( 400.0 / -mvPosition.z );
+		gl_PointSize    = size * ( 400.0 / -mvPosition.z ) ;
+		// gl_PointSize    = size + size * ( sin( time ) );
 		gl_Position     = projectionMatrix * mvPosition;
+
 	}
 </script>
 
@@ -87,52 +90,44 @@ a {
 
   $(document).ready(function(){
 
-    // LOAD JSON NOTICES
-
-    // XXXX var json_notices = require( "{{ url_for('static', filename='data/JSON_notices_nested.json') }}" ); //with path
-
-    // WORKING SOLUTION
-    // $.getJSON( "{{ url_for('static', filename='data/JSON_notices_nested.json') }}", function (json) {
-    //   console.log(json);
-    // });
-
+    // FAKE LIGHT JSON NOTICES
 		var json_fake = {
-											"ART": {	"CODE": "A",
-																"STATS": 14082,
-																"CHILDREN": [
-																							{	"NOTICES": [ {"id_o": "1431521"}, {"id_o": "1444227"}, {"id_o": "0180420"} ],
-																								"CODE": "A.1",
-																								"STATS": 1420,
-																								"NAME": "GRAPHISME"
-																							},
-																							{	"NOTICES": [ {"id_o": "1235563"}, {"id_o": "0982809"}, {"id_o": "0982806"} ],
-																								"CODE": "A.2",
-																								"STATS": 2408,
-																								"NAME": "LOISIRS CREATIFS"
-																							}
-																						]
+			"ART": {	"CODE": "A",
+								"STATS": 14082,
+								"CHILDREN": [
+															{	"NOTICES": [ {"id_o": "1431521"}, {"id_o": "1444227"}, {"id_o": "0180420"} ],
+																"CODE": "A.1",
+																"STATS": 1420,
+																"NAME": "GRAPHISME"
 															},
+															{	"NOTICES": [ {"id_o": "1235563"}, {"id_o": "0982809"}, {"id_o": "0982806"} ],
+																"CODE": "A.2",
+																"STATS": 2408,
+																"NAME": "LOISIRS CREATIFS"
+															}
+														]
+							},
 
-											"JEU": {	"CODE": "J",
-																"STATS": 7102,
-																"CHILDREN": [
-																							{	"NOTICES": [ {"id_o": "1181008"}, {"id_o": "1181016"} ],
-																								"CODE": "J.0",
-																								"STATS": 3524,
-																								"NAME": "JEUX A REGLES"
-																							},
-																							{	"NOTICES": [ {"id_o": "1267718"}, {"id_o": "1267716"}, {"id_o": "1115620"} ],
-																								"CODE": "J.1",
-																								"STATS": 808,
-																								"NAME": "JEUX D'ASSEMBLAGE"
-																							}
-																						]
+			"JEU": {	"CODE": "J",
+								"STATS": 7102,
+								"CHILDREN": [
+															{	"NOTICES": [ {"id_o": "1181008"}, {"id_o": "1181016"} ],
+																"CODE": "J.0",
+																"STATS": 3524,
+																"NAME": "JEUX A REGLES"
 															},
+															{	"NOTICES": [ {"id_o": "1267718"}, {"id_o": "1267716"}, {"id_o": "1115620"} ],
+																"CODE": "J.1",
+																"STATS": 808,
+																"NAME": "JEUX D'ASSEMBLAGE"
+															}
+														]
+							},
 
 
-											};
+			};
 
-
+		// LOAD JSON NOTICES AS CALLBACK
     function preload_notices(callback){
       $.getJSON( "{{ url_for('static', filename='data/JSON_notices_nested.json') }}", function( json ) {
         console.log("... JSON_notices_nested loaded with getJSON");
@@ -140,7 +135,7 @@ a {
       }
     )};
 
-
+		// START 3D RENDERING AFTER CALLBACK
 		preload_notices(function(json) {
 
 			//Use your data here
@@ -176,14 +171,40 @@ a {
 			var velocityFactor = 1.1 ;
 
 			var effectController = {
-				showDots: true,
-				showLines: true,
-				minDistance: 120,
+				showDots        : true,
+				showLines       : true,
+				minDistance     : 120,
 				limitConnections: true,
-				maxConnections: 10,
-				particleCount: particleCount,
-				velocityFactor: 1
+				maxConnections  : 10,
+				particleCount   : particleCount,
+				velocityFactor  : 1
 			};
+
+
+			// DEFINE MATERIALS : SHADERMATERIAL AND USUAL MATERIAL
+			// from : https://github.com/mrdoob/three.js/blob/master/examples/webgl_custom_attributes_points.html
+			var materialPoints_shader = new THREE.ShaderMaterial( {
+
+				uniforms: {
+					time     : { type : "f" , value: 1.0 },
+					amplitude: { value: 1.0 },
+					color    : { value: new THREE.Color( 0xffffff ) },
+					texture  : { value: new THREE.TextureLoader().load( "{{ url_for('static', filename='textures/sprites/spark1.png') }}" ) }
+				},
+				vertexShader:   document.getElementById( 'vertexshader' ).textContent,
+				fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+				blending:       THREE.AdditiveBlending,
+				depthTest:      false,
+				transparent:    true
+
+			});
+
+			var materialLines = new THREE.LineBasicMaterial( {
+				vertexColors: THREE.VertexColors,
+				blending    : THREE.AdditiveBlending,
+				transparent : true
+			} );
+
 
 
 			init();
@@ -192,20 +213,25 @@ a {
 
 
 
+			// GUI controls
       function initGUI() {
-  			var gui = new dat.GUI();
-  			gui.add( effectController, "showDots" ).onChange( function( value ) {  pointCloud.visible = value; } );
+
+				var gui = new dat.GUI();
+  			gui.add( effectController, "showDots"  ).onChange( function( value ) {  pointCloud.visible = value; } );
   			gui.add( effectController, "showLines" ).onChange( function( value ) { linesMesh.visible  = value; } );
-  			gui.add( effectController, "minDistance", 10, 300 );
+  			gui.add( effectController, "minDistance"   , 10, 300 );
         gui.add( effectController, "velocityFactor", 0, 10 );
   			gui.add( effectController, "limitConnections" );
   			gui.add( effectController, "maxConnections", 0, 30, 1 );
-  			gui.add( effectController, "particleCount", 0, maxParticleCount, 1 ).onChange( function( value ) {
+  			gui.add( effectController, "particleCount" , 0, maxParticleCount, 1 ).onChange( function( value ) {
   				particleCount = parseInt( value );
-  				particles.setDrawRange( 0, maxParticleCount );
+  				particlesGeom.setDrawRange( 0, particleCount );
   			});
-  		}
 
+			}
+
+
+			// INIT FUNCTION
       function init() {
 
       	initGUI();
@@ -228,73 +254,66 @@ a {
   			// group.add( helper );
 
 
+				// SET PARTICLES SYSTEM
+				function addPointsCloud() {
 
-				pPositions = new Float32Array( maxParticleCount * 3 );
-				pColors    = new Float32Array( maxParticleCount * 3 );
-				pSizes     = new Float32Array( maxParticleCount     );
+					pPositions = new Float32Array( maxParticleCount * 3 );
+					pColors    = new Float32Array( maxParticleCount * 3 );
+					pSizes     = new Float32Array( maxParticleCount     );
 
-				var vertex = new THREE.Vector3();
-				var color  = new THREE.Color( 0xffffff );
+					var vertex = new THREE.Vector3();
+					var color  = new THREE.Color( 0xffffff );
 
-				for ( var i = 0; i < maxParticleCount; i++ ) {
+					for ( var i = 0; i < maxParticleCount; i++ ) {
 
-					vertex.x = Math.random() * r - r / 2;
-					vertex.y = Math.random() * r - r / 2;
-					vertex.z = Math.random() * r - r / 2;
-					vertex.toArray( pPositions, i * 3 );
+						vertex.x = Math.random() * r - r / 2;
+						vertex.y = Math.random() * r - r / 2;
+						vertex.z = Math.random() * r - r / 2;
+						vertex.toArray( pPositions, i * 3 );
 
-					// set color cf : https://www.w3schools.com/colors/colors_hsl.asp
-					color.setHSL( 0., 0., 1. );
-					color.toArray( pColors, i * 3 );
+						// set color cf : https://www.w3schools.com/colors/colors_hsl.asp
+						color.setHSL( 0., 0., 1. );
+						color.toArray( pColors, i * 3 );
 
-					// push to separate particlesData
-  				particlesData.push( {
-  					velocity: new THREE.Vector3( -1 + Math.random() , -1 + Math.random(),  -1 + Math.random() ),
-						// rotPhi :
-						// rotThe :
-  					numConnections: 0
-  				} );
+						// push to separate particlesData
+	  				particlesData.push( {
+	  					velocity: new THREE.Vector3( -1 + Math.random() , -1 + Math.random(),  -1 + Math.random() ),
+							// rotPhi : , // in radians
+							// rotThe : , // in radians
+	  					numConnections: 0
+	  				} );
 
-					// set size
-					pSizes[i] = 100 ;
+						// set default size
+						pSizes[i] = 100 ;
 
-  			}
+	  			}
 
-				particlesGeom = new THREE.BufferGeometry();
-				particlesGeom.setDrawRange( 0, particleCount );
-  			particlesGeom.addAttribute( 'position',    new THREE.BufferAttribute( pPositions, 3 ) ); //.setDynamic( true ) );
-				particlesGeom.addAttribute( 'customColor', new THREE.BufferAttribute( pColors,    3 ) ); //.setDynamic( true ) );
-				particlesGeom.addAttribute( 'size',        new THREE.BufferAttribute( pSizes,     1 ) ); //.setDynamic( true ) );
-
-
-				// from : https://github.com/mrdoob/three.js/blob/master/examples/webgl_custom_attributes_points.html
-				var materialPoints_shader = new THREE.ShaderMaterial( {
-
-					uniforms: {
-						amplitude: { value: 1.0 },
-						color:     { value: new THREE.Color( 0xffffff ) },
-						texture:   { value: new THREE.TextureLoader().load( "{{ url_for('static', filename='textures/sprites/spark1.png') }}" ) }
-					},
-					vertexShader:   document.getElementById( 'vertexshader' ).textContent,
-					fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
-					blending:       THREE.AdditiveBlending,
-					depthTest:      false,
-					transparent:    true
-
-				});
-
-
-				// create the particle system with material
-  			pointCloud = new THREE.Points( particlesGeom, materialPoints_shader );
-  			group.add( pointCloud );
+					particlesGeom = new THREE.BufferGeometry();
+					particlesGeom.setDrawRange( 0, particleCount );
+	  			particlesGeom.addAttribute( 'position',    new THREE.BufferAttribute( pPositions, 3 ) ); //.setDynamic( true ) );
+					particlesGeom.addAttribute( 'customColor', new THREE.BufferAttribute( pColors,    3 ) ); //.setDynamic( true ) );
+					particlesGeom.addAttribute( 'size',        new THREE.BufferAttribute( pSizes,     1 ) ); //.setDynamic( true ) );
 
 
 
+					// create the particle system with material
+	  			pointCloud = new THREE.Points( particlesGeom, materialPoints_shader );
 
+					// translate/rotate current pointCloud depending on its category
+					// ...
+
+	  			group.add( pointCloud );
+
+				};
+
+				//
+				addPointsCloud() ;
+
+
+				// create all connecting lines
 				segmentsL  = maxParticleCount * maxParticleCount;
 				positionsL = new Float32Array( segmentsL * 3 );
 				colorsL    = new Float32Array( segmentsL * 3 );
-
 
         var linesGeom = new THREE.BufferGeometry();
   			linesGeom.addAttribute( 'position', new THREE.BufferAttribute( positionsL, 3 ).setDynamic( true ) );
@@ -303,29 +322,23 @@ a {
   			linesGeom.setDrawRange( 0, 0 );
 
 
-        var materialLines = new THREE.LineBasicMaterial( {
-  				vertexColors: THREE.VertexColors,
-  				blending    : THREE.AdditiveBlending,
-  				transparent : true
-  			} );
   			linesMesh = new THREE.LineSegments( linesGeom, materialLines );
   			group.add( linesMesh );
 
 
 
-        // Renderer
+        // RENDERER
   			renderer = new THREE.WebGLRenderer( { antialias: true, alpha : true } ); // alpha true for css background-color
   			renderer.setPixelRatio( window.devicePixelRatio );
   			renderer.setSize( WIDTH, HEIGHT );
-  			renderer.gammaInput = true;
+  			renderer.gammaInput  = true;
   			renderer.gammaOutput = true;
   			container.appendChild( renderer.domElement );
 
 
 
-
+				// CONTROLS
         controls = new THREE.OrbitControls( camera, container );
-
         // controls = new THREE.TrackballControls( camera, renderer.domElement );
   			controls.minDistance   = 100.0 ;
   			controls.maxDistance   = 3000.0;
@@ -345,6 +358,8 @@ a {
 
       }
 
+
+			// UI FUNCTIONS
       function onDocumentMouseMove( event ) {
       				event.preventDefault();
       				mouse.x =   ( event.clientX / WIDTH )  * 2 - 1;
@@ -357,7 +372,8 @@ a {
   			renderer.setSize( WIDTH, HEIGHT );
   		}
 
-      //
+
+      // ANIMATE FUNCTION
   		function animate() {
 
         var vertexpos    = 0;
@@ -420,7 +436,6 @@ a {
 
 				pointCloud.geometry.attributes.position.needsUpdate = true;
 
-
 				requestAnimationFrame( animate );
 
         // stats.update();
@@ -428,17 +443,21 @@ a {
 
       }
 
-
+			// RENDER FUNCTION
   		function render() {
 
+				// UPDATE TIME VALUE IN UNIFORMS
   			var time = Date.now() * 0.01;
 
-				var geometryP   = pointCloud.geometry  ;
-				var attributes  = geometryP.attributes ;
-				for ( var i = 0; i < attributes.size.array.length; i++ ) {
-					attributes.size.array[ i ] = 100 + 50 * Math.sin( 0.1 * i + time );
-				};
-				attributes.size.needsUpdate = true;
+				materialPoints_shader.uniforms.time.value = .00025 * ( Date.now() - start )
+
+				// INSTEAD OF ITERATING AT EACH FRAME CHANGE SIZE WITH TIME UNIFORM
+				// var geometryP   = pointCloud.geometry  ;
+				// var attributes  = geometryP.attributes ;
+				// for ( var i = 0; i < attributes.size.array.length; i++ ) {
+				// 	attributes.size.array[ i ] = 100 + 50 * Math.sin( 0.1 * i + time );
+				// };
+				// attributes.size.needsUpdate = true;
 
 
 				raycaster.setFromCamera( mouse, camera );
@@ -454,7 +473,6 @@ a {
   			renderer.render( scene, camera );
 
   		}
-
 
 
 
