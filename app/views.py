@@ -870,9 +870,27 @@ def logout() :
 def view_3D():
 
     print
-    print "/// test access mongoDB / users "
-    return render_template('synapse_3D.html')
-    # return render_template('snippet_3D.html')
+    print "/// test view 3D "
+    return render_template('index_.html',
+                           app_metas            = app_metas,
+                           app_colors           = app_colors,
+                           app_bib_infos        = app_bib_infos,
+                           dict_db_user         = dict_db_user,
+                           bootstrap_vars       = bootstrap_vars
+    )
+
+@app.route('/view_3D_mock')
+def view_3D_mock():
+
+    print
+    print "/// test view 3D "
+    return render_template('synapse_3D_mock.html',
+                           app_metas            = app_metas,
+                           app_colors           = app_colors,
+                           app_bib_infos        = app_bib_infos,
+                           dict_db_user         = dict_db_user,
+                           bootstrap_vars       = bootstrap_vars
+    )
 
 
 ########################################################################################
