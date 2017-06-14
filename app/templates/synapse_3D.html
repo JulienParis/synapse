@@ -55,7 +55,7 @@
 <!-- vertex shader cf : https://www.clicktorelease.com/blog/vertex-displacement-noise-3d-webgl-glsl-three-js/ -->
 <!-- cf too  : http://blog.2pha.com/experimenting-threejs-shaders-and-shadermaterial  -->
 <!-- cf also :  https://github.com/Jam3/jam3-lesson-webgl-shader-threejs -->
-<script type="x-shader/x-vertex" id="vertexshader">
+<script type="x-shader/x-vertex" id="vertexshader_points">
 
 	// Rotate / cf : https://gist.github.com/jeanlescure/e27c93b73a10b64e85e4
 	uniform float rotationX ;
@@ -106,7 +106,7 @@
 
 
 		// update position from within vertex shader
-
+		// cf : https://fr.wikipedia.org/wiki/Signal_sinusoïdal
 		float newPosX = float( limitsXYZ.x/2. * sin( time * customVelocity.x * velFactor + position.x  ) ) ;
 		float newPosY = float( limitsXYZ.y/2. * sin( time * customVelocity.y * velFactor + position.y  ) ) ;
 		float newPosZ = float( limitsXYZ.z/2. * sin( time * customVelocity.z * velFactor + position.z  ) ) ;
@@ -133,7 +133,7 @@
 </script>
 
 
-<script type="x-shader/x-fragment" id="fragmentshader">
+<script type="x-shader/x-fragment" id="fragmentshader_points">
 
 	uniform vec3      color;
 	uniform sampler2D texture;
@@ -144,6 +144,29 @@
 		gl_FragColor = gl_FragColor * texture2D( texture, gl_PointCoord );
 	}
 
+</script>
+
+
+
+<script type="x-shader/x-vertex" id="vertexshader_lines">
+	uniform float amplitude;
+	attribute vec3 displacement;
+	attribute vec3 customColor;
+	varying vec3 vColor;
+	void main() {
+		vec3 newPosition = position + amplitude * displacement;
+		vColor = customColor;
+		gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+	}
+</script>
+
+<script type="x-shader/x-fragment" id="fragmentshader_lines">
+	uniform vec3 color;
+	uniform float opacity;
+	varying vec3 vColor;
+	void main() {
+		gl_FragColor = vec4( vColor * color, opacity );
+	}
 </script>
 
 
@@ -245,8 +268,9 @@
 			};
 
 
-			// DEFINE MATERIALS : SHADERMATERIAL AND USUAL MATERIAL
-			function createShaderMaterial (limitX, limitY, limitZ) {
+
+			// DEFINE POINTS MATERIALS : SHADERMATERIAL AND USUAL MATERIAL
+			function createShaderMaterial_points ( limitX, limitY, limitZ ) {
 
 				// from : https://github.com/mrdoob/three.js/blob/master/examples/webgl_custom_attributes_points.html
 				var materialPoints_shader = new THREE.ShaderMaterial( {
@@ -259,8 +283,8 @@
 						color     : { value: new THREE.Color( 0xffffff ) },
 						texture   : { value: new THREE.TextureLoader().load( "{{ url_for('static', filename='textures/sprites/spark1.png') }}" ) }
 					},
-					vertexShader:   document.getElementById( 'vertexshader' ).textContent,
-					fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+					vertexShader:   document.getElementById( 'vertexshader_points' ).textContent,
+					fragmentShader: document.getElementById( 'fragmentshader_points' ).textContent,
 					blending:       THREE.AdditiveBlending,
 					depthTest:      false,
 					transparent:    true
@@ -272,13 +296,38 @@
 			};
 
 
+
+
+			//// DEFINE LINES MATERIAL
+
 			var materialLines = new THREE.LineBasicMaterial( {
 				vertexColors: THREE.VertexColors,
 				blending    : THREE.AdditiveBlending,
 				transparent : true
 			} );
 
+			function createShaderMaterial_lines ( limitX, limitY, limitZ ) {
 
+				var materialLines_shader = new THREE.ShaderMaterial( {
+					uniforms: {
+						time      : { type : "f" , value: 1.0 },
+						limitsXYZ : { value: new THREE.Vector3( limitX, limitY, limitZ ) },
+						velFactor : { value: 1.0 },
+						// color     : { value: new THREE.Color( 0xffffff ) },
+					},
+					vertexShader:   document.getElementById( 'vertexshader_lines' ).textContent,
+					fragmentShader: document.getElementById( 'fragmentshader_lines' ).textContent,
+
+					vertexColors:   THREE.VertexColors,
+					blending:       THREE.AdditiveBlending,
+					// depthTest:      false,
+					transparent:    true
+
+				});
+
+				return materialLines_shader ;
+
+			};
 
 			init();
 
@@ -379,7 +428,7 @@
 
 
 					// create the particle system with material
-					materialPoints_shader_custom = createShaderMaterial( r,r,r ) ;
+					materialPoints_shader_custom = createShaderMaterial_points( r,r,r ) ;
 	  			pointCloud = new THREE.Points( particlesGeom, materialPoints_shader_custom );
 
 					// translate/rotate current pointCloud depending on its category
@@ -387,26 +436,39 @@
 
 	  			group.add( pointCloud );
 
+
+
+					// LINES
+					// create all connecting lines
+					segmentsL  = maxParticleCount * maxParticleCount ;
+					positionsL = new Float32Array( segmentsL * 3 );
+					colorsL    = new Float32Array( segmentsL * 3 );
+
+					var linesGeom = new THREE.BufferGeometry();
+					linesGeom.addAttribute( 'position', new THREE.BufferAttribute( positionsL, 3 ).setDynamic( true ) );
+					linesGeom.addAttribute( 'color'   , new THREE.BufferAttribute( colorsL,    3 ).setDynamic( true ) );
+					linesGeom.computeBoundingSphere();
+					linesGeom.setDrawRange( 0, 0 );
+
+					// linesGeom.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) );
+					// linesGeom.addAttribute( 'color',           new THREE.BufferAttribute( pColors,      3 ).setDynamic( true ) );
+					// linesGeom.addAttribute( 'customFrequency', new THREE.BufferAttribute( pFrequencies, 1 ) ); //.setDynamic( true ) );
+					// linesGeom.addAttribute( 'customVelocity',  new THREE.BufferAttribute( pVelocities,  3 ) ); //.setDynamic( true ) );
+					// linesGeom.computeBoundingSphere();
+					// linesGeom.setDrawRange( 0, 100 );
+
+					// materialLines_shader_custom = createShaderMaterial_lines( r,r,r ) ;
+					// linesMesh = new THREE.Line( linesGeom, materialLines );
+					linesMesh = new THREE.LineSegments( linesGeom, materialLines );
+					group.add( linesMesh );
+
+
 				};
 
 				//
 				addPointsCloud() ;
 
 
-				// create all connecting lines
-				segmentsL  = maxParticleCount * maxParticleCount ;
-				positionsL = new Float32Array( segmentsL * 3 );
-				colorsL    = new Float32Array( segmentsL * 3 );
-
-        var linesGeom = new THREE.BufferGeometry();
-  			linesGeom.addAttribute( 'position', new THREE.BufferAttribute( positionsL, 3 ).setDynamic( true ) );
-  			linesGeom.addAttribute( 'color'   , new THREE.BufferAttribute( colorsL,    3 ).setDynamic( true ) );
-  			linesGeom.computeBoundingSphere();
-  			linesGeom.setDrawRange( 0, 0 );
-
-
-  			linesMesh = new THREE.LineSegments( linesGeom, materialLines );
-  			group.add( linesMesh );
 
 
 
@@ -517,8 +579,8 @@
   			}
 
         linesMesh.geometry.setDrawRange( 0, numConnected * 2 );
-  			linesMesh.geometry.attributes.position.needsUpdate  = true;
-  			linesMesh.geometry.attributes.color.needsUpdate     = true;
+				linesMesh.geometry.attributes.position.needsUpdate    = true;
+  			linesMesh.geometry.attributes.color.needsUpdate = true;
 
 				pointCloud.geometry.attributes.position.needsUpdate = true;
 				// pointCloud.geometry.verticesNeedUpdate = true;
