@@ -3,31 +3,31 @@
 <style>
 
 
-#canvas3D {
-				/*color: #cccccc;*/
-				font-family:Monospace;
-				font-size:13px;
-				text-align:center;
-				margin: 0px;
-				overflow: hidden;
-        color: #cccccc ;
-        background-color: {{ app_colors.three_background }} ;
-			}
-div.dg.ac {
-  top : 8%
-}
+	#canvas3D {
+					/*color: #cccccc;*/
+					font-family:Monospace;
+					font-size:13px;
+					text-align:center;
+					margin: 0px;
+					overflow: hidden;
+	        color: #cccccc ;
+	        background-color: {{ app_colors.three_background }} ;
+				}
+	div.dg.ac {
+	  top : 8%
+	}
 
-/*
-#info {
-	position: absolute;
-	top: 0px; width: 100%;
-	padding: 5px;
-}
+	/*
+	#info {
+		position: absolute;
+		top: 0px; width: 100%;
+		padding: 5px;
+	}
 
-a {
-	color: #0080ff;
-}
-*/
+	a {
+		color: #0080ff;
+	}
+	*/
 
 
 </style>
@@ -56,30 +56,94 @@ a {
 <!-- cf too  : http://blog.2pha.com/experimenting-threejs-shaders-and-shadermaterial  -->
 <!-- cf also :  https://github.com/Jam3/jam3-lesson-webgl-shader-threejs -->
 <script type="x-shader/x-vertex" id="vertexshader">
+
+	// Rotate / cf : https://gist.github.com/jeanlescure/e27c93b73a10b64e85e4
+	uniform float rotationX ;
+	uniform float rotationY ;
+	uniform float rotationZ ;
+	uniform vec3  limitsXYZ ;
+
+	varying mat4  vPosition ;
+
+
 	// uniform float amplitude;
 	uniform   float time;
+	uniform   float velFactor;
 	attribute float size;
 	attribute vec3  customColor;
-	varying   vec3  vColor;
-	void main() {
-		vColor          = customColor;
-		vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+	attribute float customFrequency;
+	attribute vec3  customVelocity;
 
-		gl_PointSize    = size * ( 400.0 / -mvPosition.z ) ;
+	varying   float customVelocityX  ;
+	varying   float customVelocityY  ;
+	varying   float customVelocityZ  ;
+
+	varying   vec3  vColor;
+
+	void main() {
+
+		vColor          = customColor;
+
+		mat4 rXPos = mat4(vec4(1.0,0.0,0.0,0.0),
+		                  vec4(0.0,cos(rotationX),-sin(rotationX),0.0),
+		                  vec4(0.0,sin(rotationX),cos(rotationX),0.0),
+		                  vec4(0.0,0.0,0.0,1.0)
+										);
+
+		mat4 rYPos = mat4(vec4(cos(rotationY),0.0,sin(rotationY),0.0),
+		                  vec4(0.0,1.0,0.0,0.0),
+		                  vec4(-sin(rotationY),0.0,cos(rotationY),0.0),
+		                  vec4(0.0,0.0,0.0,1.0)
+										);
+
+		mat4 rZPos = mat4(vec4(cos(rotationZ),-sin(rotationZ),0.0,0.0),
+		                  vec4(sin(rotationZ),cos(rotationZ),0.0,0.0),
+		                  vec4(0.0,0.0,1.0,0.0),
+		                  vec4(0.0,0.0,0.0,1.0)
+										);
+
+		vPosition =  rXPos * rZPos * rYPos ;
+
+
+		// update position from within vertex shader
+
+		float newPosX = float( limitsXYZ.x/2. * sin( time * customVelocity.x * velFactor + position.x  ) ) ;
+		float newPosY = float( limitsXYZ.y/2. * sin( time * customVelocity.y * velFactor + position.y  ) ) ;
+		float newPosZ = float( limitsXYZ.z/2. * sin( time * customVelocity.z * velFactor + position.z  ) ) ;
+
+		// store updated position
+		vec3 newPos  = vec3( newPosX, newPosY, newPosZ ) ;
+
+		// apply position to view matrix
+		vec4 mvPosition = modelViewMatrix * vec4( newPos , 1.0 ); // new position
+		// vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 ); // original position
+
+
+		// gl_PointSize    = size * ( 400.0 / -mvPosition.z ) ;
+		gl_PointSize = (1.0 + sin( customFrequency * time )) * 100.0 * ( 300.0 / length( mvPosition.xyz ) );
 		// gl_PointSize    = size + size * ( sin( time ) );
-		gl_Position     = projectionMatrix * mvPosition;
+
+		// apply projection matrix to viewPosition
+		gl_Position  = projectionMatrix * mvPosition ;
+
+
 
 	}
+
 </script>
 
+
 <script type="x-shader/x-fragment" id="fragmentshader">
+
 	uniform vec3      color;
 	uniform sampler2D texture;
 	varying vec3      vColor;
+
 	void main() {
 		gl_FragColor = vec4( color * vColor, 1. );
 		gl_FragColor = gl_FragColor * texture2D( texture, gl_PointCoord );
 	}
+
 </script>
 
 
@@ -156,8 +220,8 @@ a {
 			var HEIGHT = window.innerHeight;
 
 
-			var pPositions, pSizes, pColors ;
-			var particlesGeom  ;
+			var pPositions, pSizes, pColors, pFrequencies, pVelocities ;
+			var particlesGeom ;
 			var pointCloud ;
 
 			var positionsL, colorsL ;
@@ -165,8 +229,8 @@ a {
 
 			var maxParticleCount = 3000;
 			var particleCount    = 300;
-			var r = 800;
-			var rHalf = r / 2;
+			var r     = 800.;
+			var rHalf = r / 2.;
 
 			var velocityFactor = 1.1 ;
 
@@ -182,22 +246,31 @@ a {
 
 
 			// DEFINE MATERIALS : SHADERMATERIAL AND USUAL MATERIAL
-			// from : https://github.com/mrdoob/three.js/blob/master/examples/webgl_custom_attributes_points.html
-			var materialPoints_shader = new THREE.ShaderMaterial( {
+			function createShaderMaterial (limitX, limitY, limitZ) {
 
-				uniforms: {
-					time     : { type : "f" , value: 1.0 },
-					amplitude: { value: 1.0 },
-					color    : { value: new THREE.Color( 0xffffff ) },
-					texture  : { value: new THREE.TextureLoader().load( "{{ url_for('static', filename='textures/sprites/spark1.png') }}" ) }
-				},
-				vertexShader:   document.getElementById( 'vertexshader' ).textContent,
-				fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
-				blending:       THREE.AdditiveBlending,
-				depthTest:      false,
-				transparent:    true
+				// from : https://github.com/mrdoob/three.js/blob/master/examples/webgl_custom_attributes_points.html
+				var materialPoints_shader = new THREE.ShaderMaterial( {
 
-			});
+					uniforms: {
+						time      : { type : "f" , value: 1.0 },
+						limitsXYZ : { value: new THREE.Vector3( limitX, limitY, limitZ ) },
+						velFactor : { value: 1.0 },
+						// amplitude : { value: 1.0 },
+						color     : { value: new THREE.Color( 0xffffff ) },
+						texture   : { value: new THREE.TextureLoader().load( "{{ url_for('static', filename='textures/sprites/spark1.png') }}" ) }
+					},
+					vertexShader:   document.getElementById( 'vertexshader' ).textContent,
+					fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+					blending:       THREE.AdditiveBlending,
+					depthTest:      false,
+					transparent:    true
+
+				});
+
+				return materialPoints_shader ;
+
+			};
+
 
 			var materialLines = new THREE.LineBasicMaterial( {
 				vertexColors: THREE.VertexColors,
@@ -218,12 +291,12 @@ a {
 
 				var gui = new dat.GUI();
   			gui.add( effectController, "showDots"  ).onChange( function( value ) {  pointCloud.visible = value; } );
-  			gui.add( effectController, "showLines" ).onChange( function( value ) { linesMesh.visible  = value; } );
+  			gui.add( effectController, "showLines" ).onChange( function( value ) {  linesMesh.visible  = value; } );
   			gui.add( effectController, "minDistance"   , 10, 300 );
-        gui.add( effectController, "velocityFactor", 0, 10 );
+        gui.add( effectController, "velocityFactor",  0,  10 ) ; // .onChange( function (value) { pointCloud.material.uniforms.velFactor.value = value }) ;
   			gui.add( effectController, "limitConnections" );
-  			gui.add( effectController, "maxConnections", 0, 30, 1 );
-  			gui.add( effectController, "particleCount" , 0, maxParticleCount, 1 ).onChange( function( value ) {
+  			gui.add( effectController, "maxConnections",  0,  30, 1 );
+  			gui.add( effectController, "particleCount" ,  0, maxParticleCount, 1 ).onChange( function( value ) {
   				particleCount = parseInt( value );
   				particlesGeom.setDrawRange( 0, particleCount );
   			});
@@ -257,9 +330,11 @@ a {
 				// SET PARTICLES SYSTEM
 				function addPointsCloud() {
 
-					pPositions = new Float32Array( maxParticleCount * 3 );
-					pColors    = new Float32Array( maxParticleCount * 3 );
-					pSizes     = new Float32Array( maxParticleCount     );
+					pPositions   = new Float32Array( maxParticleCount * 3 );
+					pColors      = new Float32Array( maxParticleCount * 3 );
+					pSizes       = new Float32Array( maxParticleCount     );
+					pFrequencies = new Float32Array( maxParticleCount     );
+					pVelocities  = new Float32Array( maxParticleCount * 3 );
 
 					var vertex = new THREE.Vector3();
 					var color  = new THREE.Color( 0xffffff );
@@ -283,21 +358,29 @@ a {
 	  					numConnections: 0
 	  				} );
 
-						// set default size
-						pSizes[i] = 100 ;
+						// set default size and frequency
+
+						pSizes[i]       = 100 ;
+						pFrequencies[i] = 5 * Math.random() + 0.5;
+						velocity        = new THREE.Vector3( -1 + Math.random() , -1 + Math.random(),  -1 + Math.random() ),
+						velocity.toArray( pVelocities, i * 3 );
+
 
 	  			}
 
 					particlesGeom = new THREE.BufferGeometry();
 					particlesGeom.setDrawRange( 0, particleCount );
-	  			particlesGeom.addAttribute( 'position',    new THREE.BufferAttribute( pPositions, 3 ) ); //.setDynamic( true ) );
-					particlesGeom.addAttribute( 'customColor', new THREE.BufferAttribute( pColors,    3 ) ); //.setDynamic( true ) );
-					particlesGeom.addAttribute( 'size',        new THREE.BufferAttribute( pSizes,     1 ) ); //.setDynamic( true ) );
+	  			particlesGeom.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) );
+					particlesGeom.addAttribute( 'customColor',     new THREE.BufferAttribute( pColors,      3 ) ); //.setDynamic( true ) );
+					particlesGeom.addAttribute( 'size',            new THREE.BufferAttribute( pSizes,       1 ) ); //.setDynamic( true ) );
+					particlesGeom.addAttribute( 'customFrequency', new THREE.BufferAttribute( pFrequencies, 1 ) ); //.setDynamic( true ) );
+					particlesGeom.addAttribute( 'customVelocity',  new THREE.BufferAttribute( pVelocities,  3 ) ); //.setDynamic( true ) );
 
 
 
 					// create the particle system with material
-	  			pointCloud = new THREE.Points( particlesGeom, materialPoints_shader );
+					materialPoints_shader_custom = createShaderMaterial( r,r,r ) ;
+	  			pointCloud = new THREE.Points( particlesGeom, materialPoints_shader_custom );
 
 					// translate/rotate current pointCloud depending on its category
 					// ...
@@ -311,7 +394,7 @@ a {
 
 
 				// create all connecting lines
-				segmentsL  = maxParticleCount * maxParticleCount;
+				segmentsL  = maxParticleCount * maxParticleCount ;
 				positionsL = new Float32Array( segmentsL * 3 );
 				colorsL    = new Float32Array( segmentsL * 3 );
 
@@ -341,7 +424,7 @@ a {
         controls = new THREE.OrbitControls( camera, container );
         // controls = new THREE.TrackballControls( camera, renderer.domElement );
   			controls.minDistance   = 100.0 ;
-  			controls.maxDistance   = 3000.0;
+  			controls.maxDistance   = 5000.0;
   			controls.dampingFactor = 0.1   ;
 
         // set stats box
@@ -387,17 +470,20 @@ a {
 
           // get the particle
   				var particleData = particlesData[i];
-  				pPositions[ i * 3     ] += particleData.velocity.x * effectController.velocityFactor ;
-  				pPositions[ i * 3 + 1 ] += particleData.velocity.y * effectController.velocityFactor ;
-  				pPositions[ i * 3 + 2 ] += particleData.velocity.z * effectController.velocityFactor ;
+  				// pPositions[ i * 3     ] += particleData.velocity.x * effectController.velocityFactor ;
+  				// pPositions[ i * 3 + 1 ] += particleData.velocity.y * effectController.velocityFactor ;
+  				// pPositions[ i * 3 + 2 ] += particleData.velocity.z * effectController.velocityFactor ;
 
-          if ( pPositions[ i * 3 + 1 ] < -rHalf || pPositions[ i * 3 + 1 ] > rHalf )
-  					particleData.velocity.y = -particleData.velocity.y;
-  				if ( pPositions[ i * 3 ] < -rHalf || pPositions[ i * 3 ] > rHalf )
-  					particleData.velocity.x = -particleData.velocity.x;
-  				if ( pPositions[ i * 3 + 2 ] < -rHalf || pPositions[ i * 3 + 2 ] > rHalf )
-  					particleData.velocity.z = -particleData.velocity.z;
-  				if ( effectController.limitConnections && particleData.numConnections >= effectController.maxConnections )
+					// if ( pPositions[ i * 3 ]     < -rHalf || pPositions[ i * 3 ]     > rHalf )
+  				// 	particleData.velocity.x = -particleData.velocity.x;
+          // if ( pPositions[ i * 3 + 1 ] < -rHalf || pPositions[ i * 3 + 1 ] > rHalf )
+  				// 	particleData.velocity.y = -particleData.velocity.y;
+  				// if ( pPositions[ i * 3 + 2 ] < -rHalf || pPositions[ i * 3 + 2 ] > rHalf )
+  				// 	particleData.velocity.z = -particleData.velocity.z;
+
+
+
+					if ( effectController.limitConnections && particleData.numConnections >= effectController.maxConnections )
   					continue;
 
           // Check collision
@@ -412,7 +498,7 @@ a {
   					if ( dist < effectController.minDistance ) {
   						particleData.numConnections++;
   						particleDataB.numConnections++;
-  						var alpha = 1.0 - dist / effectController.minDistance;
+  						var alpha = 1.0 - dist / effectController.minDistance ;
   						positionsL[ vertexpos++ ] = pPositions[ i * 3     ];
   						positionsL[ vertexpos++ ] = pPositions[ i * 3 + 1 ];
   						positionsL[ vertexpos++ ] = pPositions[ i * 3 + 2 ];
@@ -435,6 +521,8 @@ a {
   			linesMesh.geometry.attributes.color.needsUpdate     = true;
 
 				pointCloud.geometry.attributes.position.needsUpdate = true;
+				// pointCloud.geometry.verticesNeedUpdate = true;
+
 
 				requestAnimationFrame( animate );
 
@@ -449,9 +537,13 @@ a {
 				// UPDATE TIME VALUE IN UNIFORMS
   			var time = Date.now() * 0.01;
 
-				materialPoints_shader.uniforms.time.value = .00025 * ( Date.now() - start )
+				// materialPoints_shader.uniforms.time.value = .001 * ( Date.now() - start )
+				pointCloud.material.uniforms.time.value      =  ( Date.now() - start ) * .001 ;
+				pointCloud.material.uniforms.velFactor.value = effectController.velocityFactor ;
 
-				// INSTEAD OF ITERATING AT EACH FRAME CHANGE SIZE WITH TIME UNIFORM
+				// pointCloud.geometry.attributes.position.needsUpdate = true;
+
+				// INSTEAD OF ITERATING AT EACH FRAME CHANGE SIZE WITH TIME UNIFORM AND CUSTOMFREQUENCY
 				// var geometryP   = pointCloud.geometry  ;
 				// var attributes  = geometryP.attributes ;
 				// for ( var i = 0; i < attributes.size.array.length; i++ ) {
@@ -469,7 +561,7 @@ a {
         }
 
 
-  			// group.rotation.y = time * 0.1;
+  			// group.rotation.y = time * 0.01;
   			renderer.render( scene, camera );
 
   		}
