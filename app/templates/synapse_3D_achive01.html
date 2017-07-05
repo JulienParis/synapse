@@ -1,0 +1,1164 @@
+
+
+<style>
+
+
+	#canvas3D {
+					/*color: #cccccc;*/
+					font-family:Monospace;
+					font-size:13px;
+					text-align:center;
+					margin: 0px;
+					overflow: hidden;
+	        color: #cccccc ;
+	        background-color: {{ app_colors.three_background }} ;
+				}
+	div.dg.ac {
+	  top : 8%
+	}
+
+	/*
+	#info {
+		position: absolute;
+		top: 0px; width: 100%;
+		padding: 5px;
+	}
+
+	a {
+		color: #0080ff;
+	}
+	*/
+
+
+</style>
+
+
+<!-- cf : http://requirejs.org/docs/start.html -->
+<!-- <script type="text/javascript" src="{{ url_for('static', filename='js/require.js') }}"></script> -->
+
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/three.js') }}"></script>
+<!-- <script type="text/javascript" src="{{ url_for('static', filename='js/threejs/loaders/OBJLoader.js') }}"></script> -->
+<!-- <script type="text/javascript" src="{{ url_for('static', filename='js/threejs/loaders/STLLoader.js') }}"></script> -->
+<script type="text/javascript" src="{{ url_for('static', filename='js/threejs/Detector.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/threejs/libs/dat.gui.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/threejs/libs/stats.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/threejs/controls/OrbitControls.js') }}"></script>
+<!-- <script type="text/javascript" src="{{ url_for('static', filename='js/threejs/controls/TrackballControls.js') }}"></script> -->
+<!-- <script type="text/javascript" src="{{ url_for('static', filename='js/threejs/geometries/ConvexGeometry.js') }}"></script> -->
+<script type="text/javascript" src="{{ url_for('static', filename='js/delaunay.js') }}"></script>
+
+
+
+<div id="canvas3D">
+</div>
+
+
+<!-- vertex shader cf : https://www.clicktorelease.com/blog/vertex-displacement-noise-3d-webgl-glsl-three-js/ -->
+<!-- cf too  : http://blog.2pha.com/experimenting-threejs-shaders-and-shadermaterial  -->
+<!-- cf also :  https://github.com/Jam3/jam3-lesson-webgl-shader-threejs -->
+<script type="x-shader/x-vertex" id="vertexshader_points">
+
+	precision lowp float;
+	// uniform float u_time;     // temps écoulé depuis le lancement du shader
+
+	// GLSL textureless classic 3D noise "cnoise",
+	// with an RSL-style periodic variant "pnoise".
+	// Author:  Stefan Gustavson (stefan.gustavson@liu.se)
+	// Version: 2011-10-11
+	//
+	// Many thanks to Ian McEwan of Ashima Arts for the
+	// ideas for permutation and gradient selection.
+	//
+	// Copyright (c) 2011 Stefan Gustavson. All rights reserved.
+	// Distributed under the MIT license. See LICENSE file.
+	// https://github.com/ashima/webgl-noise
+	//
+	vec3 mod289(vec3 x)  				{ return x - floor(x * (1.0 / 289.0)) * 289.0; }
+	vec4 mod289(vec4 x)  				{	return x - floor(x * (1.0 / 289.0)) * 289.0; }
+	vec4 permute(vec4 x) 				{	return mod289(((x*34.0)+1.0)*x); }
+	vec4 taylorInvSqrt(vec4 r) 	{ return 1.79284291400159 - 0.85373472095314 * r; }
+	vec3 fade(vec3 t) 					{ return t*t*t*(t*(t*6.0-15.0)+10.0); }
+
+	// Classic Perlin noise
+	float cnoise(vec3 P)
+	{
+	  vec3 Pi0 = floor(P); // Integer part for indexing
+	  vec3 Pi1 = Pi0 + vec3(1.0); // Integer part + 1
+	  Pi0 = mod289(Pi0);
+	  Pi1 = mod289(Pi1);
+	  vec3 Pf0 = fract(P); // Fractional part for interpolation
+	  vec3 Pf1 = Pf0 - vec3(1.0); // Fractional part - 1.0
+	  vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
+	  vec4 iy = vec4(Pi0.yy, Pi1.yy);
+	  vec4 iz0 = Pi0.zzzz;
+	  vec4 iz1 = Pi1.zzzz;
+	  vec4 ixy = permute(permute(ix) + iy);
+	  vec4 ixy0 = permute(ixy + iz0);
+	  vec4 ixy1 = permute(ixy + iz1);
+	  vec4 gx0 = ixy0 * (1.0 / 7.0);
+	  vec4 gy0 = fract(floor(gx0) * (1.0 / 7.0)) - 0.5;
+	  gx0 = fract(gx0);
+	  vec4 gz0 = vec4(0.5) - abs(gx0) - abs(gy0);
+	  vec4 sz0 = step(gz0, vec4(0.0));
+	  gx0 -= sz0 * (step(0.0, gx0) - 0.5);
+	  gy0 -= sz0 * (step(0.0, gy0) - 0.5);
+	  vec4 gx1 = ixy1 * (1.0 / 7.0);
+	  vec4 gy1 = fract(floor(gx1) * (1.0 / 7.0)) - 0.5;
+	  gx1 = fract(gx1);
+	  vec4 gz1 = vec4(0.5) - abs(gx1) - abs(gy1);
+	  vec4 sz1 = step(gz1, vec4(0.0));
+	  gx1 -= sz1 * (step(0.0, gx1) - 0.5);
+	  gy1 -= sz1 * (step(0.0, gy1) - 0.5);
+	  vec3 g000 = vec3(gx0.x,gy0.x,gz0.x);
+	  vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);
+	  vec3 g010 = vec3(gx0.z,gy0.z,gz0.z);
+	  vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);
+	  vec3 g001 = vec3(gx1.x,gy1.x,gz1.x);
+	  vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);
+	  vec3 g011 = vec3(gx1.z,gy1.z,gz1.z);
+	  vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);
+	  vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));
+	  g000 *= norm0.x;
+	  g010 *= norm0.y;
+	  g100 *= norm0.z;
+	  g110 *= norm0.w;
+	  vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));
+	  g001 *= norm1.x;
+	  g011 *= norm1.y;
+	  g101 *= norm1.z;
+	  g111 *= norm1.w;
+	  float n000 = dot(g000, Pf0);
+	  float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));
+	  float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z));
+	  float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));
+	  float n001 = dot(g001, vec3(Pf0.xy, Pf1.z));
+	  float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));
+	  float n011 = dot(g011, vec3(Pf0.x, Pf1.yz));
+	  float n111 = dot(g111, Pf1);
+	  vec3 fade_xyz = fade(Pf0);
+	  vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);
+	  vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);
+	  float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x);
+	  return 2.2 * n_xyz;
+	}
+
+	// Classic Perlin noise, periodic variant
+	float pnoise(vec3 P, vec3 rep)
+	{
+	  vec3 Pi0 = mod(floor(P), rep); // Integer part, modulo period
+	  vec3 Pi1 = mod(Pi0 + vec3(1.0), rep); // Integer part + 1, mod period
+	  Pi0 = mod289(Pi0);
+	  Pi1 = mod289(Pi1);
+	  vec3 Pf0 = fract(P); // Fractional part for interpolation
+	  vec3 Pf1 = Pf0 - vec3(1.0); // Fractional part - 1.0
+	  vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
+	  vec4 iy = vec4(Pi0.yy, Pi1.yy);
+	  vec4 iz0 = Pi0.zzzz;
+	  vec4 iz1 = Pi1.zzzz;
+	  vec4 ixy = permute(permute(ix) + iy);
+	  vec4 ixy0 = permute(ixy + iz0);
+	  vec4 ixy1 = permute(ixy + iz1);
+	  vec4 gx0 = ixy0 * (1.0 / 7.0);
+	  vec4 gy0 = fract(floor(gx0) * (1.0 / 7.0)) - 0.5;
+	  gx0 = fract(gx0);
+	  vec4 gz0 = vec4(0.5) - abs(gx0) - abs(gy0);
+	  vec4 sz0 = step(gz0, vec4(0.0));
+	  gx0 -= sz0 * (step(0.0, gx0) - 0.5);
+	  gy0 -= sz0 * (step(0.0, gy0) - 0.5);
+	  vec4 gx1 = ixy1 * (1.0 / 7.0);
+	  vec4 gy1 = fract(floor(gx1) * (1.0 / 7.0)) - 0.5;
+	  gx1 = fract(gx1);
+	  vec4 gz1 = vec4(0.5) - abs(gx1) - abs(gy1);
+	  vec4 sz1 = step(gz1, vec4(0.0));
+	  gx1 -= sz1 * (step(0.0, gx1) - 0.5);
+	  gy1 -= sz1 * (step(0.0, gy1) - 0.5);
+	  vec3 g000 = vec3(gx0.x,gy0.x,gz0.x);
+	  vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);
+	  vec3 g010 = vec3(gx0.z,gy0.z,gz0.z);
+	  vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);
+	  vec3 g001 = vec3(gx1.x,gy1.x,gz1.x);
+	  vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);
+	  vec3 g011 = vec3(gx1.z,gy1.z,gz1.z);
+	  vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);
+	  vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));
+	  g000 *= norm0.x;
+	  g010 *= norm0.y;
+	  g100 *= norm0.z;
+	  g110 *= norm0.w;
+	  vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));
+	  g001 *= norm1.x;
+	  g011 *= norm1.y;
+	  g101 *= norm1.z;
+	  g111 *= norm1.w;
+	  float n000 = dot(g000, Pf0);
+	  float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));
+	  float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z));
+	  float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));
+	  float n001 = dot(g001, vec3(Pf0.xy, Pf1.z));
+	  float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));
+	  float n011 = dot(g011, vec3(Pf0.x, Pf1.yz));
+	  float n111 = dot(g111, Pf1);
+	  vec3 fade_xyz = fade(Pf0);
+	  vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);
+	  vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);
+	  float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x);
+	  return 2.2 * n_xyz;
+	}
+	// Include the Ashima code for Perlin noise
+
+	float turbulence( vec3 p ) {
+	  float w = 100.0;
+	  float t = -.5;
+	  for (float f = 1.0 ; f <= 10.0 ; f++ ){
+	    float power = pow( 2.0, f );
+	    t += abs( pnoise( vec3( power * p ), vec3( 10.0, 10.0, 10.0 ) ) / power );
+	  }
+	  return t;
+	}
+
+
+	// Rotate / cf : https://gist.github.com/jeanlescure/e27c93b73a10b64e85e4
+	uniform float rotationX ;
+	uniform float rotationY ;
+	uniform float rotationZ ;
+	uniform vec3  limitsXYZ ;
+
+	// rotation matrice function
+	mat4 rotMat (float rotationX, float rotationY, float rotationZ ) {
+
+		mat4 rXPos = mat4(vec4(1.0,0.0,0.0,0.0),
+											vec4(0.0,cos(rotationX),-sin(rotationX),0.0),
+											vec4(0.0,sin(rotationX),cos(rotationX),0.0),
+											vec4(0.0,0.0,0.0,1.0)
+										);
+
+		mat4 rYPos = mat4(vec4(cos(rotationY),0.0,sin(rotationY),0.0),
+											vec4(0.0,1.0,0.0,0.0),
+											vec4(-sin(rotationY),0.0,cos(rotationY),0.0),
+											vec4(0.0,0.0,0.0,1.0)
+										);
+
+		mat4 rZPos = mat4(vec4(cos(rotationZ),-sin(rotationZ),0.0,0.0),
+											vec4(sin(rotationZ),cos(rotationZ),0.0,0.0),
+											vec4(0.0,0.0,1.0,0.0),
+											vec4(0.0,0.0,0.0,1.0)
+										);
+
+		mat4  vPosition ;
+		vPosition =  rXPos * rZPos * rYPos ;
+
+		return vPosition ;
+
+	}
+
+	// uniform   float time;
+
+
+	uniform   float time;
+	uniform   float velFactor;
+	uniform   float size;
+	attribute vec3  customColor;
+	attribute float customFrequency;
+	attribute vec3  customVelocity;
+
+	// varying   float customVelocityX  ;
+	// varying   float customVelocityY  ;
+	// varying   float customVelocityZ  ;
+
+	varying   vec3  vColor;
+
+	void main() {
+
+		vColor = customColor;
+
+		// update position from within vertex shader
+		// cf : https://fr.wikipedia.org/wiki/Signal_sinusoïdal
+		// cf : https://stackoverflow.com/questions/1073606/is-there-a-one-line-function-that-generates-a-triangle-wave
+		float newPosX = position.x ; // float( limitsXYZ.x/2. * sin( time * customVelocity.x * velFactor + position.x  ) ) ;
+		float newPosY = position.y ; // float( limitsXYZ.y/2. * sin( time * customVelocity.y * velFactor + position.y  ) ) ;
+		float newPosZ = float( limitsXYZ.z/2. * sin( time * customVelocity.z * velFactor + position.z  ) ) ;
+
+		// store updated position
+		vec3 newPos  = vec3( newPosX, newPosY, newPosZ ) ;
+
+		// apply position to view matrix
+		vec4 mvPosition = modelViewMatrix * vec4( newPos , 1.0 ); // new position
+		// vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 ); // original position
+
+
+		// gl_PointSize    = size * ( 400.0 / -mvPosition.z ) ;
+		gl_PointSize = (1.0 + sin( customFrequency * time )) * size * ( 300.0 / length( mvPosition.xyz ) );
+		// gl_PointSize    = size + size * ( sin( time ) );
+
+		// apply projection matrix to viewPosition
+		gl_Position  = projectionMatrix * mvPosition ;
+
+
+
+	}
+
+</script>
+
+
+<script type="x-shader/x-fragment" id="fragmentshader_points">
+
+	uniform   vec2 resolution;
+
+	uniform vec3      color;
+	uniform sampler2D texture;
+	varying vec3      vColor;
+
+	void main() {
+		gl_FragColor = vec4( color * vColor, 1. );
+		gl_FragColor = gl_FragColor * texture2D( texture, gl_PointCoord );
+	}
+
+</script>
+
+
+
+<script type="x-shader/x-vertex" id="vertexshader_lines">
+	uniform float amplitude;
+	attribute vec3 displacement;
+	attribute vec3 customColor;
+	varying vec3 vColor;
+	void main() {
+		vec3 newPosition = position + amplitude * displacement;
+		vColor = customColor;
+		gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+	}
+</script>
+
+<script type="x-shader/x-fragment" id="fragmentshader_lines">
+	uniform vec3 color;
+	uniform float opacity;
+	varying vec3 vColor;
+	void main() {
+		gl_FragColor = vec4( vColor * color, opacity );
+	}
+</script>
+
+
+
+<!--  tests shaders  -->
+<script type="x-shader/x-vertex" id="vertexShader">
+	// attribute vec3 center;
+	// varying vec3 vCenter;
+	void main() {
+		// vCenter = center;
+		gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+	}
+</script>
+
+<script type="x-shader/x-fragment" id="fragmentShader">
+	// varying vec3 vCenter;
+	// float edgeFactorTri() {
+	// 	vec3 d = fwidth( vCenter.xyz );
+	// 	vec3 a3 = smoothstep( vec3( 0.0 ), d * 1.5, vCenter.xyz );
+	// 	return min( min( a3.x, a3.y ), a3.z );
+	// }
+	void main() {
+		gl_FragColor.rgb = mix( vec3( 1.0 ), vec3( 0.2 ), vec3( 0.2 ) );
+		gl_FragColor.a = 1.0;
+	}
+</script>
+
+
+<script>
+
+  $(document).ready(function(){
+
+    // FAKE LIGHT JSON NOTICES
+		var json_fake = {
+			"ART": {	"CODE": "A",
+								"STATS": 14082,
+								"CHILDREN": [
+															{	"NOTICES": [ {"id_o": "1431521"}, {"id_o": "1444227"}, {"id_o": "0180420"} ],
+																"CODE": "A.1",
+																"STATS": 1420,
+																"NAME": "GRAPHISME"
+															},
+															{	"NOTICES": [ {"id_o": "1235563"}, {"id_o": "0982809"}, {"id_o": "0982806"} ],
+																"CODE": "A.2",
+																"STATS": 2408,
+																"NAME": "LOISIRS CREATIFS"
+															}
+														]
+							},
+
+			"JEU": {	"CODE": "J",
+								"STATS": 7102,
+								"CHILDREN": [
+															{	"NOTICES": [ {"id_o": "1181008"}, {"id_o": "1181016"} ],
+																"CODE": "J.0",
+																"STATS": 3524,
+																"NAME": "JEUX A REGLES"
+															},
+															{	"NOTICES": [ {"id_o": "1267718"}, {"id_o": "1267716"}, {"id_o": "1115620"} ],
+																"CODE": "J.1",
+																"STATS": 808,
+																"NAME": "JEUX D'ASSEMBLAGE"
+															}
+														]
+							},
+
+
+			};
+
+		// LOAD JSON NOTICES AS CALLBACK
+    function preload_notices(callback){
+      $.getJSON( "{{ url_for('static', filename='data/JSON_notices_nested.json') }}", function( json ) {
+        console.log("... JSON_notices_nested loaded with getJSON");
+        callback(json);
+      }
+    )};
+
+		// START 3D RENDERING AFTER CALLBACK
+		preload_notices(function(json) {
+
+			//Use your data here
+			console.log("... JSON_notices_nested after callback");
+			var json_notices = json ;
+			console.log( json_notices );
+
+
+			var start = Date.now() ;
+
+			var group;
+			var container, controls, stats ;
+			var particlesData = [] ;
+			var camera, scene, renderer ;
+			var raycaster, mouse;
+
+			var WIDTH  = window.innerWidth;
+			var HEIGHT = window.innerHeight;
+
+
+			var pPositions, pSizes, pColors, pFrequencies, pVelocities ;
+			var particlesGeom ;
+			var pointCloud, convexHullMesh ;
+
+			var positionsL, colorsL ;
+			var linesMesh ;
+			var sphereMesh ;
+
+			var maxParticleCount = 3000;
+			var particleCount    = 300;
+			var r     = 800.;
+			var rHalf = r / 2.;
+
+			var velocityFactor = 0.3 ;
+
+			var effectController = {
+				showDots        : true,
+				showLines       : true,
+				minDistance     : 120,
+				limitConnections: true,
+				maxConnections  : 10,
+				particleCount   : particleCount,
+				velocityFactor  : 0.
+			};
+
+
+
+			// DEFINE POINTS MATERIALS : SHADERMATERIAL AND USUAL MATERIAL
+			function createShaderMaterial_points ( limitX, limitY, limitZ, is_texture = true ) {
+
+				var uniforms = {
+					// amplitude : { value: 1.0 },
+					time      : { type : "f" , value: 1.0 },
+					resolution: { type: "v2" , value: new THREE.Vector2() },
+					limitsXYZ : { value: new THREE.Vector3( limitX, limitY, limitZ ) },
+					velFactor : { value: 1.0 },
+					color     : { value: new THREE.Color( 0xffffff ) },
+					size      : { value: 100 }
+				} ;
+
+				if ( is_texture == true ) {
+					uniforms.texture = { value: new THREE.TextureLoader().load( "{{ url_for('static', filename='textures/sprites/spark1.png') }}" ) }
+				} ;
+
+				// from : https://github.com/mrdoob/three.js/blob/master/examples/webgl_custom_attributes_points.html
+				var material_shader = new THREE.ShaderMaterial( {
+
+					// uniforms: {
+					// 	time      : { type : "f" , value: 1.0 },
+					// 	limitsXYZ : { value: new THREE.Vector3( limitX, limitY, limitZ ) },
+					// 	velFactor : { value: 1.0 },
+					// 	// amplitude : { value: 1.0 },
+					// 	color     : { value: new THREE.Color( 0xffffff ) },
+					// 	texture   : { value: new THREE.TextureLoader().load( "{{ url_for('static', filename='textures/sprites/spark1.png') }}" ) }
+					// },
+					uniforms      : uniforms ,
+					vertexShader  : document.getElementById( 'vertexshader_points' ).textContent,
+					fragmentShader: document.getElementById( 'fragmentshader_points' ).textContent,
+					blending      : THREE.AdditiveBlending,
+					depthTest     : false,
+					transparent   : true
+
+				});
+
+				return material_shader ;
+
+			};
+
+
+
+
+			//// DEFINE LINES MATERIAL
+
+			var materialLines = new THREE.LineBasicMaterial( {
+				vertexColors: THREE.VertexColors,
+				blending    : THREE.AdditiveBlending,
+				transparent : true
+			} );
+
+			var wireframeMaterial = new THREE.MeshBasicMaterial( {
+				color      : 0xffffff,
+				wireframe  : true,
+				// transparent: true
+			} );
+
+			function createShaderMaterial_lines ( limitX, limitY, limitZ ) {
+
+				var materialLines_shader = new THREE.ShaderMaterial( {
+					uniforms: {
+						time      : { type : "f" , value: 1.0 },
+						resolution: { type: "v2" , value: new THREE.Vector2() },
+						limitsXYZ : { value: new THREE.Vector3( limitX, limitY, limitZ ) },
+						velFactor : { value: 1.0 },
+						color     : { value: new THREE.Color( 0xffffff ) },
+					},
+					vertexShader:   document.getElementById( 'vertexshader_points' ).textContent,
+					fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+
+					// vertexColors:   THREE.VertexColors,
+					// blending:       THREE.AdditiveBlending,
+					// depthTest:      false,
+					transparent:    true,
+					wireframe  :    true
+
+				});
+
+				return materialLines_shader ;
+
+			};
+
+			init();
+
+			animate();
+
+
+
+			// GUI controls
+			// check : http://learningthreejs.com/blog/2011/08/14/dat-gui-simple-ui-for-demos/
+			// check also : https://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
+      function initGUI() {
+
+				var gui = new dat.GUI();
+
+				var f1 = gui.addFolder("Display") ;
+  			f1.add( effectController, "showDots"  ).onChange( function( value ) {  pointCloud.visible = value; } );
+  			f1.add( effectController, "showLines" ).onChange( function( value ) {  linesMesh.visible  = value; } );
+
+				var f2 = gui.addFolder("factors");
+  			f2.add( effectController, "minDistance"   ,  10, 300 , 1       );
+        f2.add( effectController, "velocityFactor",  0.,  2. , 0.01    ) ; // .onChange( function (value) { pointCloud.material.uniforms.velFactor.value = value }) ;
+				// f2.add( effectController, "outFactor",       0.,  50., 1.      ) ; // .onChange( function (value) { pointCloud.material.uniforms.velFactor.value = value }) ;
+				f2.open() ;
+
+				var f3 = gui.addFolder("limits");
+				f3.add( effectController, "limitConnections" );
+  			f3.add( effectController, "maxConnections",  0,  30, 1 );
+  			f3.add( effectController, "particleCount" ,  0, maxParticleCount, 1 ).onChange( function( value ) {
+  				particleCount = parseInt( value );
+  				particlesGeom.setDrawRange( 0, particleCount );
+				});
+				f3.open() ;
+
+			};
+
+
+			// INIT FUNCTION
+      function init() {
+
+      	initGUI();
+  			container = document.getElementById( 'canvas3D' );
+
+      	// set scene
+  			camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 4000 );
+  			camera.position.z = 1750;
+
+  			scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
+
+				// -----------------------------
+				// test iteration
+				for (var key in json_fake ){
+				  console.log( key, json_fake[key] );
+				} ;
+
+
+
+        group = new THREE.Group();
+  			scene.add( group );
+
+        // var helper = new THREE.BoxHelper( new THREE.Mesh( new THREE.BoxGeometry( r, r, r ) ) );
+  			// helper.material.color.setHex( 0x080808 );
+  			// helper.material.blending = THREE.AdditiveBlending;
+  			// helper.material.transparent = true;
+  			// group.add( helper );
+
+				function rand() {
+					var x = Math.random() ;
+					return x ;
+				};
+
+				// -------------------------------------------------------
+				// SET PARTICLES SYSTEM
+				function addPointsCloud() {
+
+					pPositions   = new Float32Array( maxParticleCount * 3 );
+					pColors      = new Float32Array( maxParticleCount * 3 );
+					// pSizes       = new Float32Array( maxParticleCount     );
+					pFrequencies = new Float32Array( maxParticleCount     );
+					pVelocities  = new Float32Array( maxParticleCount * 3 );
+
+					var color   = new THREE.Color( 0xffffff );
+					var vertices3   = [] ;
+					var vertices2   = [] ;
+
+
+					for ( var i = 0; i < maxParticleCount; i++ ) {
+
+						var vertex3 = new THREE.Vector3();
+						var vertex2 = new Vertex();
+
+						// var randNumX = rand() ;
+						// if (i<10) { console.log(randNumX * r - r / 2.) ; } ;
+						// var randNumX = Math.random() ;
+						vertex2.x = vertex3.x = Math.random() * r - r / 2.;
+						vertex2.y = vertex3.y = Math.random() * r - r / 2.;
+						vertex3.z = 0 ; // Math.random() * r - r / 2.;
+						// if (i<10) { console.log(vertex2) ; } ;
+
+						vertex3.toArray( pPositions, i * 3 );
+						vertices3[i] = vertex3 ;
+						vertices2.push( vertex2 )  ;
+
+						// set color cf : https://www.w3schools.com/colors/colors_hsl.asp
+						color.setHSL( 0., 0., 1. );
+						color.toArray( pColors, i * 3 );
+
+						// push to separate particlesData
+	  				particlesData.push( {
+	  					velocity: new THREE.Vector3( -1 + Math.random() , -1 + Math.random(),  -1 + Math.random() ),
+							// rotPhi : , // in radians
+							// rotThe : , // in radians
+	  					numConnections: 0
+	  				} );
+
+						// set default size and frequency
+
+						// pSizes[i]       = 100 ;
+						pFrequencies[i] = 5 * Math.random() + 0.5;
+						velocity        = new THREE.Vector3( -1 + Math.random() , -1 + Math.random(),  -1 + Math.random() ),
+						velocity.toArray( pVelocities, i * 3 );
+
+	  			}
+
+
+					console.log("--- pPositions : ", pPositions);
+					console.log("--- vertices2 : ",  vertices2);
+					console.log("--- vertices3 : ",  vertices3);
+
+
+					// console.log(pPositions);
+					particlesGeom = new THREE.BufferGeometry();
+					particlesGeom.setDrawRange( 0, particleCount );
+	  			particlesGeom.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) );
+					particlesGeom.addAttribute( 'customColor',     new THREE.BufferAttribute( pColors,      3 ) ); //.setDynamic( true ) );
+					// particlesGeom.addAttribute( 'size',            new THREE.BufferAttribute( pSizes,       1 ) ); //.setDynamic( true ) );
+					particlesGeom.addAttribute( 'customFrequency', new THREE.BufferAttribute( pFrequencies, 1 ) ); //.setDynamic( true ) );
+					particlesGeom.addAttribute( 'customVelocity',  new THREE.BufferAttribute( pVelocities,  3 ) ); //.setDynamic( true ) );
+
+					// create the particle system with material
+					var materialPoints_shader_custom = createShaderMaterial_points( r,r,r/10, true ) ;
+
+					console.log("--- materialPoints_shader_custom : ", materialPoints_shader_custom);
+	  			pointCloud = new THREE.Points( particlesGeom, materialPoints_shader_custom );
+					group.add( pointCloud );
+
+
+
+
+					// -----------------------------------------------------------------------
+					// TRYING DELAUNAY TRIANGULATION ON VERTICES 2D (projectd on plane XY)
+					// cf : https://github.com/callumprentice/callumprentice.github.io/blob/master/apps/delaunay/index.html
+					var triangles = triangulate(vertices2);
+					console.log("--- triangles : ", triangles);
+
+					var geomTri = new THREE.Geometry();
+          var f = 0;
+
+					// topology custom to recreate indexed BufferGeometry
+					// cf : https://stackoverflow.com/questions/36730365/how-can-i-add-faces-to-an-indexed-three-buffergeometry
+					var uniq_edges_set = new Set() ;
+					var facesVIndices = [] ;
+
+					triangles.forEach(function(tri) {
+
+						// get v1, v2, v3 indices
+						var v0_i = vertices2.indexOf(tri.v0);
+						var v1_i = vertices2.indexOf(tri.v1);
+						var v2_i = vertices2.indexOf(tri.v2);
+
+						// store indices
+						facesVIndices.push(v0_i) ;
+						facesVIndices.push(v1_i) ;
+						facesVIndices.push(v2_i) ;
+
+						// make and store edges vindices
+						// var e0   = new Set ().add(v0_i).add(v1_i) ;
+						// var e1   = new Set ().add(v1_i).add(v2_i) ;
+						// var e2   = new Set ().add(v2_i).add(v0_i) ;
+						var e0_   = [v0_i,v1_i].sort() ; var e0 = e0_.join(".") ;
+						var e1_   = [v1_i,v2_i].sort() ; var e1 = e1_.join(".") ;
+						var e2_   = [v2_i,v0_i].sort() ; var e2 = e2_.join(".") ;
+
+						// add edges to unique edges set
+						uniq_edges_set.add(e0).add(e1).add(e2) ;
+
+
+            // geomTri.vertices.push(new THREE.Vector3(tri.v2.x,tri.v2.y,0));
+            // geomTri.vertices.push(new THREE.Vector3(tri.v1.x,tri.v1.y,0));
+            // geomTri.vertices.push(new THREE.Vector3(tri.v0.x,tri.v0.y,0));
+            // geomTri.faces.push( new THREE.Face3( f, f+1, f+2 ) );
+            // f+=3;
+
+					})
+
+					console.log("--- uniq_edges_set : ", uniq_edges_set);
+					// make list of edges as couples of vertex indices
+					var uniq_edges_v_indices   = [] ;
+					for (let eString of uniq_edges_set) {
+						var vi_s = eString.split(".") ;
+						var vi_0 = parseInt(vi_s[0]) ;
+						var vi_1 = parseInt(vi_s[1]) ;
+						uniq_edges_v_indices.push(vi_0) ;
+						uniq_edges_v_indices.push(vi_1) ;
+					};
+					console.log("--- uniq_edges_v_indices : ", uniq_edges_v_indices);
+
+					// -------------------------------
+						// var uniq_edges_v_positions = new Float32Array( uniq_edges_v_indices.length * 3 ) ;
+						// for (var i = 0 ; i < uniq_edges_v_indices.length ; i++ ) {
+						// 	// console.log(vi);
+						// 	vi = uniq_edges_v_indices[i] ;
+						// 	var v3 = vertices3[vi] ;
+						// 	if (i == 0) { console.log(vi, v3) } ;
+						// 	uniq_edges_v_positions[ i * 3     ] = v3.x ;
+						// 	uniq_edges_v_positions[ i * 3 + 1 ] = v3.y ;
+						// 	uniq_edges_v_positions[ i * 3 + 2 ] = v3.z ;
+						// };
+						// console.log("--- uniq_edges_v_positions : ", uniq_edges_v_positions);
+
+						// var geometry = new THREE.BufferGeometry();
+						// geometry.addAttribute('position', new THREE.BufferAttribute( pPositions, 3));
+						// geometry.setIndex(new THREE.BufferAttribute(new Uint16Array(uniq_edges_v_indices),  1));
+						// var line = new THREE.LineSegments(geometry, wireframeMaterial);
+						// console.log("--- line : ", line );
+						// group.add(line);
+
+						// geomTri.mergeVertices();
+	          // geomTri.computeVertexNormals();
+						// geomTri.computeFaceNormals();
+						// geomTri.computeLineDistances();
+						// console.log("--- geomTri : ", geomTri);
+
+
+					geomTri_buffer = new THREE.BufferGeometry();//.fromGeometry(geomTri) ;
+						// var ePositions = new Float32Array( geomTri.vertices.length * 3 );
+						// for (i = 0; i < geomTri_buffer.attributes.position.length ; i++){
+						// 	var eV = geomTri_buffer.attributes.position[i] ;
+						// 	if(i==0) {
+						// 		console.log("--- eV --- ", eV);
+						// 	}
+						// 	eV.toArray( ePositions, i * 3 );
+						// };
+						// console.log("--- ePositions :", ePositions );
+						// geomTri_buffer.setDrawRange( 0, 17984  );
+					geomTri_buffer.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,     3 ).setDynamic( true ) );
+					geomTri_buffer.setIndex(      new THREE.BufferAttribute( new Uint16Array ( facesVIndices , 1) ) );
+					geomTri_buffer.addAttribute( 'customFrequency', new THREE.BufferAttribute( pFrequencies,   1 ) ); //.setDynamic( true ) );
+					geomTri_buffer.addAttribute( 'customVelocity',  new THREE.BufferAttribute( pVelocities,    3 ) ); //.setDynamic( true ) );
+					console.log("--- geomTri_buffer : ", geomTri_buffer);
+
+					// var materialLines_shader_custom = createShaderMaterial_lines( r,r,r ) ;
+
+					var materialLines_shader_custom = new THREE.ShaderMaterial( {
+						uniforms: {
+							time      : { type : "f" , value: 1.0 },
+							resolution: { type: "v2" , value: new THREE.Vector2() },
+							limitsXYZ : { value: new THREE.Vector3( r, r, r/20 ) },
+							velFactor : { value: 1.0 },
+							color     : { value: new THREE.Color( 0xffffff ) },
+						},
+						vertexShader: document.getElementById( 'vertexshader_points' ).textContent,
+						fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
+						transparent : true,
+						wireframe   : true
+					} );
+
+
+					console.log("--- materialLines_shader_custom : ",materialLines_shader_custom);
+					linesMesh = new THREE.LineSegments( geomTri_buffer, materialLines_shader_custom) ;
+					// linesMesh = new THREE.LineSegments( geomTri_buffer, wireframeMaterial) ;
+
+					// linesMesh = new THREE.Mesh( geomTri, wireframeMaterial) ;
+					console.log( "--- linesMesh : ", linesMesh );
+					group.add( linesMesh );
+
+
+
+
+					//      .___.___.___.   .___.
+						// // 0   1   2   3   4   5
+						//
+						// // line material
+						// var material = new THREE.LineBasicMaterial({
+						//     color: 0xffffff
+						// });
+						//
+						// vertices = [
+						//     new THREE.Vector3(0, 0, 0),
+						//     new THREE.Vector3(10, 0, 0),
+						//     new THREE.Vector3(20, 0, 0),
+						//     new THREE.Vector3(30, 0, 0),
+						//     new THREE.Vector3(40, 0, 0),
+						//     new THREE.Vector3(50, 0, 0)
+						// ];
+						//
+						// var positions = new Float32Array(vertices.length * 3);
+						//
+						// for (var i = 0; i < vertices.length; i++) {
+						//
+						//     positions[i * 3] = vertices[i].x;
+						//     positions[i * 3 + 1] = vertices[i].y;
+						//     positions[i * 3 + 2] = vertices[i].z;
+						//
+						// }
+						//
+						// indices = [0, 1, 1, 2, 2, 3, 4, 5];
+						//
+						// var geometry = new THREE.BufferGeometry();
+						// geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+						// geometry.setIndex(new THREE.BufferAttribute(new Uint16Array(indices), 1));
+						//
+						// var line = new THREE.LineSegments(geometry, material);
+						// scene.add(line);
+
+
+
+
+					// ---------------------------------------
+						// vertex normals helper // not working
+						// var helper = new THREE.VertexNormalsHelper( linesMesh, 10, 0x00ff00, 1 );
+						// var helper = new THREE.FaceNormalsHelper( linesMesh, 10, 0x00ff00, 1 );
+						// console.log( "--- helper : ", helper );
+						// group.add( helper );
+
+
+						// ---------------------------------------
+						// convex hull
+
+						// console.log(vertices);
+						// var meshGeometry_ = new THREE.ConvexGeometry(vertices) ;
+						// var meshGeometry  = new THREE.BufferGeometry().fromGeometry(meshGeometry_) ;
+						// meshGeometry.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) );
+						// meshGeometry.addAttribute( 'customColor',     new THREE.BufferAttribute( pColors,      3 ) ); //.setDynamic( true ) );
+						// meshGeometry.addAttribute( 'customFrequency', new THREE.BufferAttribute( pFrequencies, 1 ) ); //.setDynamic( true ) );
+						// meshGeometry.addAttribute( 'customVelocity',  new THREE.BufferAttribute( pVelocities,  3 ) ); //.setDynamic( true ) );
+						// var materialConvexHull_shader_custom = createShaderMaterial_points( r,r,r, false ) ;
+						// convexHullMesh = new THREE.Mesh( meshGeometry, materialConvexHull_shader_custom );
+						// group.add( convexHullMesh );
+
+						// translate/rotate current pointCloud depending on its category
+						// ...
+
+
+
+
+						// LINES
+						// create all connecting lines
+						// segmentsL  = maxParticleCount * maxParticleCount ;
+						// positionsL = new Float32Array( segmentsL * 3 );
+						// colorsL    = new Float32Array( segmentsL * 3 );
+						//
+						// var linesGeom = new THREE.BufferGeometry();
+
+						// linesGeom.addAttribute( 'position', new THREE.BufferAttribute( positionsL, 3 ).setDynamic( true ) );
+						// linesGeom.addAttribute( 'color'   , new THREE.BufferAttribute( colorsL,    3 ).setDynamic( true ) );
+						// linesGeom.computeBoundingSphere();
+						// linesGeom.setDrawRange( 0, 0 );
+
+						// linesGeom.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) );
+						// linesGeom.addAttribute( 'color',           new THREE.BufferAttribute( pColors,      3 ).setDynamic( true ) );
+						// linesGeom.addAttribute( 'customFrequency', new THREE.BufferAttribute( pFrequencies, 1 ) ); //.setDynamic( true ) );
+						// linesGeom.addAttribute( 'customVelocity',  new THREE.BufferAttribute( pVelocities,  3 ) ); //.setDynamic( true ) );
+						// linesGeom.computeBoundingSphere();
+						// linesGeom.setDrawRange( 0, 100 );
+
+						// materialLines_shader_custom = createShaderMaterial_lines( r,r,r ) ;
+						// linesMesh = new THREE.Line( linesGeom, materialLines );
+
+						// linesMesh = new THREE.LineSegments( linesGeom, materialLines );
+						// group.add( linesMesh );
+
+
+				};
+
+				//
+				addPointsCloud() ;
+
+
+				function addSphereArc(numHeightSegments, numWidthSegments) {
+
+					var numPoints     = ( (numHeightSegments - 1) * ( numWidthSegments + 1 ) ) + 2 ;
+
+					var pFrequencies_ = new Float32Array( numPoints     );
+					var pVelocities_  = new Float32Array( numPoints * 3 );
+
+					for ( var i = 0; i < numPoints; i++ ) {
+
+						pFrequencies_[i] = 5 * Math.random() + 0.5;
+						velocity         = new THREE.Vector3( -1 + Math.random() , -1 + Math.random(),  -1 + Math.random() ),
+						velocity.toArray( pVelocities_, i * 3 );
+
+					} ;
+
+					var radius 					= 500 ;
+					var widthSegments 	= numWidthSegments ;
+					var heightSegments 	= numHeightSegments ;
+					var phiStart 				= 1.0 ;
+					var phiLength 			= ( Math.PI * 2 ) - ( phiStart * 2 ) ;
+					var thetaStart 			= 1.0 ;
+					var thetaLength 		= Math.PI - ( thetaStart * 2 ) ;
+
+					var geomTri_buffer_ = new THREE.SphereBufferGeometry(radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength) ;
+					// geomTri_buffer_.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) );
+					// geomTri_buffer_.setIndex(      new THREE.BufferAttribute( new Uint16Array ( facesVIndices , 1) ) );
+					geomTri_buffer_.addAttribute( 'customFrequency', new THREE.BufferAttribute( pFrequencies_, 1 ) ); //.setDynamic( true ) );
+					geomTri_buffer_.addAttribute( 'customVelocity',  new THREE.BufferAttribute( pVelocities_,  3 ) ); //.setDynamic( true ) );
+					console.log("--- geomTri_buffer_ : ", geomTri_buffer_);
+
+
+					var materialLines_shader_custom_ = new THREE.ShaderMaterial( {
+						uniforms: {
+							time      : { type : "f" , value: 1.0 },
+							resolution: { type: "v2" , value: new THREE.Vector2() },
+							limitsXYZ : { value: new THREE.Vector3( radius, radius, radius/10 ) },
+							velFactor : { value: 1.0 },
+							color     : { value: new THREE.Color( 0xffffff ) },
+						},
+						vertexShader  : document.getElementById(   'vertexshader_points' ).textContent,
+						fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
+						transparent : true,
+						wireframe   : true
+					} );
+
+					var fakeMaterial = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+
+					sphereMesh = new THREE.LineSegments( geomTri_buffer_, materialLines_shader_custom_ );
+					console.log("--- sphereMesh : ", sphereMesh);
+					group.add( sphereMesh ) ;
+
+				};
+
+				//
+				addSphereArc(100, 100) ;
+
+
+        // RENDERER
+  			renderer = new THREE.WebGLRenderer( { antialias: true, alpha : true } ); // alpha true for css background-color
+  			renderer.setPixelRatio( window.devicePixelRatio );
+  			renderer.setSize( WIDTH, HEIGHT );
+  			renderer.gammaInput  = true;
+  			renderer.gammaOutput = true;
+  			container.appendChild( renderer.domElement );
+
+
+
+				// CONTROLS
+        controls = new THREE.OrbitControls( camera, container );
+        // controls = new THREE.TrackballControls( camera, renderer.domElement );
+  			controls.minDistance   = 100.0 ;
+  			controls.maxDistance   = 5000.0;
+  			controls.dampingFactor = 0.1   ;
+
+        // set stats box
+  			// stats = new Stats();
+  			// container.appendChild( stats.dom );
+
+
+        // raycasting for mouse interaction
+				raycaster = new THREE.Raycaster();
+				mouse     = new THREE.Vector2();
+
+				onWindowResize();
+        window.addEventListener(   'resize',    onWindowResize, false );
+        document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+      }
+
+
+			// UI FUNCTIONS
+      function onDocumentMouseMove( event ) {
+      				event.preventDefault();
+      				mouse.x =   ( event.clientX / WIDTH )  * 2 - 1;
+      				mouse.y = - ( event.clientY / HEIGHT ) * 2 + 1;
+      			}
+
+      function onWindowResize() {
+				renderer.setSize( WIDTH, HEIGHT );
+  			camera.aspect = WIDTH / HEIGHT ;
+  			camera.updateProjectionMatrix();
+  		}
+
+
+      // ANIMATE FUNCTION
+  		function animate() {
+
+        var vertexpos    = 0;
+  			var colorpos     = 0;
+  			var numConnected = 0;
+
+        for ( var i = 0; i < particleCount; i++ )
+  				particlesData[ i ].numConnections = 0;
+
+        for ( var i = 0; i < particleCount; i++ ) {
+
+          // get the particle
+  				var particleData = particlesData[i];
+  				// pPositions[ i * 3     ] += particleData.velocity.x * effectController.velocityFactor ;
+  				// pPositions[ i * 3 + 1 ] += particleData.velocity.y * effectController.velocityFactor ;
+  				// pPositions[ i * 3 + 2 ] += particleData.velocity.z * effectController.velocityFactor ;
+
+					// if ( pPositions[ i * 3 ]     < -rHalf || pPositions[ i * 3 ]     > rHalf )
+  				// 	particleData.velocity.x = -particleData.velocity.x;
+          // if ( pPositions[ i * 3 + 1 ] < -rHalf || pPositions[ i * 3 + 1 ] > rHalf )
+  				// 	particleData.velocity.y = -particleData.velocity.y;
+  				// if ( pPositions[ i * 3 + 2 ] < -rHalf || pPositions[ i * 3 + 2 ] > rHalf )
+  				// 	particleData.velocity.z = -particleData.velocity.z;
+
+
+
+					if ( effectController.limitConnections && particleData.numConnections >= effectController.maxConnections )
+  					continue;
+
+          // // Check collision
+  				// for ( var j = i + 1; j < particleCount; j++ ) {
+  				// 	var particleDataB = particlesData[ j ];
+  				// 	if ( effectController.limitConnections && particleDataB.numConnections >= effectController.maxConnections )
+  				// 		continue;
+  				// 	var dx = pPositions[ i * 3     ] - pPositions[ j * 3     ];
+  				// 	var dy = pPositions[ i * 3 + 1 ] - pPositions[ j * 3 + 1 ];
+  				// 	var dz = pPositions[ i * 3 + 2 ] - pPositions[ j * 3 + 2 ];
+  				// 	var dist = Math.sqrt( dx * dx + dy * dy + dz * dz );
+  				// 	if ( dist < effectController.minDistance ) {
+  				// 		particleData.numConnections++;
+  				// 		particleDataB.numConnections++;
+  				// 		var alpha = 1.0 - dist / effectController.minDistance ;
+  				// 		positionsL[ vertexpos++ ] = pPositions[ i * 3     ];
+  				// 		positionsL[ vertexpos++ ] = pPositions[ i * 3 + 1 ];
+  				// 		positionsL[ vertexpos++ ] = pPositions[ i * 3 + 2 ];
+  				// 		positionsL[ vertexpos++ ] = pPositions[ j * 3     ];
+  				// 		positionsL[ vertexpos++ ] = pPositions[ j * 3 + 1 ];
+  				// 		positionsL[ vertexpos++ ] = pPositions[ j * 3 + 2 ];
+  				// 		colorsL[ colorpos++ ] = alpha;
+  				// 		colorsL[ colorpos++ ] = alpha;
+  				// 		colorsL[ colorpos++ ] = alpha;
+  				// 		colorsL[ colorpos++ ] = alpha;
+  				// 		colorsL[ colorpos++ ] = alpha;
+  				// 		colorsL[ colorpos++ ] = alpha;
+  				// 		numConnected++;
+  				// 	}
+  				// }
+
+  			}
+				//
+        // linesMesh.geometry.setDrawRange( 0, numConnected * 2 );
+				// linesMesh.geometry.attributes.position.needsUpdate = true;
+  			// linesMesh.geometry.attributes.color.needsUpdate    = true;
+
+				// convexHullMesh.geometry.attributes.position.needsUpdate = true;
+
+
+				pointCloud.geometry.attributes.position.needsUpdate = true;
+				pointCloud.geometry.verticesNeedUpdate = true;
+
+				linesMesh.geometry.attributes.position.needsUpdate = true;
+				linesMesh.geometry.verticesNeedUpdate = true;
+
+				requestAnimationFrame( animate );
+
+        // stats.update();
+  			render();
+
+      }
+
+			// RENDER FUNCTION
+  		function render() {
+
+				// UPDATE TIME VALUE IN UNIFORMS
+  			// var time  = Date.now() * 0.01;
+				var time_ = ( Date.now() - start ) * .001 ;
+
+				// materialPoints_shader.uniforms.time.value = .001 * ( Date.now() - start )
+				pointCloud.material.uniforms.time.value      =  time_ ;
+				pointCloud.material.uniforms.velFactor.value = effectController.velocityFactor ;
+
+				linesMesh.material.uniforms.time.value       =  time_ ;
+				linesMesh.material.uniforms.velFactor.value  = effectController.velocityFactor ;
+
+				sphereMesh.material.uniforms.time.value       =  time_ ;
+				sphereMesh.material.uniforms.velFactor.value  = effectController.velocityFactor ;
+				// pointCloud.geometry.attributes.position.needsUpdate = true;
+
+				// INSTEAD OF ITERATING AT EACH FRAME CHANGE SIZE WITH TIME UNIFORM AND CUSTOMFREQUENCY
+				// var geometryP   = pointCloud.geometry  ;
+				// var attributes  = geometryP.attributes ;
+				// for ( var i = 0; i < attributes.size.array.length; i++ ) {
+				// 	attributes.size.array[ i ] = 100 + 50 * Math.sin( 0.1 * i + time );
+				// };
+				// attributes.size.needsUpdate = true;
+
+
+				// raycaster.setFromCamera( mouse, camera );
+				// var intersects = raycaster.intersectObject( group );
+        // if ( intersects.length > 0 ) {
+        //   console.log( "-X- intersecting");
+        // } else {
+				//
+        // }
+
+
+  			// group.rotation.y = time * 0.01;
+  			renderer.render( scene, camera );
+
+  		}
+
+
+
+
+
+    });
+
+
+  }) ;
+
+
+
+
+</script>
