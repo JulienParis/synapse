@@ -257,8 +257,9 @@
 
 
 	uniform   float time;
-	uniform   float velFactor;
-	uniform   float scaFactor;
+	uniform   float velFactor ;
+	uniform   float scaFactor ;
+	uniform   float breathing ;
 	uniform   float size;
 	attribute vec3  customColor;
 	attribute float customFrequency;
@@ -338,7 +339,7 @@
 		// float vnoise = float( sin( time * velFactor * customFrequency ) ) ;
 		float vnoise = noise(position + time * velFactor ) ;
 
-		vec3 posNormal = normalize( position ) * vnoise * scaFactor * float(sin(time)) * 10. ;
+		vec3 posNormal = 10. * normalize( position ) * vnoise * scaFactor * ( 1. +  float( sin(time) ) *  breathing ) ;
 
 		// float newPosX = position.x + posNormal.x * scale * 10. ; // * .02 ; // float( limitsXYZ.x/2. * sin( time * customVelocity.x * velFactor + position.x  ) ) ;
 		// float newPosY = position.y + posNormal.y * scale * 10. ; // * .02 ; // float( limitsXYZ.y/2. * sin( time * customVelocity.y * velFactor + position.y  ) ) ;
@@ -418,7 +419,9 @@
 		var container, controls, stats ;
 		var particlesData = [] ;
 		var camera, scene, renderer ;
-		var raycaster, mouse;
+
+		var raycaster, intersects ;
+		var mouse, INTERSECTED ;
 
 		var WIDTH  = window.innerWidth;
 		var HEIGHT = window.innerHeight;
@@ -431,7 +434,7 @@
 		var positionsL, colorsL ;
 		// var linesMesh ;
 		// var meshesList = [] ;
-		var sphereMesh ;
+		// var sphereMesh ;
 
 		var maxParticleCount 	= 1000;
 		var particleCount    	= 0;
@@ -452,7 +455,9 @@
 			// maxConnections  : 10,
 			particleCount   : particleCount,
 			velocityFactor  : 1. ,
-			scaleFactor     : .4
+			scaleFactor     : .4 ,
+			breathing       : 1.,
+			rotationGroup   : 1.,
 		};
 
 
@@ -488,6 +493,7 @@
 
 
 	// randomly create vertex position on a sphere arc
+	// cf : http://mathinsight.org/spherical_coordinates
 	function positionVertexOnProjectedCircleOntoSphere( radiusCircleMax, radiusSphere ) {
 
 		var position = new THREE.Vector3();
@@ -497,6 +503,10 @@
 		var ra = getRandomNumber( 0, radiusCircleMax ) ;
 		position.x = ra * Math.cos(te) ;
 		position.y = ra * Math.sin(te) ;
+
+		// populate rectangle with random point
+		// position.x = getRandomNumber( -radiusCircleMax*1.0, radiusCircleMax*1.0 );
+		// position.y = getRandomNumber( -radiusCircleMax*0.6, radiusCircleMax*0.6 );
 
 		lenXY = Math.sqrt( Math.pow(position.x, 2) + Math.pow(position.y, 2)  ) ;
 		position.z = Math.sqrt( Math.pow(radiusSphere, 2) - Math.pow(lenXY, 2)  ) ;
@@ -524,7 +534,7 @@
 
 	// for rotation whole group on X axis
 	function groupAngle( groupIndex, groupsLength ) {
-		var angleGr = 0.8 * Math.PI / groupsLength   ;
+		var angleGr = 0.6 * ( Math.PI / groupsLength ) ;
 		if ( groupIndex % 2 ) {
 			angleGr  *= - groupIndex ;
 		} else {
@@ -549,7 +559,7 @@
 
 	// for distance origin to cluster
 	function sphereRadius( clusterIndex, margin ) {
-		var clusterDist = Rbasis + clusterIndex * margin ;
+		var clusterDist = Rbasis + clusterIndex * margin * 1.2 ;
 		return clusterDist ;
 	};
 
@@ -718,17 +728,19 @@
   			// f2.add( effectController, "minDistance"   ,  10, 300 , 1       );
         f2.add( effectController, "velocityFactor",  0.,  2.  , 0.01   ) ; // .onChange( function (value) { pointCloud.material.uniforms.velFactor.value = value }) ;
 				f2.add( effectController, "scaleFactor",     0.,  10. , 0.1    ) ; // .onChange( function (value) { pointCloud.material.uniforms.velFactor.value = value }) ;
+				f2.add( effectController, "breathing"  ,     0.,  1.  , 0.1    ) ; // .onChange( function (value) { pointCloud.material.uniforms.velFactor.value = value }) ;
 				// f2.add( effectController, "outFactor",       0.,  50., 1.      ) ; // .onChange( function (value) { pointCloud.material.uniforms.velFactor.value = value }) ;
 				f2.open() ;
 
-				// var f3 = gui.addFolder("limits");
+				var f3 = gui.addFolder("limits");
+				f3.add( effectController, "rotationGroup",  0.,  1., 0.1 );
 				// // f3.add( effectController, "limitConnections" );
   			// // f3.add( effectController, "maxConnections",  0,  30, 1 );
   			// f3.add( effectController, "particleCount" ,  0, maxParticleCount, 1 ).onChange( function( value ) {
   			// 	particleCount = parseInt( value );
   			// 	particlesGeom.setDrawRange( 0, particleCount );
 				// });
-				// f3.open() ;
+				f3.open() ;
 
 			};
 
@@ -766,7 +778,7 @@
 
 				// -------------------------------------------------------
 				// SET PARTICLES SYSTEM
-				function addPointsCloud(particlesLength, angleFamily, angleGroup, radiusGroup, radiusCluster) {
+				function addPointsCloud(particlesLength, angleFamily, angleGroup, radiusGroup, radiusCluster, wireORpoints) {
 
 					// empty arrays variables
 						pPositions   = new Float32Array( particlesLength * 3 );
@@ -835,142 +847,107 @@
 	  			}
 
 
-					console.log("--- pPositions : ", pPositions);
-					console.log("--- vertices2 : ",  vertices2);
-					console.log("--- vertices3 : ",  vertices3);
+					// console.log("--- pPositions : ", pPositions);
+					// console.log("--- vertices2 : ",  vertices2);
+					// console.log("--- vertices3 : ",  vertices3);
 
 
-
+					if ( wireORpoints == "points" ) {
 					// --- ADDING POINTS --- //
-					// console.log(pPositions);
-					// particlesGeom = new THREE.BufferGeometry();
-					// particlesGeom.setDrawRange( 0, particleCount );
-	  			// particlesGeom.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) );
-					// particlesGeom.addAttribute( 'customColor',     new THREE.BufferAttribute( pColors,      3 ) ); //.setDynamic( true ) );
-					// // particlesGeom.addAttribute( 'size',            new THREE.BufferAttribute( pSizes,       1 ) ); //.setDynamic( true ) );
-					// particlesGeom.addAttribute( 'customFrequency', new THREE.BufferAttribute( pFrequencies, 1 ) ); //.setDynamic( true ) );
-					// // particlesGeom.addAttribute( 'customVelocity',  new THREE.BufferAttribute( pVelocities,  3 ) ); //.setDynamic( true ) );
-					//
-					// // create the particle system with material
-					// var materialPoints_shader_custom = createShaderMaterial_points( r,r,r/10, true ) ;
-					//
-					// console.log("--- materialPoints_shader_custom : ", materialPoints_shader_custom);
-	  			// pointCloud = new THREE.Points( particlesGeom, materialPoints_shader_custom );
-					//
-					// group.add( pointCloud );
+						// console.log(pPositions);
+						var geomTri_buffer = new THREE.BufferGeometry();
+						geomTri_buffer.setDrawRange( 0, particleCount );
+		  			geomTri_buffer.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) );
+						geomTri_buffer.addAttribute( 'customColor',     new THREE.BufferAttribute( pColors,      3 ) ); //.setDynamic( true ) );
+						geomTri_buffer.addAttribute( 'size',            new THREE.BufferAttribute( pSizes,       1 ) ); //.setDynamic( true ) );
+						geomTri_buffer.addAttribute( 'customFrequency', new THREE.BufferAttribute( pFrequencies, 1 ) ); //.setDynamic( true ) );
+						// geomTri_buffer.addAttribute( 'customVelocity',  new THREE.BufferAttribute( pVelocities,  3 ) ); //.setDynamic( true ) );
+						//
+						// // create the particle system with material
+						// var materialPoints_shader_custom = createShaderMaterial_points( r,r,r/10, true ) ;
+						//
+						// console.log("--- materialPoints_shader_custom : ", materialPoints_shader_custom);
+		  			// pointCloud = new THREE.Points( geomTri_buffer, materialPoints_shader_custom );
+						//
+						// group.add( pointCloud );
+					}
 
 
-
-
+					else {
 					// --- ADDING TRIANGULATED MESH --- //
 
-					// -----------------------------------------------------------------------
-					// TRYING DELAUNAY TRIANGULATION ON VERTICES 2D (projectd on plane XY)
-					// cf : https://github.com/callumprentice/callumprentice.github.io/blob/master/apps/delaunay/index.html
-					// cf didn't tried it but seems nice : https://github.com/mapbox/delaunator
-					var triangles = triangulate(vertices2);
-					console.log("--- triangles : ", triangles);
+						// -----------------------------------------------------------------------
+						// TRYING DELAUNAY TRIANGULATION ON VERTICES 2D (projectd on plane XY)
+						// cf : https://github.com/callumprentice/callumprentice.github.io/blob/master/apps/delaunay/index.html
+						// cf didn't tried it but seems nice : https://github.com/mapbox/delaunator
 
-					var geomTri = new THREE.Geometry();
-          var f = 0;
+						var triangles = triangulate(vertices2);
+						// console.log("--- triangles : ", triangles);
 
-					// topology custom to recreate indexed BufferGeometry
-					// cf : https://stackoverflow.com/questions/36730365/how-can-i-add-faces-to-an-indexed-three-buffergeometry
-					var uniq_edges_set = new Set() ;
-					var facesVIndices  = [] ;
+						var geomTri = new THREE.Geometry();
+	          var f = 0;
 
-					triangles.forEach( function(tri) {
+						// topology custom to recreate indexed BufferGeometry
+						// cf : https://stackoverflow.com/questions/36730365/how-can-i-add-faces-to-an-indexed-three-buffergeometry
+						var uniq_edges_set = new Set() ;
+						var facesVIndices  = [] ;
 
-						// get v1, v2, v3 indices
-						var v0_i = vertices2.indexOf(tri.v0);
-						var v1_i = vertices2.indexOf(tri.v1);
-						var v2_i = vertices2.indexOf(tri.v2);
+						triangles.forEach( function(tri) {
 
-						// store indices
-						facesVIndices.push(v0_i) ;
-						facesVIndices.push(v1_i) ;
-						facesVIndices.push(v2_i) ;
+							// get v1, v2, v3 indices
+							var v0_i = vertices2.indexOf(tri.v0);
+							var v1_i = vertices2.indexOf(tri.v1);
+							var v2_i = vertices2.indexOf(tri.v2);
 
-						// make and store edges vindices
+							// store indices
+							facesVIndices.push(v0_i) ;
+							facesVIndices.push(v1_i) ;
+							facesVIndices.push(v2_i) ;
 
-						var e0_   = [v0_i,v1_i].sort() ; var e0 = e0_.join(".") ;
-						var e1_   = [v1_i,v2_i].sort() ; var e1 = e1_.join(".") ;
-						var e2_   = [v2_i,v0_i].sort() ; var e2 = e2_.join(".") ;
+							// make and store edges vindices
 
-						// add edges to unique edges set
-						uniq_edges_set.add(e0).add(e1).add(e2) ;
+							var e0_   = [v0_i,v1_i].sort() ; var e0 = e0_.join(".") ;
+							var e1_   = [v1_i,v2_i].sort() ; var e1 = e1_.join(".") ;
+							var e2_   = [v2_i,v0_i].sort() ; var e2 = e2_.join(".") ;
 
-
-					})
-
-					console.log("--- uniq_edges_set : ", uniq_edges_set);
-					// make list of edges as couples of vertex indices
-					var uniq_edges_v_indices   = [] ;
-					for (let eString of uniq_edges_set) {
-						var vi_s = eString.split(".") ;
-						var vi_0 = parseInt(vi_s[0]) ;
-						var vi_1 = parseInt(vi_s[1]) ;
-						uniq_edges_v_indices.push(vi_0) ;
-						uniq_edges_v_indices.push(vi_1) ;
-					};
-					console.log("--- uniq_edges_v_indices : ", uniq_edges_v_indices);
-
-					geomTri_buffer = new THREE.BufferGeometry();//.fromGeometry(geomTri) ;
-						// var ePositions = new Float32Array( geomTri.vertices.length * 3 );
-						// for (i = 0; i < geomTri_buffer.attributes.position.length ; i++){
-						// 	var eV = geomTri_buffer.attributes.position[i] ;
-						// 	if(i==0) {
-						// 		console.log("--- eV --- ", eV);
-						// 	}
-						// 	eV.toArray( ePositions, i * 3 );
-						// };
-						// console.log("--- ePositions :", ePositions );
-						// geomTri_buffer.setDrawRange( 0, 17984  );
-					geomTri_buffer.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,     3 ).setDynamic( true ) );
-					geomTri_buffer.setIndex(      new THREE.BufferAttribute( new Uint16Array ( facesVIndices , 1) ) );
-					geomTri_buffer.addAttribute( 'customFrequency', new THREE.BufferAttribute( pFrequencies,   1 ) ); //.setDynamic( true ) );
-					// geomTri_buffer.addAttribute( 'customVelocity',  new THREE.BufferAttribute( pVelocities,    3 ) ); //.setDynamic( true ) );
+							// add edges to unique edges set
+							uniq_edges_set.add(e0).add(e1).add(e2) ;
 
 
-					console.log("--- geomTri_buffer : ", geomTri_buffer);
+						})
 
+						// console.log("--- uniq_edges_set : ", uniq_edges_set);
+						// make list of edges as couples of vertex indices
+						var uniq_edges_v_indices   = [] ;
+						for (let eString of uniq_edges_set) {
+							var vi_s = eString.split(".") ;
+							var vi_0 = parseInt(vi_s[0]) ;
+							var vi_1 = parseInt(vi_s[1]) ;
+							uniq_edges_v_indices.push(vi_0) ;
+							uniq_edges_v_indices.push(vi_1) ;
+						};
+						// console.log("--- uniq_edges_v_indices : ", uniq_edges_v_indices);
 
+						var geomTri_buffer = new THREE.BufferGeometry();//.fromGeometry(geomTri) ;
+							// var ePositions = new Float32Array( geomTri.vertices.length * 3 );
+							// for (i = 0; i < geomTri_buffer.attributes.position.length ; i++){
+							// 	var eV = geomTri_buffer.attributes.position[i] ;
+							// 	if(i==0) {
+							// 		console.log("--- eV --- ", eV);
+							// 	}
+							// 	eV.toArray( ePositions, i * 3 );
+							// };
+							// console.log("--- ePositions :", ePositions );
+							// geomTri_buffer.setDrawRange( 0, 17984  );
+						geomTri_buffer.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,     3 ).setDynamic( true ) );
+						geomTri_buffer.setIndex(      new THREE.BufferAttribute( new Uint16Array ( facesVIndices , 1) ) );
+						geomTri_buffer.addAttribute( 'customFrequency', new THREE.BufferAttribute( pFrequencies,   1 ) ); //.setDynamic( true ) );
+						// geomTri_buffer.addAttribute( 'customVelocity',  new THREE.BufferAttribute( pVelocities,    3 ) ); //.setDynamic( true ) );
+					}
 
+					// console.log("--- geomTri_buffer : ", geomTri_buffer);
 
-					// var materialLines_shader_custom = createShaderMaterial_lines( r,r,r ) ;
-
-					var materialLines_shader_custom = new THREE.ShaderMaterial( {
-						uniforms: {
-							time        : { type : "f" , value: 1.0 },
-							resolution  : { type: "v2" , value: new THREE.Vector2() },
-							// limitsXYZ : { value: new THREE.Vector3( r, r, r/10 ) },
-							velFactor   : { value: 1.0 },
-							scaFactor   : { value: 1.0 },
-							color       : { value: new THREE.Color( 0xffffff ) },
-						},
-						vertexShader  : document.getElementById( 'vertexshader_points' ).textContent,
-						fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
-						transparent : true,
-						wireframe   : true
-					} );
-
-
-					console.log("--- materialLines_shader_custom : ",materialLines_shader_custom);
-					// linesMesh = new THREE.LineSegments( geomTri_buffer, materialLines_shader_custom) ;
-					var linesMesh = new THREE.LineSegments( geomTri_buffer, materialLines_shader_custom) ;
-					// meshesList.push(linesMesh) ;
-
-					// linesMesh = new THREE.LineSegments( geomTri_buffer, wireframeMaterial) ;
-
-					// linesMesh = new THREE.Mesh( geomTri, wireframeMaterial) ;
-					// console.log( "--- linesMesh : ", linesMesh );
-
-					linesMesh.rotation.x = angleGroup  ;
-					linesMesh.rotation.y = angleFamily ;
-
-					group.add( linesMesh );
-
-
+					return geomTri_buffer ;
 				};
 
 
@@ -1001,28 +978,84 @@
 				// iteration on families
 				Object.keys(json_notices).forEach( function (keyFa, indexFa) {
 
-					console.log("--- ITERATION / family : ", keyFa, indexFa, json_fake[keyFa] );
+					// -- FOR EACH FAMILY
+					console.log("--- ITERATION FA / keyFa, indexFa : ", keyFa, indexFa );
 
 					var angleFa = familyAngle( indexFa, familiesLen);
-					console.log("--- ITERATION  / angleFa : ", angleFa );
+					console.log("--- ITERATION FA / angleFa : ", angleFa );
 
 					var faGroups     = json_notices[keyFa]["CHILDREN"];
 					var faGroupsLen  = Object.keys(faGroups).length   ;
-					console.log("--- ITERATION / faGroupsLen, faGroups : " , faGroupsLen, faGroups);
+					console.log("--- ITERATION FA / keyFa, faGroupsLen : " , keyFa, faGroupsLen );
+
 
 					Object.keys(faGroups).forEach( function (keyGroup, indexGroup) {
 
-						var distGroup  = sphereRadius(indexGroup, RmarginDist  ) ;
+						// --- FOR EACH FAMILY
+						var groupName = faGroups[keyGroup]["NAME"]  ;
+						var groupLen  = faGroups[keyGroup]["STATS"] ;
 
+						var groupFa3D = new THREE.Group () ;
+						groupFa3D.customFactor = getRandomNumber( 1, 5);
+						scene.add( groupFa3D );
+
+						console.log("------ ITERATION GR / keyFa, keyGroup, groupName, groupLen : " , keyFa, keyGroup, groupName, groupLen );
+						var distGroup  = sphereRadius(indexGroup, RmarginDist  ) ;
 						var angleGroup = groupAngle( indexGroup, faGroupsLen );
 
+
+						// Object.keys(faGroups).forEach( function (keyGroup, indexGroup) {
+
 						// addPointsCloud --> particlesLength, angleFamily, angleGroup, radiusGroup, radiusCluster
-						addPointsCloud(maxCluster, angleFa, angleGroup, maxCircleRad*.9, distGroup + Rbasis * indexFa / familiesLen ) ; // distGroup or Rbasis
+						var geomTri_buffer = addPointsCloud(maxCluster, angleFa, angleGroup, maxCircleRad*.9, distGroup + Rbasis * indexFa / familiesLen , "wire") ; // distGroup or Rbasis
+
+						// var materialLines_shader_custom = createShaderMaterial_lines( r,r,r ) ;
+						var materialLines_shader_custom = new THREE.ShaderMaterial( {
+							uniforms: {
+								time        : { type : "f" , value: 1.0 },
+								resolution  : { type: "v2" , value: new THREE.Vector2() },
+								// limitsXYZ : { value: new THREE.Vector3( r, r, r/10 ) },
+								velFactor   : { value: 1.0 },
+								scaFactor   : { value: 1.0 },
+								breathing   : { value: 1.0 },
+								color       : { value: new THREE.Color( 0xffffff ) },
+							},
+							vertexShader  : document.getElementById( 'vertexshader_points' ).textContent,
+							fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
+							transparent : true,
+							wireframe   : true
+						} );
+
+
+						// console.log("--- materialLines_shader_custom : ",materialLines_shader_custom);
+						// linesMesh = new THREE.LineSegments( geomTri_buffer, materialLines_shader_custom) ;
+						var linesMesh = new THREE.LineSegments( geomTri_buffer, materialLines_shader_custom) ;
+						// meshesList.push(linesMesh) ;
+
+						// linesMesh = new THREE.LineSegments( geomTri_buffer, wireframeMaterial) ;
+
+						// linesMesh = new THREE.Mesh( geomTri, wireframeMaterial) ;
+						// console.log( "--- linesMesh : ", linesMesh );
+
+
+						// apply rotation on sub-group
+						// var rot = new THREE.Euler( angleGroup, angleFa, 0, 'XYZ' );
+						// linesMesh.position.applyEuler(rot) ;
+
+						linesMesh.eulerOrder = "ZYX" ;
+						linesMesh.rotation.x += angleGroup  ;
+						linesMesh.rotation.y += angleFa ;
+
+
+
+						groupFa3D.add( linesMesh );
+
+
 
 					});
 
 
-					console.log("--- ");
+					console.log(" ======================================== ");
 
 
 
@@ -1114,7 +1147,7 @@
 
 				scene.traverse( function( node ) {
 
-			    if ( node instanceof THREE.LineSegments ) {
+			    if ( node instanceof THREE.LineSegments | node instanceof THREE.Points ) {
 
 		        // insert your code here, for example:
 		        // node.material = new THREE.MeshNormalMaterial() ;
@@ -1157,17 +1190,18 @@
 
 				scene.traverse( function( node ) {
 
-			    if ( node instanceof THREE.LineSegments ) {
+			    if ( node instanceof THREE.LineSegments | node instanceof THREE.Points ) {
 
 						if (node.name != "helper") {
 							// console.log("--- traverse / node : ", node );
 							node.material.uniforms.time.value       =  time_ ;
 							node.material.uniforms.velFactor.value  = effectController.velocityFactor ;
 							node.material.uniforms.scaFactor.value  = effectController.scaleFactor ;
+							node.material.uniforms.breathing.value  = effectController.breathing ;
 						}
 					}
 
-				} );
+				});
 
 				// for (var mesh_ in meshesList) {
 				// 	mesh_.material.uniforms.time.value       =  time_ ;
@@ -1175,9 +1209,15 @@
 				// 	mesh_.material.uniforms.scaFactor.value  = effectController.scaleFactor ;
 				// } ;
 
-  			group.rotation.x = time_ * 0.04 ;
-				group.rotation.y = time_ * 0.02 ;
-  			renderer.render( scene, camera );
+				scene.traverse( function( node ) {
+					if ( node instanceof THREE.Group ) {
+		  			node.rotation.x = time_ * 0.04 * effectController.rotationGroup * node.customFactor ;
+						node.rotation.y = time_ * 0.02 * effectController.rotationGroup * node.customFactor ;
+					}
+				}) ;
+
+				renderer.render( scene, camera );
+
 
   		}
 
