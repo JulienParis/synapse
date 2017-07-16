@@ -104,7 +104,7 @@ This application proposes several features :
   $ sudo apt-get install ntp
   ```
 
-  - **if needed** : `$ sudo ufw delete allow 80`
+  - *** if needed: `$ sudo ufw delete allow 80`
 
   - check enabled ports : `$ sudo ufw show added`
 
