@@ -32,7 +32,7 @@ with app.app_context():
 
     print "starting app --- connect to webservice Aloes"
     ### get authentification args from config.py
-    SYNAPSE_IP   = app.config["SYNAPSE_IP"]
+    SYNAPSE_IP   = app.config["SYNAPSE_IP"] ### OR : app.config["SYNAPSE_IP_PROD"]
     WSDL         = app.config["WSDL"]
     NOM_MACHINE  = app.config["NOM_MACHINE"]
 

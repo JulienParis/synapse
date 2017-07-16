@@ -219,54 +219,58 @@
 		// }
 
 
-		// Rotate / cf : https://gist.github.com/jeanlescure/e27c93b73a10b64e85e4
-		uniform float rotationX ;
-		uniform float rotationY ;
-		uniform float rotationZ ;
-		uniform vec3  limitsXYZ ;
+	// Rotate / cf : https://gist.github.com/jeanlescure/e27c93b73a10b64e85e4
+	uniform float rotationX ;
+	uniform float rotationY ;
+	uniform float rotationZ ;
+	// uniform vec3  limitsXYZ ;
 
-		// rotation matrice function
-		mat4 rotMat (float rotationX, float rotationY, float rotationZ ) {
+	// rotation matrice function
+	mat4 rotMat ( float rotationX, float rotationY, float rotationZ ) {
 
-			mat4 rXPos = mat4(vec4(1.0,0.0,0.0,0.0),
-												vec4(0.0,cos(rotationX),-sin(rotationX),0.0),
-												vec4(0.0,sin(rotationX),cos(rotationX),0.0),
-												vec4(0.0,0.0,0.0,1.0)
-											);
+		mat4 rXPos = mat4(vec4(1.0,0.0,0.0,0.0),
+											vec4(0.0,cos(rotationX),-sin(rotationX),0.0),
+											vec4(0.0,sin(rotationX),cos(rotationX),0.0),
+											vec4(0.0,0.0,0.0,1.0)
+										);
 
-			mat4 rYPos = mat4(vec4(cos(rotationY),0.0,sin(rotationY),0.0),
-												vec4(0.0,1.0,0.0,0.0),
-												vec4(-sin(rotationY),0.0,cos(rotationY),0.0),
-												vec4(0.0,0.0,0.0,1.0)
-											);
+		mat4 rYPos = mat4(vec4(cos(rotationY),0.0,sin(rotationY),0.0),
+											vec4(0.0,1.0,0.0,0.0),
+											vec4(-sin(rotationY),0.0,cos(rotationY),0.0),
+											vec4(0.0,0.0,0.0,1.0)
+										);
 
-			mat4 rZPos = mat4(vec4(cos(rotationZ),-sin(rotationZ),0.0,0.0),
-												vec4(sin(rotationZ),cos(rotationZ),0.0,0.0),
-												vec4(0.0,0.0,1.0,0.0),
-												vec4(0.0,0.0,0.0,1.0)
-											);
+		mat4 rZPos = mat4(vec4(cos(rotationZ),-sin(rotationZ),0.0,0.0),
+											vec4(sin(rotationZ),cos(rotationZ),0.0,0.0),
+											vec4(0.0,0.0,1.0,0.0),
+											vec4(0.0,0.0,0.0,1.0)
+										);
 
-			mat4  vPosition ;
-			vPosition =  rXPos * rZPos * rYPos ;
+		mat4  vPosition ;
+		vPosition =  rXPos * rZPos * rYPos ;
 
-			return vPosition ;
+		return vPosition ;
 
-		}
-
-
+	}
 
 
-	uniform   float time;
+	uniform   float time      ;
 	uniform   float velFactor ;
 	uniform   float scaFactor ;
 	uniform   float breathing ;
-	uniform   float size;
-	attribute vec3  customColor;
-	attribute float customFrequency;
+	uniform   float size      ;
+	uniform   float familyI   ;
+	uniform   float familiesL ;
+	uniform   float groupI    ;
+	uniform   float groupL    ;
+
+	// attribute vec3  customColor;
+	// attribute float customFrequency;
 	// attribute vec3  customVelocity;
 
 
-	varying   vec3  vColor;
+	// varying   vec3  vColor;
+	// varying   vec4  famillyC ;
 
 	// --- CUSTOM NOISE --- cf : https://stackoverflow.com/questions/15628039/simplex-noise-shader
 		// hash based 3d value noise
@@ -300,9 +304,9 @@
 
 	// GENERIC NOISE --- cf : https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
 
-	float mod289(float x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
-	vec4  mod289(vec4 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
-	vec4  perm(vec4 x){return mod289(((x * 34.0) + 1.0) * x);}
+	float mod289( float x ){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
+	vec4  mod289( vec4  x ){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
+	vec4  perm(   vec4  x ){ return mod289(((x * 34.0) + 1.0) * x); }
 
 	float noise(vec3 p){
 	    vec3 a = floor(p);
@@ -317,8 +321,8 @@
 	    vec4 k3 = perm(c);
 	    vec4 k4 = perm(c + 1.0);
 
-	    vec4 o1 = fract(k3 * (1.0 / 41.0));
-	    vec4 o2 = fract(k4 * (1.0 / 41.0));
+	    vec4 o1 = fract(k3 * (1.0 / 50.0));
+	    vec4 o2 = fract(k4 * (1.0 / 50.0));
 
 	    vec4 o3 = o2 * d.z + o1 * (1.0 - d.z);
 	    vec2 o4 = o3.yw * d.x + o3.xz * (1.0 - d.x);
@@ -330,16 +334,19 @@
 
 	void main() {
 
-		vColor = customColor;
+		// vColor = customColor;
+		// familyC = familyI * .1 ;
+		// familyC = vec4 ( familyI, familyI, familyI, .5 );
+		// familyC = vec4 ( vec3( 1., familyI , 1. ) , .5 );
 
 		// update position from within vertex shader
 		// cf : https://fr.wikipedia.org/wiki/Signal_sinusoïdal
 		// cf : https://stackoverflow.com/questions/1073606/is-there-a-one-line-function-that-generates-a-triangle-wave
 
 		// float vnoise = float( sin( time * velFactor * customFrequency ) ) ;
-		float vnoise = noise(position + time * velFactor ) ;
+		float vnoise   = noise( position + time * velFactor * familyI ) ;
 
-		vec3 posNormal = 10. * normalize( position ) * vnoise * scaFactor * ( 1. +  float( sin(time) ) *  breathing ) ;
+		vec3 posNormal =  10. * normalize( position ) * vnoise * scaFactor * ( .0 +  float( sin(time) ) *  breathing ) ;
 
 		// float newPosX = position.x + posNormal.x * scale * 10. ; // * .02 ; // float( limitsXYZ.x/2. * sin( time * customVelocity.x * velFactor + position.x  ) ) ;
 		// float newPosY = position.y + posNormal.y * scale * 10. ; // * .02 ; // float( limitsXYZ.y/2. * sin( time * customVelocity.y * velFactor + position.y  ) ) ;
@@ -350,15 +357,20 @@
 		// store updated position
 		// vec3 newPos  = vec3( newPosX, newPosY, newPosZ ) ;
 
-		vec3 newPos  = position + posNormal ;
+		vec3 newPos_  = position + posNormal ;
+		vec4 newPos   = vec4( newPos_ , 1.0 ) ;
+
+		mat4 rotP = rotMat( time * .1  * velFactor , sin(time*.1) , time * velFactor ) ;
 
 		// apply position to view matrix
-		vec4 mvPosition = modelViewMatrix * vec4( newPos , 1.0 ); // new position
+		vec4 mvPosition =  modelViewMatrix * rotP * newPos ; // new position
 		// vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 ); // original position
 
 
+
+
 		// gl_PointSize    = size * ( 400.0 / -mvPosition.z ) ;
-		gl_PointSize = (1.0 + sin( customFrequency * time )) * size * ( 300.0 / length( mvPosition.xyz ) );
+		gl_PointSize = ( 1.0 + sin( time )) * size * ( 300.0 / length( mvPosition.xyz ) );
 		// gl_PointSize    = size + size * ( sin( time ) );
 
 		// apply projection matrix to viewPosition
@@ -377,7 +389,7 @@
 
 	uniform vec3      color;
 	uniform sampler2D texture;
-	varying vec3      vColor;
+	varying vec3   vColor;
 
 	void main() {
 		gl_FragColor = vec4( color * vColor, 1. );
@@ -401,9 +413,24 @@
 
 <script type="x-shader/x-fragment" id="fragmentShader">
 
+	uniform   float familyI   ;
+	uniform   float familiesL ;
+	uniform   float groupI    ;
+	uniform   float groupL    ;
+	// varying vec4 familyC  ;
+	uniform float time ;
+	// uniform vec3 color ;
+	// uniform vec4 color ;
+
 	void main() {
-		gl_FragColor.rgb = mix( vec3( 1.0 ), vec3( 0.2 ), vec3( 0.2 ) );
-		gl_FragColor.a = 1.0;
+		// gl_FragColor = vec4( familyI  , 0. , 0.  , 1. );
+		vec3 color = vec3 ( sin(time * familyI / familiesL ), 1., 1. );
+		gl_FragColor = vec4( color , .8 );
+		// gl_FragColor = color ;
+		// gl_FragColor = familyC ;
+		// gl_FragColor.rgb = mix( vec3( famillyI * .2 ), vec3( famillyI * .1 ), vec3( 1. ) );
+		// gl_FragColor.rgb = mix( vec3( 1. - famillyI * .1  ), vec3( 1. - famillyI * .1 ), vec3(  1. - famillyI * .1 ) );
+		// gl_FragColor.a = 1.0;
 	}
 </script>
 
@@ -412,6 +439,7 @@
 
 
 	// --- GLOBAL VARIABLES --- //
+	// ------------------------ //
 
 		var start = Date.now() ;
 
@@ -419,6 +447,7 @@
 		var container, controls, stats ;
 		var particlesData = [] ;
 		var camera, scene, renderer ;
+		var gui ;
 
 		var raycaster, intersects ;
 		var mouse, INTERSECTED ;
@@ -453,12 +482,23 @@
 			// minDistance     : 120,
 			// limitConnections: true,
 			// maxConnections  : 10,
-			particleCount   : particleCount,
-			velocityFactor  : 1. ,
+			// particleCount   : particleCount,
+			velocityFactor  : .2 ,
 			scaleFactor     : .4 ,
-			breathing       : 1.,
-			rotationGroup   : 1.,
+			breathing       : 1. ,
+			rotationGroup   : 1. ,
 		};
+
+		var familiesColors = [
+			"rgb(255,188,158)",
+			"rgb(79,116,255)",
+			"rgb(213,209,0)",
+			"rgb(201,52,72)",
+			"rgb(156,255,168)",
+			"rgb(255,133,16)",
+			"rgb(1,136,116)",
+		];
+
 
 
 
@@ -500,7 +540,7 @@
 
 		// populate circle with random point
 		var te = getRandomNumber( 0, 2. * Math.PI ) ;
-		var ra = getRandomNumber( 0, radiusCircleMax ) ;
+		var ra = getRandomNumber( radiusCircleMax/2., radiusCircleMax ) ;
 		position.x = ra * Math.cos(te) ;
 		position.y = ra * Math.sin(te) ;
 
@@ -512,6 +552,7 @@
 		position.z = Math.sqrt( Math.pow(radiusSphere, 2) - Math.pow(lenXY, 2)  ) ;
 
 		return position ;
+
 	};
 
 
@@ -519,7 +560,7 @@
 	function maxCircleRadius ( familiesLength ) {
 		var angleIsocele = ( Math.PI * 2. - ( familiesLength * RmarginAngle ) ) / familiesLength  ;
 		console.log("___ angleIsocele : ", angleIsocele);
-		var maxRadius    = Rbasis * Math.sin( angleIsocele ) ;
+		var maxRadius    = Rbasis * Math.sin( angleIsocele ) * 0.8 ;
 		return maxRadius ;
 	};
 
@@ -533,13 +574,17 @@
 	};
 
 	// for rotation whole group on X axis
-	function groupAngle( groupIndex, groupsLength ) {
-		var angleGr = 0.6 * ( Math.PI / groupsLength ) ;
-		if ( groupIndex % 2 ) {
-			angleGr  *= - groupIndex ;
-		} else {
-			angleGr  *= groupIndex ;
-		}
+	function groupAngle( groupIndex, groupsLength, angleLap ) {
+		// var angleGr = 1. * ( Math.PI / groupsLength ) ;
+		// if ( groupIndex % 2 ) {
+		// 	angleGr  *= - groupIndex ;
+		// } else {
+		// 	angleGr  *= groupIndex ;
+		// }
+		var angleGr = ( groupIndex - groupsLength/2. ) * Math.PI / angleLap ;
+		// if ( groupIndex % 2 ) {
+		// 	angleGr  *= - 1 ;
+		// }
 		return angleGr ;
 	};
 
@@ -559,9 +604,270 @@
 
 	// for distance origin to cluster
 	function sphereRadius( clusterIndex, margin ) {
-		var clusterDist = Rbasis + clusterIndex * margin * 1.2 ;
+		var clusterDist = Rbasis + clusterIndex * margin * 1.4 ;
 		return clusterDist ;
 	};
+
+
+
+	// --- DEFINE SHADER MATERIALS : SHADERMATERIAL AND USUAL MATERIAL
+	function createShaderMaterial ( familyIndex,
+																	familiesLength,
+																	groupIndex,
+																	groupsLen,
+																	is_wire,
+																	is_texture ) {
+
+		var colorG  = new THREE.Color( 0xffffff ) ;
+		// var randColor = Math.random() ;
+		// var famColor = familyIndex / familiesLength ;
+		// // var randHSl = "hsl(" + randColor + ", 100%, 80%)" ;
+		// var colorG  = new THREE.Color( famColor, 0.2,  0.6 ) ;
+
+		var famColor = familiesColors[familyIndex] ;
+		// var colorG  = new THREE.Color( famColor )  ;
+
+
+		console.log( ">>> familyIndex" , familyIndex );
+
+		var uniforms = {
+			time        : { type  : "f"  , value: 1.0 },
+			resolution  : { type  : "v2" , value: new THREE.Vector2() },
+			velFactor   : { value : effectController.velocityFactor },
+			scaFactor   : { value : effectController.scaleFactor },
+			breathing   : { value : effectController.breathing },
+			color       : { value : colorG },
+			familyI     : { value : familyIndex },
+			familiesL   : { value : familiesLength },
+			groupI      : { value : groupIndex  },
+			groupsL     : { value : groupsLen  },
+		} ;
+
+		if ( is_wire == false ) {
+			uniforms.size = { value : 50. } ;
+		} ;
+
+		if ( is_texture == true ) {
+			uniforms.texture = { value: new THREE.TextureLoader().load( "{{ url_for('static', filename='textures/sprites/spark1.png') }}" ) } ;
+		} ;
+
+		// from : https://github.com/mrdoob/three.js/blob/master/examples/webgl_custom_attributes_points.html
+		var material_shader = new THREE.ShaderMaterial( {
+			uniforms      : uniforms ,
+			vertexShader  : document.getElementById( 'vertexshader_points'   ).textContent,
+			fragmentShader: document.getElementById( 'fragmentshader_points' ).textContent,
+			// transparent:    true,
+			// wireframe  :    true
+		});
+
+		if ( is_wire == true ) {
+			material_shader.fragmentShader = document.getElementById( 'fragmentShader' ).textContent ;
+			material_shader.transparent    = true ;
+			material_shader.wireframe      = true ;
+		} ;
+
+		return material_shader ;
+
+	};
+
+
+	//// --- DEFINE BASIC LINES MATERIAL
+	var materialLines = new THREE.LineBasicMaterial( {
+		vertexColors: THREE.VertexColors,
+		blending    : THREE.AdditiveBlending,
+		transparent : true
+	} );
+
+	var wireframeMaterial = new THREE.MeshBasicMaterial( {
+		color      : 0xffffff,
+		wireframe  : true,
+		// transparent: true
+	} );
+
+
+
+	// -------------------------------------------------------
+	// SET PARTICLES SYSTEM
+	function addPointsCloud(particlesLength, angleFamily, angleGroup, radiusGroup, radiusCluster, wireORpoints) {
+
+		// empty arrays variables
+			pPositions   = new Float32Array( particlesLength * 3 );
+			pColors      = new Float32Array( particlesLength * 3 );
+			pSizes       = new Float32Array( particlesLength     );
+			// pFamily      = new Float32Array( particlesLength     ); // those are uniforms --> set in ShaderMaterial
+			// pGroup       = new Float32Array( particlesLength     ); // those are uniforms --> set in ShaderMaterial
+			// pFrequencies = new Float32Array( particlesLength     );
+			// pVelocities  = new Float32Array( particlesLength * 3 );
+
+			var color     = new THREE.Color( 0xffffff );
+			var vertices3 = [] ;
+			var vertices2 = [] ;
+
+
+			// sphere arc variables
+			// var radiusCircle 				= Rbasis*2/3 ;
+			// var radiusSphere 				= Rbasis ;
+			// var phiStart 			= 1.2 ;
+			// var phiLength 		= Math.PI - ( phiStart ) ;
+			// var thetaStart 		= 2. ;
+			// var thetaLength 	= ( Math.PI * 2 ) - ( thetaStart ) ;
+			// console.log("sphere variables : radius / thetaLength / phiLength ",radius, thetaLength, phiLength  );
+
+
+		// CREATE EACH PARTICLE
+		for ( var i = 0; i < particlesLength; i++ ) {
+
+
+			// var vertex3 = positionVertexOnSphere(radius, phiStart, phiLength, thetaStart, thetaLength) ;
+			// var vertex3 = positionVertexOnProjectedCircleOntoSphere(radiusCircle, radiusSphere) ;
+			var vertex3 = positionVertexOnProjectedCircleOntoSphere(radiusGroup, radiusCluster) ;
+
+			// var vertex3 = new THREE.Vector3();
+			var vertex2 = new Vertex();
+
+			vertex2.x = vertex3.x ;
+			vertex2.y = vertex3.y ;
+
+			// vertex2.x = vertex3.x = Math.random() * Rbasis - Rbasis / 2.;
+			// vertex2.y = vertex3.y = Math.random() * Rbasis - Rbasis / 2.;
+			// vertex3.z = 0 ; // Math.random() * Rbasis - Rbasis / 2.;
+
+
+			vertex3.toArray( pPositions, i * 3 );
+			vertices3[i] = vertex3 ;
+			vertices2.push( vertex2 )  ;
+
+			// set color cf : https://www.w3schools.com/colors/colors_hsl.asp
+			color.setHSL( 0., 0., 1. );
+			color.toArray( pColors, i * 3 );
+
+			// push to separate particlesData
+			// particlesData.push( {
+				// velocity: new THREE.Vector3( -1 + Math.random() , -1 + Math.random(),  -1 + Math.random() ),
+				// rotPhi : , // in radians
+				// rotThe : , // in radians
+				// numConnections: 0
+			// } );
+
+			// set default size and frequency
+
+			pSizes[i]       = 100 ;
+			// pFrequencies[i] = 5 * Math.random() + 0.5;
+			// velocity        = new THREE.Vector3( -1 + Math.random() , -1 + Math.random(),  -1 + Math.random() ),
+			// velocity.toArray( pVelocities, i * 3 );
+
+		}
+
+
+		// console.log("--- pPositions : ", pPositions);
+		// console.log("--- vertices2 : ",  vertices2);
+		// console.log("--- vertices3 : ",  vertices3);
+
+
+		var geomTri_buffer = new THREE.BufferGeometry();
+		geomTri_buffer.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) );
+
+
+		if ( wireORpoints == "points" ) {
+		// --- ADDING POINTS --- //
+			// -----------------------------------------------------------------------
+			// console.log(pPositions);
+			// var geomTri_buffer = new THREE.BufferGeometry();
+			// geomTri_buffer.setDrawRange( 0, particleCount );
+			// geomTri_buffer.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) );
+			geomTri_buffer.addAttribute( 'customColor',     new THREE.BufferAttribute( pColors,      3 ) ); //.setDynamic( true ) );
+			geomTri_buffer.addAttribute( 'size',            new THREE.BufferAttribute( pSizes,       1 ) ); //.setDynamic( true ) );
+			// geomTri_buffer.addAttribute( 'customFrequency', new THREE.BufferAttribute( pFrequencies, 1 ) ); //.setDynamic( true ) );
+			// geomTri_buffer.addAttribute( 'customVelocity',  new THREE.BufferAttribute( pVelocities,  3 ) ); //.setDynamic( true ) );
+			//
+			// // create the particle system with material
+			// var materialPoints_shader_custom = createShaderMaterial_points( r,r,r/10, true ) ;
+			//
+			// console.log("--- materialPoints_shader_custom : ", materialPoints_shader_custom);
+			// pointCloud = new THREE.Points( geomTri_buffer, materialPoints_shader_custom );
+			//
+			// group.add( pointCloud );
+		}
+
+
+		else {
+		// --- ADDING TRIANGULATED MESH --- //
+			// -----------------------------------------------------------------------
+			// TRYING DELAUNAY TRIANGULATION ON VERTICES 2D (projectd on plane XY)
+			// cf : https://github.com/callumprentice/callumprentice.github.io/blob/master/apps/delaunay/index.html
+			// cf didn't tried it but seems nice : https://github.com/mapbox/delaunator
+
+			var triangles = triangulate(vertices2);
+			// console.log("--- triangles : ", triangles);
+
+			var geomTri = new THREE.Geometry();
+			var f = 0;
+
+			// topology custom to recreate indexed BufferGeometry
+			// cf : https://stackoverflow.com/questions/36730365/how-can-i-add-faces-to-an-indexed-three-buffergeometry
+			var uniq_edges_set = new Set() ;
+			var facesVIndices  = [] ;
+
+			triangles.forEach( function(tri) {
+
+				// get v1, v2, v3 indices
+				var v0_i = vertices2.indexOf(tri.v0);
+				var v1_i = vertices2.indexOf(tri.v1);
+				var v2_i = vertices2.indexOf(tri.v2);
+
+				// store indices
+				facesVIndices.push(v0_i) ;
+				facesVIndices.push(v1_i) ;
+				facesVIndices.push(v2_i) ;
+
+				// make and store edges vindices
+
+				var e0_   = [v0_i,v1_i].sort() ; var e0 = e0_.join(".") ;
+				var e1_   = [v1_i,v2_i].sort() ; var e1 = e1_.join(".") ;
+				var e2_   = [v2_i,v0_i].sort() ; var e2 = e2_.join(".") ;
+
+				// add edges to unique edges set
+				uniq_edges_set.add(e0).add(e1).add(e2) ;
+
+
+			})
+
+			// console.log("--- uniq_edges_set : ", uniq_edges_set);
+			// make list of edges as couples of vertex indices
+			var uniq_edges_v_indices   = [] ;
+			for (let eString of uniq_edges_set) {
+				var vi_s = eString.split(".") ;
+				var vi_0 = parseInt(vi_s[0]) ;
+				var vi_1 = parseInt(vi_s[1]) ;
+				uniq_edges_v_indices.push(vi_0) ;
+				uniq_edges_v_indices.push(vi_1) ;
+			};
+			// console.log("--- uniq_edges_v_indices : ", uniq_edges_v_indices);
+
+			// var geomTri_buffer = new THREE.BufferGeometry();//.fromGeometry(geomTri) ;
+				// var ePositions = new Float32Array( geomTri.vertices.length * 3 );
+				// for (i = 0; i < geomTri_buffer.attributes.position.length ; i++){
+				// 	var eV = geomTri_buffer.attributes.position[i] ;
+				// 	if(i==0) {
+				// 		console.log("--- eV --- ", eV);
+				// 	}
+				// 	eV.toArray( ePositions, i * 3 );
+				// };
+				// console.log("--- ePositions :", ePositions );
+				// geomTri_buffer.setDrawRange( 0, 17984  );
+			// geomTri_buffer.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,     3 ).setDynamic( true ) );
+			geomTri_buffer.setIndex(      new THREE.BufferAttribute( new Uint16Array ( facesVIndices , 1) ) );
+			// geomTri_buffer.addAttribute( 'customFrequency', new THREE.BufferAttribute( pFrequencies,   1 ) ); //.setDynamic( true ) );
+			// geomTri_buffer.addAttribute( 'customVelocity',  new THREE.BufferAttribute( pVelocities,    3 ) ); //.setDynamic( true ) );
+		}
+
+		// console.log("--- geomTri_buffer : ", geomTri_buffer);
+
+		return geomTri_buffer ;
+
+
+	};
+
 
 
 
@@ -623,126 +929,42 @@
 
 
 
-			// --- DEFINE POINTS MATERIALS : SHADERMATERIAL AND USUAL MATERIAL
-			function createShaderMaterial_points ( limitX, limitY, limitZ, is_texture = true ) {
-
-				var uniforms = {
-					// amplitude : { value: 1.0 },
-					time        : { type : "f" , value: 1.0 },
-					resolution  : { type: "v2" , value: new THREE.Vector2() },
-					// limitsXYZ : { value: new THREE.Vector3( limitX, limitY, limitZ ) },
-					velFactor   : { value: 1.0 },
-					scaFactor   : { value: 1.0 },
-					color       : { value: new THREE.Color( 0xffffff ) },
-					size        : { value: 100 }
-				} ;
-
-				if ( is_texture == true ) {
-					uniforms.texture = { value: new THREE.TextureLoader().load( "{{ url_for('static', filename='textures/sprites/spark1.png') }}" ) }
-				} ;
-
-				// from : https://github.com/mrdoob/three.js/blob/master/examples/webgl_custom_attributes_points.html
-				var material_shader = new THREE.ShaderMaterial( {
-
-					// uniforms: {
-					// 	time      : { type : "f" , value: 1.0 },
-					// 	limitsXYZ : { value: new THREE.Vector3( limitX, limitY, limitZ ) },
-					// 	velFactor : { value: 1.0 },
-					// 	// amplitude : { value: 1.0 },
-					// 	color     : { value: new THREE.Color( 0xffffff ) },
-					// 	texture   : { value: new THREE.TextureLoader().load( "{{ url_for('static', filename='textures/sprites/spark1.png') }}" ) }
-					// },
-					uniforms      : uniforms ,
-					vertexShader  : document.getElementById( 'vertexshader_points' ).textContent,
-					fragmentShader: document.getElementById( 'fragmentshader_points' ).textContent,
-					blending      : THREE.AdditiveBlending,
-					depthTest     : false,
-					transparent   : true
-
-				});
-
-				return material_shader ;
-
-			};
-
-
-
-			//// --- DEFINE LINES MATERIAL
-
-			var materialLines = new THREE.LineBasicMaterial( {
-				vertexColors: THREE.VertexColors,
-				blending    : THREE.AdditiveBlending,
-				transparent : true
-			} );
-
-			var wireframeMaterial = new THREE.MeshBasicMaterial( {
-				color      : 0xffffff,
-				wireframe  : true,
-				// transparent: true
-			} );
-
-			function createShaderMaterial_lines ( limitX, limitY, limitZ ) {
-
-				var materialLines_shader = new THREE.ShaderMaterial( {
-					uniforms: {
-						time        : { type : "f" , value: 1.0 },
-						resolution  : { type: "v2" , value: new THREE.Vector2() },
-						// limitsXYZ : { value: new THREE.Vector3( limitX, limitY, limitZ ) },
-						velFactor   : { value: 1.0 },
-						scaFactor   : { value: 1.0 },
-						color       : { value: new THREE.Color( 0xffffff ) },
-					},
-					vertexShader:   document.getElementById( 'vertexshader_points' ).textContent,
-					fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
-
-					// vertexColors:   THREE.VertexColors,
-					// blending:       THREE.AdditiveBlending,
-					// depthTest:      false,
-					transparent:    true,
-					wireframe  :    true
-
-				});
-
-				return materialLines_shader ;
-
-			};
-
 			init();
 
-			animate();
+			initGUI();
 
+			animate();
+			// render() ;
 
 
 			// GUI controls
 			// check : http://learningthreejs.com/blog/2011/08/14/dat-gui-simple-ui-for-demos/
 			// check also : https://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
-      function initGUI() {
+			function initGUI( ) {
 
-				var gui = new dat.GUI();
+				gui = new dat.GUI();
 
 				var f1 = gui.addFolder("Display") ;
-  			f1.add( effectController, "showGroup"  ).onChange( function( value ) {  group.visible   = value; } );
-  			f1.add( effectController, "showHelper" ).onChange( function( value ) {  groupH.visible  = value; } );
+					f1.add( effectController, "showGroup"  ).onChange( function( value ) {  group.visible   = value; } );
+					f1.add( effectController, "showHelper" ).onChange( function( value ) {  groupH.visible  = value; } );
 
 				var f2 = gui.addFolder("factors");
-  			// f2.add( effectController, "minDistance"   ,  10, 300 , 1       );
-        f2.add( effectController, "velocityFactor",  0.,  2.  , 0.01   ) ; // .onChange( function (value) { pointCloud.material.uniforms.velFactor.value = value }) ;
-				f2.add( effectController, "scaleFactor",     0.,  10. , 0.1    ) ; // .onChange( function (value) { pointCloud.material.uniforms.velFactor.value = value }) ;
-				f2.add( effectController, "breathing"  ,     0.,  1.  , 0.1    ) ; // .onChange( function (value) { pointCloud.material.uniforms.velFactor.value = value }) ;
-				// f2.add( effectController, "outFactor",       0.,  50., 1.      ) ; // .onChange( function (value) { pointCloud.material.uniforms.velFactor.value = value }) ;
-				f2.open() ;
+					// f2.add( effectController, "minDistance"   ,  10, 300 , 1       );
+					f2.add( effectController, "velocityFactor",  0.,  2.  , 0.01   ); // .onChange( onChangeControl(scene, "velFactor") ) ;
+					f2.add( effectController, "scaleFactor",     0.,  10. , 0.1    ); // .onChange( onChangeControl(scene, "scaFactor") ) ;
+					f2.add( effectController, "breathing"  ,     0.,  1.  , 0.1    ); // .onChange( onChangeControl(scene, "breathing") ) ;
+					f2.open() ;
 
 				var f3 = gui.addFolder("limits");
-				f3.add( effectController, "rotationGroup",  0.,  1., 0.1 );
-				// // f3.add( effectController, "limitConnections" );
-  			// // f3.add( effectController, "maxConnections",  0,  30, 1 );
-  			// f3.add( effectController, "particleCount" ,  0, maxParticleCount, 1 ).onChange( function( value ) {
-  			// 	particleCount = parseInt( value );
-  			// 	particlesGeom.setDrawRange( 0, particleCount );
-				// });
-				f3.open() ;
+					f3.add( effectController, "rotationGroup",  0.,  1., 0.1 );
+					f3.open() ;
+
+				console.log("--- initGUI / gui :", gui);
 
 			};
+
+
+
 
 
 			// INIT FUNCTION
@@ -751,22 +973,21 @@
 				// --- BASIC STUFF --- //
 	  			container = document.getElementById( 'canvas3D' );
 
-					initGUI();
 
 	      	// set scene
-	  			camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 4000 );
+	  			camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 10, 5000 );
 	  			camera.position.x = 200;
 					camera.position.y = 300;
 					camera.position.z = 100;
 
 	  			scene = new THREE.Scene();
-	        scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
+	        scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
 
 	        group = new THREE.Group();
 	  			scene.add( group );
 
 					groupH = new THREE.Group();
-					scene.add( groupH) ;
+					scene.add( groupH ) ;
 	        var helper = new THREE.BoxHelper( new THREE.Mesh( new THREE.BoxGeometry( Rbasis, Rbasis, Rbasis ) ) );
 						helper.name = "helper" ;
 		  			helper.material.color.setHex( 0x080808 );
@@ -776,185 +997,8 @@
 
 
 
-				// -------------------------------------------------------
-				// SET PARTICLES SYSTEM
-				function addPointsCloud(particlesLength, angleFamily, angleGroup, radiusGroup, radiusCluster, wireORpoints) {
-
-					// empty arrays variables
-						pPositions   = new Float32Array( particlesLength * 3 );
-						pColors      = new Float32Array( particlesLength * 3 );
-						// pSizes       = new Float32Array( maxParticleCount     );
-						pFrequencies = new Float32Array( particlesLength     );
-						pVelocities  = new Float32Array( particlesLength * 3 );
-
-						var color   = new THREE.Color( 0xffffff );
-						var vertices3   = [] ;
-						var vertices2   = [] ;
-
-
-
-						// sphere arc variables
-						// var radiusCircle 				= Rbasis*2/3 ;
-						// var radiusSphere 				= Rbasis ;
-						// var phiStart 			= 1.2 ;
-						// var phiLength 		= Math.PI - ( phiStart ) ;
-						// var thetaStart 		= 2. ;
-						// var thetaLength 	= ( Math.PI * 2 ) - ( thetaStart ) ;
-						// console.log("sphere variables : radius / thetaLength / phiLength ",radius, thetaLength, phiLength  );
-
-
-					for ( var i = 0; i < particlesLength; i++ ) {
-
-
-						// var vertex3 = positionVertexOnSphere(radius, phiStart, phiLength, thetaStart, thetaLength) ;
-						// var vertex3 = positionVertexOnProjectedCircleOntoSphere(radiusCircle, radiusSphere) ;
-						var vertex3 = positionVertexOnProjectedCircleOntoSphere(radiusGroup, radiusCluster) ;
-
-						// var vertex3 = new THREE.Vector3();
-						var vertex2 = new Vertex();
-
-						vertex2.x = vertex3.x ;
-						vertex2.y = vertex3.y ;
-
-						// vertex2.x = vertex3.x = Math.random() * Rbasis - Rbasis / 2.;
-						// vertex2.y = vertex3.y = Math.random() * Rbasis - Rbasis / 2.;
-						// vertex3.z = 0 ; // Math.random() * Rbasis - Rbasis / 2.;
-
-
-						vertex3.toArray( pPositions, i * 3 );
-						vertices3[i] = vertex3 ;
-						vertices2.push( vertex2 )  ;
-
-						// set color cf : https://www.w3schools.com/colors/colors_hsl.asp
-						color.setHSL( 0., 0., 1. );
-						color.toArray( pColors, i * 3 );
-
-						// push to separate particlesData
-	  				particlesData.push( {
-	  					velocity: new THREE.Vector3( -1 + Math.random() , -1 + Math.random(),  -1 + Math.random() ),
-							// rotPhi : , // in radians
-							// rotThe : , // in radians
-	  					numConnections: 0
-	  				} );
-
-						// set default size and frequency
-
-						// pSizes[i]       = 100 ;
-						pFrequencies[i] = 5 * Math.random() + 0.5;
-						velocity        = new THREE.Vector3( -1 + Math.random() , -1 + Math.random(),  -1 + Math.random() ),
-						velocity.toArray( pVelocities, i * 3 );
-
-	  			}
-
-
-					// console.log("--- pPositions : ", pPositions);
-					// console.log("--- vertices2 : ",  vertices2);
-					// console.log("--- vertices3 : ",  vertices3);
-
-
-					if ( wireORpoints == "points" ) {
-					// --- ADDING POINTS --- //
-						// console.log(pPositions);
-						var geomTri_buffer = new THREE.BufferGeometry();
-						geomTri_buffer.setDrawRange( 0, particleCount );
-		  			geomTri_buffer.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) );
-						geomTri_buffer.addAttribute( 'customColor',     new THREE.BufferAttribute( pColors,      3 ) ); //.setDynamic( true ) );
-						geomTri_buffer.addAttribute( 'size',            new THREE.BufferAttribute( pSizes,       1 ) ); //.setDynamic( true ) );
-						geomTri_buffer.addAttribute( 'customFrequency', new THREE.BufferAttribute( pFrequencies, 1 ) ); //.setDynamic( true ) );
-						// geomTri_buffer.addAttribute( 'customVelocity',  new THREE.BufferAttribute( pVelocities,  3 ) ); //.setDynamic( true ) );
-						//
-						// // create the particle system with material
-						// var materialPoints_shader_custom = createShaderMaterial_points( r,r,r/10, true ) ;
-						//
-						// console.log("--- materialPoints_shader_custom : ", materialPoints_shader_custom);
-		  			// pointCloud = new THREE.Points( geomTri_buffer, materialPoints_shader_custom );
-						//
-						// group.add( pointCloud );
-					}
-
-
-					else {
-					// --- ADDING TRIANGULATED MESH --- //
-
-						// -----------------------------------------------------------------------
-						// TRYING DELAUNAY TRIANGULATION ON VERTICES 2D (projectd on plane XY)
-						// cf : https://github.com/callumprentice/callumprentice.github.io/blob/master/apps/delaunay/index.html
-						// cf didn't tried it but seems nice : https://github.com/mapbox/delaunator
-
-						var triangles = triangulate(vertices2);
-						// console.log("--- triangles : ", triangles);
-
-						var geomTri = new THREE.Geometry();
-	          var f = 0;
-
-						// topology custom to recreate indexed BufferGeometry
-						// cf : https://stackoverflow.com/questions/36730365/how-can-i-add-faces-to-an-indexed-three-buffergeometry
-						var uniq_edges_set = new Set() ;
-						var facesVIndices  = [] ;
-
-						triangles.forEach( function(tri) {
-
-							// get v1, v2, v3 indices
-							var v0_i = vertices2.indexOf(tri.v0);
-							var v1_i = vertices2.indexOf(tri.v1);
-							var v2_i = vertices2.indexOf(tri.v2);
-
-							// store indices
-							facesVIndices.push(v0_i) ;
-							facesVIndices.push(v1_i) ;
-							facesVIndices.push(v2_i) ;
-
-							// make and store edges vindices
-
-							var e0_   = [v0_i,v1_i].sort() ; var e0 = e0_.join(".") ;
-							var e1_   = [v1_i,v2_i].sort() ; var e1 = e1_.join(".") ;
-							var e2_   = [v2_i,v0_i].sort() ; var e2 = e2_.join(".") ;
-
-							// add edges to unique edges set
-							uniq_edges_set.add(e0).add(e1).add(e2) ;
-
-
-						})
-
-						// console.log("--- uniq_edges_set : ", uniq_edges_set);
-						// make list of edges as couples of vertex indices
-						var uniq_edges_v_indices   = [] ;
-						for (let eString of uniq_edges_set) {
-							var vi_s = eString.split(".") ;
-							var vi_0 = parseInt(vi_s[0]) ;
-							var vi_1 = parseInt(vi_s[1]) ;
-							uniq_edges_v_indices.push(vi_0) ;
-							uniq_edges_v_indices.push(vi_1) ;
-						};
-						// console.log("--- uniq_edges_v_indices : ", uniq_edges_v_indices);
-
-						var geomTri_buffer = new THREE.BufferGeometry();//.fromGeometry(geomTri) ;
-							// var ePositions = new Float32Array( geomTri.vertices.length * 3 );
-							// for (i = 0; i < geomTri_buffer.attributes.position.length ; i++){
-							// 	var eV = geomTri_buffer.attributes.position[i] ;
-							// 	if(i==0) {
-							// 		console.log("--- eV --- ", eV);
-							// 	}
-							// 	eV.toArray( ePositions, i * 3 );
-							// };
-							// console.log("--- ePositions :", ePositions );
-							// geomTri_buffer.setDrawRange( 0, 17984  );
-						geomTri_buffer.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,     3 ).setDynamic( true ) );
-						geomTri_buffer.setIndex(      new THREE.BufferAttribute( new Uint16Array ( facesVIndices , 1) ) );
-						geomTri_buffer.addAttribute( 'customFrequency', new THREE.BufferAttribute( pFrequencies,   1 ) ); //.setDynamic( true ) );
-						// geomTri_buffer.addAttribute( 'customVelocity',  new THREE.BufferAttribute( pVelocities,    3 ) ); //.setDynamic( true ) );
-					}
-
-					// console.log("--- geomTri_buffer : ", geomTri_buffer);
-
-					return geomTri_buffer ;
-				};
-
 
 				// console.log("--- meshesList", meshesList );
-
-
-
 
 
 
@@ -1001,31 +1045,21 @@
 
 						console.log("------ ITERATION GR / keyFa, keyGroup, groupName, groupLen : " , keyFa, keyGroup, groupName, groupLen );
 						var distGroup  = sphereRadius(indexGroup, RmarginDist  ) ;
-						var angleGroup = groupAngle( indexGroup, faGroupsLen );
-
+						var angleGroup = groupAngle(  indexGroup, faGroupsLen, 5. );
 
 						// Object.keys(faGroups).forEach( function (keyGroup, indexGroup) {
 
-						// addPointsCloud --> particlesLength, angleFamily, angleGroup, radiusGroup, radiusCluster
-						var geomTri_buffer = addPointsCloud(maxCluster, angleFa, angleGroup, maxCircleRad*.9, distGroup + Rbasis * indexFa / familiesLen , "wire") ; // distGroup or Rbasis
+						// addPointsCloud -->          particlesLength, angleFamily, angleGroup, radiusGroup,     radiusCluster
+						var geomTri_buffer = addPointsCloud(maxCluster, angleFa,     angleGroup, maxCircleRad*.8, Rbasis*1.,     "wire") ; // distGroup or Rbasis
 
-						// var materialLines_shader_custom = createShaderMaterial_lines( r,r,r ) ;
-						var materialLines_shader_custom = new THREE.ShaderMaterial( {
-							uniforms: {
-								time        : { type : "f" , value: 1.0 },
-								resolution  : { type: "v2" , value: new THREE.Vector2() },
-								// limitsXYZ : { value: new THREE.Vector3( r, r, r/10 ) },
-								velFactor   : { value: 1.0 },
-								scaFactor   : { value: 1.0 },
-								breathing   : { value: 1.0 },
-								color       : { value: new THREE.Color( 0xffffff ) },
-							},
-							vertexShader  : document.getElementById( 'vertexshader_points' ).textContent,
-							fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
-							transparent : true,
-							wireframe   : true
-						} );
-
+						var materialLines_shader_custom = createShaderMaterial (
+																																		indexFa,
+																																		familiesLen,
+																																		indexGroup,
+																																		faGroupsLen,
+																																		is_wire = true,
+																																		is_texture = false
+																																	) ;
 
 						// console.log("--- materialLines_shader_custom : ",materialLines_shader_custom);
 						// linesMesh = new THREE.LineSegments( geomTri_buffer, materialLines_shader_custom) ;
@@ -1042,9 +1076,10 @@
 						// var rot = new THREE.Euler( angleGroup, angleFa, 0, 'XYZ' );
 						// linesMesh.position.applyEuler(rot) ;
 
-						linesMesh.eulerOrder = "ZYX" ;
-						linesMesh.rotation.x += angleGroup  ;
+						// linesMesh.eulerOrder = "ZYX" ;
+						linesMesh.rotation.order = "ZYX" ;
 						linesMesh.rotation.y += angleFa ;
+						linesMesh.rotation.x += angleGroup ;
 
 
 
@@ -1098,80 +1133,96 @@
 					raycaster = new THREE.Raycaster();
 					mouse     = new THREE.Vector2();
 
-					// // onWindowResize();
-	        window.addEventListener(   'resize',    onWindowResize, false );
+					// onWindowResize();
+	        window.addEventListener(   'resize',    onWindowResize,      false );
 	        document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+					//
 
       }
 
 
 			// UI FUNCTIONS
       function onDocumentMouseMove( event ) {
-      				event.preventDefault();
-      				mouse.x =   ( event.clientX / WIDTH )  * 2 - 1;
-      				mouse.y = - ( event.clientY / HEIGHT ) * 2 + 1;
-      			}
+				event.preventDefault();
+				mouse.x =   ( event.clientX / WIDTH )  * 2 - 1;
+				mouse.y = - ( event.clientY / HEIGHT ) * 2 + 1;
+			};
 
-      function onWindowResize() {
+      // function onWindowResize() {
+			// 	renderer.setSize( WIDTH, HEIGHT );
+  		// 	camera.aspect = WIDTH / HEIGHT ;
+  		// 	camera.updateProjectionMatrix();
+  		// };
+
+			// RESIZE FUNCTION
+			function onWindowResize() {
+				WIDTH = window.innerWidth ;
+				HEIGHT = window.innerHeight ;
+				camera.aspect = WIDTH / HEIGHT ;
+				camera.updateProjectionMatrix();
 				renderer.setSize( WIDTH, HEIGHT );
-  			camera.aspect = WIDTH / HEIGHT ;
-  			camera.updateProjectionMatrix();
-  		}
+			};
+
+
+			// --- TRAVERSE SCENE FUNCTIONS --- //
+			function onChangeControl ( factorName ) {
+
+				scene.traverse( function( node ) {
+
+					if ( node instanceof THREE.LineSegments | node instanceof THREE.Points ) {
+
+						if (node.name != "helper") {
+							// console.log("--- traverse / node : ", node );
+
+							if ( factorName == "velFactor" ) {
+								node.material.uniforms.velFactor.value  = effectController.velocityFactor ;
+							}
+							if ( factorName == "scaFactor" ) {
+								node.material.uniforms.scaFactor.value  = effectController.scaleFactor ;
+							}
+							if ( factorName == "breathing" ) {
+								node.material.uniforms.breathing.value  = effectController.breathing ;
+							}
+
+						}
+					}
+
+				});
+
+			};
 
 
       // ANIMATE FUNCTION
   		function animate() {
 
-        var vertexpos    = 0;
-  			var colorpos     = 0;
-  			var numConnected = 0;
 
-        // for ( var i = 0; i < particleCount; i++ ) {
-  			// 	particlesData[ i ].numConnections = 0
-				// };
-
-        // for ( var i = 0; i < particleCount; i++ ) {
+				// scene.traverse( function( node ) {
 				//
-        //   // get the particle
-  			// 	var particleData = particlesData[i];
+			  //   if ( node instanceof THREE.LineSegments | node instanceof THREE.Points ) {
 				//
-				// 	if ( effectController.limitConnections && particleData.numConnections >= effectController.maxConnections )
-  			// 		continue;
-				// } ;
+		    //     // insert your code here, for example:
+		    //     // node.material = new THREE.MeshNormalMaterial() ;
+				//
+				// 		node.geometry.attributes.position.needsUpdate = true;
+				// 		node.geometry.verticesNeedUpdate = true;
+				// 	}
+				//
+				// } );
 
-				// pointCloud.geometry.attributes.position.needsUpdate = true;
-				// pointCloud.geometry.verticesNeedUpdate = true;
+				// optimize rendering = every 1/24 second
+				setTimeout( function() {
+				  requestAnimationFrame( animate );
+				}, 1000 / 20 );
 
-				// linesMesh.geometry.attributes.position.needsUpdate = true;
-				// linesMesh.geometry.verticesNeedUpdate = true;
-
-				scene.traverse( function( node ) {
-
-			    if ( node instanceof THREE.LineSegments | node instanceof THREE.Points ) {
-
-		        // insert your code here, for example:
-		        // node.material = new THREE.MeshNormalMaterial() ;
-
-						node.geometry.attributes.position.needsUpdate = true;
-						node.geometry.verticesNeedUpdate = true;
-					}
-
-				} );
-
-				// for (var mesh_ in meshesList) {
-				// 	mesh_.geometry.attributes.position.needsUpdate = true;
-				// 	mesh_.geometry.verticesNeedUpdate = true;
-				// };
-
-				window.addEventListener(   'resize',    onWindowResize, false );
-
-				requestAnimationFrame( animate );
+				// requestAnimationFrame( animate );
+				render();
 
         // stats.update();
 
-  			render();
 
       }
+
 
 			// RENDER FUNCTION
   		function render() {
@@ -1179,14 +1230,6 @@
 				// UPDATE TIME VALUE IN UNIFORMS
   			// var time  = Date.now() * 0.01;
 				var time_ = ( Date.now() - start ) * .001 ;
-
-				// pointCloud.material.uniforms.time.value      =  time_ ;
-				// pointCloud.material.uniforms.velFactor.value = effectController.velocityFactor ;
-				// pointCloud.material.uniforms.scaFactor.value = effectController.scaleFactor ;
-
-				// linesMesh.material.uniforms.time.value       =  time_ ;
-				// linesMesh.material.uniforms.velFactor.value  = effectController.velocityFactor ;
-				// linesMesh.material.uniforms.scaFactor.value  = effectController.scaleFactor ;
 
 				scene.traverse( function( node ) {
 
@@ -1203,18 +1246,14 @@
 
 				});
 
-				// for (var mesh_ in meshesList) {
-				// 	mesh_.material.uniforms.time.value       =  time_ ;
-				// 	mesh_.material.uniforms.velFactor.value  = effectController.velocityFactor ;
-				// 	mesh_.material.uniforms.scaFactor.value  = effectController.scaleFactor ;
-				// } ;
 
-				scene.traverse( function( node ) {
-					if ( node instanceof THREE.Group ) {
-		  			node.rotation.x = time_ * 0.04 * effectController.rotationGroup * node.customFactor ;
-						node.rotation.y = time_ * 0.02 * effectController.rotationGroup * node.customFactor ;
-					}
-				}) ;
+
+				// scene.traverse( function( node ) {
+				// 	if ( node instanceof THREE.Group ) {
+		  	// 		node.rotation.x = time_ * 0.04 * effectController.rotationGroup * node.customFactor ;
+				// 		node.rotation.y = time_ * 0.02 * effectController.rotationGroup * node.customFactor ;
+				// 	}
+				// }) ;
 
 				renderer.render( scene, camera );
 
