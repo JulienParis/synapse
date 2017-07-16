@@ -168,7 +168,6 @@ This application proposes several features :
   $ ssh-keygen -t rsa -C "jparis.py@gmail.com" -b 4096
   or
   $ ssh-keygen -t rsa -b 4096
-
   (save it to /root/.ssh/id_rsa +Y )
   (empty passphrase + Y )
   ```
@@ -185,8 +184,8 @@ This application proposes several features :
   ```
   $ ssh-add ~/.ssh/id_rsa
   $ cat ~/.ssh/id_rsa.pub
-  ```
   (copy ssh key)
+  ```
 
   - add .ssh / config  :
   - cf : <https://about.gitlab.com/2016/02/18/gitlab-dot-com-now-supports-an-alternate-git-plus-ssh-port/>
@@ -200,7 +199,6 @@ This application proposes several features :
     Port 443
     PreferredAuthentications publickey
     IdentityFile ~/.ssh/id_rsa
-
   ```
 
   - go to gitlab / github (on gitlab : https://gitlab.com/profile/keys) : `--> add ssh key to authorized keys / deployment keys`
