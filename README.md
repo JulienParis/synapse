@@ -99,11 +99,12 @@ This application proposes several features :
   $ sudo ufw allow 5000
   $ sudo ufw allow 22
   $ sudo ufw allow 443
-
   $ sudo ufw enable
   $ sudo apt-get update
   $ sudo apt-get install ntp
   ```
+
+  - **if needed** : `$ sudo ufw delete allow 80`
 
   - check enabled ports : `$ sudo ufw show added`
 
@@ -255,6 +256,7 @@ This application proposes several features :
   >
   ```
   $ sudo apt-get install python-pip python-dev
+  $ sudo apt-get install libmysqlclient-dev
   $ sudo apt-get install python-mysqldb
   $ pip install -r requirements.txt
   $ pip install gunicorn
@@ -266,12 +268,16 @@ This application proposes several features :
   ```
   $ cd ~/etc/nginx/sites-enabled`
   ```
-  create NGINX configuration file for synapse
+
+  - create NGINX configuration file for synapse
+  >
   ```
   $ sudo vi synapse
   ESC + i
   ```
-  copy/paste NGINX configuration settings
+
+  - copy/paste NGINX configuration settings
+  >
   ```
   	# configuration containing list of application servers
   	upstream app_server {
@@ -293,18 +299,19 @@ This application proposes several features :
   	  }
   	}
   ```
-  save `synapse` NGINX config file
+
+  - save `synapse` NGINX config file : `ESC + :wq + ENTER`
+
+
+  - remove default nginx file from `/etc/nginx/sites-enabled`
+  >
   ```
-  ESC + :wq + ENTER
+  $ sudo rm default
   ```
-  test for syntax errors by typing:
-  ```
-  $ sudo nginx -t
-  ```
-  restart the NGINX process to read the our new config:
-  ```
-  $ sudo service nginx restart
-  ```
+
+  - test for syntax errors by typing : `$ sudo nginx -t`
+
+  - restart the NGINX process to read the our new config : `$ sudo service nginx restart`
 
   - copy original config.py file to server (from local machine)
   - cf : <https://unix.stackexchange.com/questions/106480/how-to-copy-files-from-one-machine-to-another-using-ssh>
@@ -313,7 +320,7 @@ This application proposes several features :
   $ scp /Users/username/PATH/TO/PROJECT/config.py julien@80.82.225.40:/home/julien/apps/synapse
   ```
 
-  - GIT pull when changes
+  - GIT maintainance : pull when changes
   >
   ```
   $ ssh julien@80.82.225.40

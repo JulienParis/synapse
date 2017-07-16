@@ -7,7 +7,8 @@ upstream app_server {
 server {
   # running port
     listen 80 default_server;
-    server_name flaplab.com;
+    # server_name synapse.com;
+    server_name 80.82.225.40 ;
 
   # Proxy connections to the application servers
   # app_servers
