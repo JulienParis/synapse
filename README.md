@@ -193,7 +193,6 @@ This application proposes several features :
   >
   ```
   $ sudo vi ~/.ssh/config
-
   (copy paste + ESC + :WQ + enter)
   Host gitlab.com
     Hostname altssh.gitlab.com
