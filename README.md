@@ -163,7 +163,7 @@ This application proposes several features :
   - connect to server : `—> julien@80.82.225.40 $`
 
   - ** if not set yet : create SSH key
-  >>
+  >
   ```
   $ ssh-keygen -t rsa -C "jparis.py@gmail.com" -b 4096
   or
@@ -174,14 +174,14 @@ This application proposes several features :
   ```
 
   - ** check if ssh-agent enabled
-  >>
+  >
   ```
   $ eval "$(ssh-agent -s)"
   --> Agent pid 1234
   ```
 
   - add identity :
-  >>
+  >
   ```
   $ ssh-add ~/.ssh/id_rsa
   $ cat ~/.ssh/id_rsa.pub
@@ -190,7 +190,7 @@ This application proposes several features :
 
   - add .ssh / config  :
   - cf : <https://about.gitlab.com/2016/02/18/gitlab-dot-com-now-supports-an-alternate-git-plus-ssh-port/>
-  >>
+  >
   ```
   $ sudo vi ~/.ssh/config
 
@@ -211,7 +211,7 @@ This application proposes several features :
   - install GIT on the server : `$ sudo apt-get install git`
 
   - config GIT :
-  >>
+  >
   ```
   $ git config --global user.name 'julien'
   $ git config --global user.email ‘jparis.py@gmail.com’
@@ -220,7 +220,7 @@ This application proposes several features :
   - create a directory to store apps : `$ sudo mkdir apps`
 
   - go to home/apps + add project
-  >>
+  >
   ```
   $ cd apps
   $ git config --list
@@ -229,7 +229,7 @@ This application proposes several features :
   ```
 
   - and clone :
-  >>
+  >
   ```
   $ git clone git@gitlab.com:Julien_P/synapse.git
   $ ...
