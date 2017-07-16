@@ -9,6 +9,7 @@ import os
 
 if __name__ == '__main__':
 
-
-    ### for production
-    socketio.run(app, host='0.0.0.0')
+    with app.app_context() :
+        ### for production
+        # socketio.run(app, host='0.0.0.0')
+        socketio.run(app, host=app.config["SYNAPSE_IP"])

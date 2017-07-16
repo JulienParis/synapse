@@ -242,11 +242,21 @@ This application proposes several features :
 ## _FW_NGINX_ on Ubuntu server ****
 
 
-  - install NGINX on the server :
+  - install NGINX on the server : cf <https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-16-04>
   >
   ```
   $ sudo apt-get install nginx
   $ service nginx restart
+  $ sudo ufw app list
+  $ sudo ufw allow 'Nginx Full
+  $ sudo ufw status
+  ```
+
+  - check web server : `$ systemctl status nginx`
+  >
+  ```
+  $ sudo apt-get install curl
+  $ curl -4 icanhazip.com
   ```
 
   - install Python, PIP, and dependencies :
