@@ -58,9 +58,9 @@ try :
     print "starting app --- connect to webservice Aloes --- OK with GUID : ", GUID
 
 except :
-    print "------------------------------------------------------------"
-    print "starting app --- PROBLEM connecting to webservice Aloes --- "
-    print "------------------------------------------------------------"
+    print "---------------------------------------------------------------"
+    print "--- starting app --- PROBLEM connecting to webservice Aloes --- "
+    print "---------------------------------------------------------------"
 
 
 

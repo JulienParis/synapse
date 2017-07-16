@@ -139,14 +139,14 @@ This application proposes several features :
   - create `~/data/db` and authorize in read-write (on Ubuntu)
   - cf : <https://stackoverflow.com/questions/7948789/mongodb-mongod-complains-that-there-is-no-data-db-folder>
   >
-  '''
+  ```
   $ sudo mkdir -p /data/db
   $ grep mongo /etc/passwd
   --> mongodb:x:_123_:_456_::/home/mongodb:/bin/false
   $ sudo chmod 0755 /data/db
   $ sudo chown -R _123_:_456_ /data/db
   $ sudo chown -R `id -u` /data/db
-  '''
+  ```
 
   - *** start mongo shell (optional) / test mongo once data/db created : `$ mongod`
 
