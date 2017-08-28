@@ -100,24 +100,55 @@
 
     <ul class="nav navbar-nav">
 
-      <li class="divider-vertical"></li>
+      <!-- <li class="divider-vertical"></li> -->
 
 
 
-      <li class="bstooltip" data-toggle="tooltip" data-placement="bottom"
-          title="Comment utiliser {{ app_metas.title }} ?" >
-        <a  role="button"
+      <li >
+        
+        <button type="button"
+          class="btn btn-default btn-sm navbar-btn bstooltip"
+          data-toggle="modal"
+          data-target="#mod_howto"
+
+          data-trigger='manual'
+          data-tooltip="tooltip"
+          data-placement="bottom"
+          title="Comment utiliser {{ app_metas.title }} ?"
+          data-container="body"
+          >
+            <!-- <a  role="button"
             data-toggle="modal"
-            data-target="#mod_howto">
-          <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
-
-        </a>
+            data-target="#mod_howto"> -->
+            <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+          </button>
+        <!-- </a> -->
       </li>
 
 
-      <li class="divider-vertical"></li>
+      <!-- <li class="divider-vertical"></li> -->
 
 
+      {% if isUser != None %}
+      
+      <li>
+        <button type="button"
+                class="btn btn-default btn-sm navbar-btn bstooltip"
+                data-toggle="modal"
+                data-target="#update_user_account_form"
+
+                data-trigger='manual'
+                data-tooltip="tooltip"
+                data-placement="bottom"
+                title="votre compte utilisateur "
+                data-container="body"
+                >
+            <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+
+          </button>
+      </li>
+
+      {% endif %}
 
     </ul>
 
@@ -129,7 +160,8 @@
       {% if isUser != None %}
       <li>
           <p class="navbar-text" id="navbar-text" >
-              bonjour, {{ isUser }}
+              bonjour
+              <!-- , { { isUser } } -->
           </p>
       </li>
 
@@ -142,11 +174,28 @@
                   data-trigger='manual'
                   data-tooltip="tooltip"
                   data-placement="bottom"
-                  title="mettre à jour votre historique "
+                  title="mettre à jour votre historique automatiquement à partir de votre carte de bibliothèque"
                   data-container="body"
                   >
               <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
 
+          </button>
+      </li>
+
+      <li>
+          <button type="button"
+                  class="btn btn-default btn-sm navbar-btn bstooltip"
+                  data-toggle="modal"
+                  data-target="#modal_add_item"
+
+                  data-trigger='manual'
+                  data-tooltip="tooltip"
+                  data-placement="bottom"
+                  title="ajouter manuellement des titres à votre parcours"
+                  data-container="body"
+                  >
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+               
           </button>
       </li>
 
@@ -159,11 +208,11 @@
                   data-trigger='manual'
                   data-tooltip="tooltip"
                   data-placement="bottom"
-                  title="mettre à jour vos informations"
+                  title="votre parcours"
                   data-container="body"
                   >
-              <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-               vos infos
+              <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+               
           </button>
       </li>
 
@@ -176,12 +225,11 @@
                   data-trigger='manual'
                   data-tooltip="tooltip"
                   data-placement="bottom"
-                  title="cliquer pour vous déconnecter"
+                  title="cliquer ici pour vous déconnecter"
                   data-container="body"
                   >
 
                   <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
-                  logout
               </a>
           </p>
       </li>
@@ -226,7 +274,7 @@
       </li>
       {% endif %}
 
-      <li class="divider-vertical"></li>
+      <!-- <li class="divider-vertical"></li> -->
 
       <li>
         <a  href="https://gitlab.com/Julien_P/{{ app_metas.title }}" target="_blank"
@@ -244,7 +292,7 @@
         </a>
       </li>
 
-      <li class="divider-vertical"></li>
+      <!-- <li class="divider-vertical"></li> -->
 
       <li>
         <a  href="https://www.paypal.me/jpydev" target="_blank"

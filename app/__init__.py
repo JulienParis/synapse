@@ -39,7 +39,7 @@ app = Flask(__name__, static_path = SITE_STATIC ) ### change static directory ad
 app.config.from_object('config')
 
 ### set socketio
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode="eventlet")
 
 
 from app import views

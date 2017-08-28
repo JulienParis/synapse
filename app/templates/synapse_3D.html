@@ -11,8 +11,12 @@
 					margin: 0px;
 					overflow: hidden;
 	        color: #cccccc ;
-	        background-color: {{ app_colors.three_background }} ;
-				}
+			/* background-color : #f6761c  /*{{ app_colors.three_background }} ;*/ 
+			background-size: cover;
+			background-image: url(http://www.la-bibliotheque.com/wp-content/themes/la_bibliotheque_orange/images/datavision_fond.jpg);
+			text-align: center;
+			opacity: 1;
+		}
 	div.dg.ac {
 	  top : 8%
 	}
@@ -370,8 +374,8 @@
 
 
 		// gl_PointSize    = size * ( 400.0 / -mvPosition.z ) ;
-		gl_PointSize = ( 1.0 + sin( time )) * size * ( 300.0 / length( mvPosition.xyz ) );
-		// gl_PointSize    = size + size * ( sin( time ) );
+		// gl_PointSize = ( 1.0 + sin( time )) * size ; // ; * ( 300.0 / length( mvPosition.xyz ) );
+		gl_PointSize    = size + ( 1. + sin( time * velFactor ) );
 
 		// apply projection matrix to viewPosition
 		gl_Position  = projectionMatrix * mvPosition ;
@@ -385,15 +389,31 @@
 
 <script type="x-shader/x-fragment" id="fragmentshader_points">
 
-	uniform   vec2 resolution;
-
-	uniform vec3      color;
-	uniform sampler2D texture;
-	varying vec3   vColor;
+	uniform   float familyI   ;
+	uniform   float familiesL ;
+	uniform   float groupI    ;
+	uniform   float groupL    ;
+	// varying vec4 familyC  ;
+	uniform   float time ;
+	// uniform vec3 color ;
+	// uniform vec4 color ;
+	uniform sampler2D texture ;
 
 	void main() {
-		gl_FragColor = vec4( color * vColor, 1. );
-		gl_FragColor = gl_FragColor * texture2D( texture, gl_PointCoord );
+		//vec4 gl_FragColor = vec4( familyI  , 0. , 0.  , 1. );
+		
+		//vec3 color = vec3 ( sin(time * familyI / familiesL ), 1., 1. );
+		vec3 color = vec3 ( 0.92, 0.47, 0.14 );
+		
+		gl_FragColor = vec4( color , .8 ) ;
+
+		gl_FragColor = gl_FragColor * texture2D( texture, gl_PointCoord ) ;
+
+		// gl_FragColor = color ;
+		// gl_FragColor = familyC ;
+		// gl_FragColor.rgb = mix( vec3( famillyI * .2 ), vec3( famillyI * .1 ), vec3( 1. ) );
+		// gl_FragColor.rgb = mix( vec3( 1. - famillyI * .1  ), vec3( 1. - famillyI * .1 ), vec3(  1. - famillyI * .1 ) );
+		// gl_FragColor.a = 1.0;
 	}
 
 </script>
@@ -418,7 +438,7 @@
 	uniform   float groupI    ;
 	uniform   float groupL    ;
 	// varying vec4 familyC  ;
-	uniform float time ;
+	uniform   float time ;
 	// uniform vec3 color ;
 	// uniform vec4 color ;
 
@@ -435,7 +455,7 @@
 </script>
 
 
-<script>
+<script type="text/javascript">
 
 
 	// --- GLOBAL VARIABLES --- //
@@ -467,7 +487,7 @@
 
 		var maxParticleCount 	= 1000;
 		var particleCount    	= 0;
-		var Rbasis     				= 100.;
+		var Rbasis     	        = 100.;
 		var RmarginAngle   		= 0.4 ;
 		var RmarginDist   		= Rbasis / 10. ;
 		var RbasisHalf 	   		= RmarginAngle / 2.;
@@ -478,7 +498,7 @@
 
 		var effectController = {
 			showGroup        : true,
-			showHelper       : true,
+			showHelper       : false,
 			// minDistance     : 120,
 			// limitConnections: true,
 			// maxConnections  : 10,
@@ -612,11 +632,11 @@
 
 	// --- DEFINE SHADER MATERIALS : SHADERMATERIAL AND USUAL MATERIAL
 	function createShaderMaterial ( familyIndex,
-																	familiesLength,
-																	groupIndex,
-																	groupsLen,
-																	is_wire,
-																	is_texture ) {
+									familiesLength,
+									groupIndex,
+									groupsLen,
+									is_wire,
+									is_texture ) {
 
 		var colorG  = new THREE.Color( 0xffffff ) ;
 		// var randColor = Math.random() ;
@@ -644,11 +664,11 @@
 		} ;
 
 		if ( is_wire == false ) {
-			uniforms.size = { value : 50. } ;
+			uniforms.size = { value : 5. } ;
 		} ;
 
 		if ( is_texture == true ) {
-			uniforms.texture = { value: new THREE.TextureLoader().load( "{{ url_for('static', filename='textures/sprites/spark1.png') }}" ) } ;
+			uniforms.texture = { value: new THREE.TextureLoader().load( "{{ url_for('static', filename='textures/sprites/ball.png') }}" ) } ;
 		} ;
 
 		// from : https://github.com/mrdoob/three.js/blob/master/examples/webgl_custom_attributes_points.html
@@ -765,7 +785,7 @@
 
 
 		var geomTri_buffer = new THREE.BufferGeometry();
-		geomTri_buffer.addAttribute( 'position',        new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) );
+		geomTri_buffer.addAttribute( 'position',  new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) );
 
 
 		if ( wireORpoints == "points" ) {
@@ -875,43 +895,43 @@
   $(document).ready(function(){
 
     // --- FAKE LIGHT JSON NOTICES
-		var json_fake = {
-			"ART": {	"CODE": "A",
-								"STATS": 14082,
-								"CHILDREN": [
-															{	"NOTICES": [ {"id_o": "1431521"}, {"id_o": "1444227"}, {"id_o": "0180420"} ],
-																"CODE": "A.1",
-																"STATS": 1420,
-																"NAME": "GRAPHISME"
-															},
-															{	"NOTICES": [ {"id_o": "1235563"}, {"id_o": "0982809"}, {"id_o": "0982806"} ],
-																"CODE": "A.2",
-																"STATS": 2408,
-																"NAME": "LOISIRS CREATIFS"
-															}
-														]
-							},
+	var json_fake = {
+		"ART": {	"CODE": "A",
+							"STATS": 14082,
+							"CHILDREN": [
+														{	"NOTICES": [ {"id_o": "1431521"}, {"id_o": "1444227"}, {"id_o": "0180420"} ],
+															"CODE": "A.1",
+															"STATS": 1420,
+															"NAME": "GRAPHISME"
+														},
+														{	"NOTICES": [ {"id_o": "1235563"}, {"id_o": "0982809"}, {"id_o": "0982806"} ],
+															"CODE": "A.2",
+															"STATS": 2408,
+															"NAME": "LOISIRS CREATIFS"
+														}
+													]
+						},
 
-			"JEU": {	"CODE": "J",
-								"STATS": 7102,
-								"CHILDREN": [
-															{	"NOTICES": [ {"id_o": "1181008"}, {"id_o": "1181016"} ],
-																"CODE": "J.0",
-																"STATS": 3524,
-																"NAME": "JEUX A REGLES"
-															},
-															{	"NOTICES": [ {"id_o": "1267718"}, {"id_o": "1267716"}, {"id_o": "1115620"} ],
-																"CODE": "J.1",
-																"STATS": 808,
-																"NAME": "JEUX D'ASSEMBLAGE"
-															}
-														]
-							},
+		"JEU": {	"CODE": "J",
+							"STATS": 7102,
+							"CHILDREN": [
+														{	"NOTICES": [ {"id_o": "1181008"}, {"id_o": "1181016"} ],
+															"CODE": "J.0",
+															"STATS": 3524,
+															"NAME": "JEUX A REGLES"
+														},
+														{	"NOTICES": [ {"id_o": "1267718"}, {"id_o": "1267716"}, {"id_o": "1115620"} ],
+															"CODE": "J.1",
+															"STATS": 808,
+															"NAME": "JEUX D'ASSEMBLAGE"
+														}
+													]
+						},
 
 
-			};
+		};
 
-		// --- LOAD JSON NOTICES AS CALLBACK
+	// --- LOAD JSON NOTICES AS CALLBACK
     function preload_notices(callback){
       $.getJSON( "{{ url_for('static', filename='data/JSON_notices_nested.json') }}", function( json ) {
         console.log("... JSON_notices_nested loaded with getJSON");
@@ -919,83 +939,79 @@
       }
     )};
 
-		// --- START 3D RENDERING AFTER CALLBACK
-		preload_notices(function(json) {
+	// --- START 3D RENDERING AFTER CALLBACK
+	preload_notices(function(json) {
 
-			//Use your data here
-			console.log("... JSON_notices_nested after callback");
-			var json_notices = json ;
-			console.log( json_notices );
-
-
-
-			init();
-
-			initGUI();
-
-			animate();
-			// render() ;
+		//Use your data here
+		console.log("... JSON_notices_nested after callback");
+		var json_notices = json ;
+		console.log( json_notices );
 
 
-			// GUI controls
-			// check : http://learningthreejs.com/blog/2011/08/14/dat-gui-simple-ui-for-demos/
-			// check also : https://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
-			function initGUI( ) {
+		init();
 
-				gui = new dat.GUI();
+		initGUI();
 
-				var f1 = gui.addFolder("Display") ;
-					f1.add( effectController, "showGroup"  ).onChange( function( value ) {  group.visible   = value; } );
-					f1.add( effectController, "showHelper" ).onChange( function( value ) {  groupH.visible  = value; } );
+		animate();
+		// render() ;
 
-				var f2 = gui.addFolder("factors");
-					// f2.add( effectController, "minDistance"   ,  10, 300 , 1       );
-					f2.add( effectController, "velocityFactor",  0.,  2.  , 0.01   ); // .onChange( onChangeControl(scene, "velFactor") ) ;
-					f2.add( effectController, "scaleFactor",     0.,  10. , 0.1    ); // .onChange( onChangeControl(scene, "scaFactor") ) ;
-					f2.add( effectController, "breathing"  ,     0.,  1.  , 0.1    ); // .onChange( onChangeControl(scene, "breathing") ) ;
-					f2.open() ;
 
-				var f3 = gui.addFolder("limits");
-					f3.add( effectController, "rotationGroup",  0.,  1., 0.1 );
-					f3.open() ;
+		// GUI controls
+		// check : http://learningthreejs.com/blog/2011/08/14/dat-gui-simple-ui-for-demos/
+		// check also : https://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
+		function initGUI( ) {
 
-				console.log("--- initGUI / gui :", gui);
+			gui = new dat.GUI();
 
-			};
+			var f1 = gui.addFolder("Display") ;
+				f1.add( effectController, "showGroup"  ).onChange( function( value ) {  group.visible   = value; } );
+				f1.add( effectController, "showHelper" ).onChange( function( value ) {  groupH.visible  = value; } );
 
+			var f2 = gui.addFolder("factors");
+				// f2.add( effectController, "minDistance"   ,  10, 300 , 1       );
+				f2.add( effectController, "velocityFactor",  0.,  2.  , 0.01   ); // .onChange( onChangeControl(scene, "velFactor") ) ;
+				f2.add( effectController, "scaleFactor",     0.,  10. , 0.1    ); // .onChange( onChangeControl(scene, "scaFactor") ) ;
+				f2.add( effectController, "breathing"  ,     0.,  1.  , 0.1    ); // .onChange( onChangeControl(scene, "breathing") ) ;
+				f2.open() ;
+
+			var f3 = gui.addFolder("limits");
+				f3.add( effectController, "rotationGroup",  0.,  1., 0.1 );
+				f3.open() ;
+
+			console.log("--- initGUI / gui :", gui);
+
+		};
 
 
 
 
-			// INIT FUNCTION
-      function init() {
+		// INIT FUNCTION
+      	function init() {
 
-				// --- BASIC STUFF --- //
-	  			container = document.getElementById( 'canvas3D' );
+			// --- BASIC STUFF --- //
+				container = document.getElementById( 'canvas3D' );
 
+				// set scene
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 10, 5000 );
+				camera.position.x = 200;
+				camera.position.y = 300;
+				camera.position.z = 100;
 
-	      	// set scene
-	  			camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 10, 5000 );
-	  			camera.position.x = 200;
-					camera.position.y = 300;
-					camera.position.z = 100;
+				scene     = new THREE.Scene();
+				scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
 
-	  			scene = new THREE.Scene();
-	        scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
+				group = new THREE.Group();
+				scene.add( group );
 
-	        group = new THREE.Group();
-	  			scene.add( group );
-
-					groupH = new THREE.Group();
-					scene.add( groupH ) ;
-	        var helper = new THREE.BoxHelper( new THREE.Mesh( new THREE.BoxGeometry( Rbasis, Rbasis, Rbasis ) ) );
-						helper.name = "helper" ;
-		  			helper.material.color.setHex( 0x080808 );
-		  			helper.material.blending = THREE.AdditiveBlending;
-		  			helper.material.transparent = true;
-		  			groupH.add( helper );
-
-
+				groupH = new THREE.Group();
+				scene.add( groupH ) ;
+				
+				var helper = new THREE.BoxHelper( new THREE.Mesh( new THREE.BoxGeometry( Rbasis, Rbasis, Rbasis ) ) );
+				helper.name = "helper" ;
+				helper.material.color.setHex( 0x080808 );
+				helper.material.blending = THREE.AdditiveBlending;
+				helper.material.transparent = true;
+				groupH.add( helper );
 
 
 				// console.log("--- meshesList", meshesList );
@@ -1019,82 +1035,105 @@
 				console.log("--- maxCircleRad", maxCircleRad);
 
 
-				// iteration on families
-				Object.keys(json_notices).forEach( function (keyFa, indexFa) {
+			// iteration on families
+			Object.keys(json_notices).forEach( function (keyFa, indexFa) {
 
-					// -- FOR EACH FAMILY
-					console.log("--- ITERATION FA / keyFa, indexFa : ", keyFa, indexFa );
+				// -- FOR EACH FAMILY
+				console.log("--- ITERATION FA / keyFa, indexFa : ", keyFa, indexFa );
 
-					var angleFa = familyAngle( indexFa, familiesLen);
-					console.log("--- ITERATION FA / angleFa : ", angleFa );
+				var angleFa = familyAngle( indexFa, familiesLen);
+				console.log("--- ITERATION FA / angleFa : ", angleFa );
 
-					var faGroups     = json_notices[keyFa]["CHILDREN"];
-					var faGroupsLen  = Object.keys(faGroups).length   ;
-					console.log("--- ITERATION FA / keyFa, faGroupsLen : " , keyFa, faGroupsLen );
-
-
-					Object.keys(faGroups).forEach( function (keyGroup, indexGroup) {
-
-						// --- FOR EACH FAMILY
-						var groupName = faGroups[keyGroup]["NAME"]  ;
-						var groupLen  = faGroups[keyGroup]["STATS"] ;
-
-						var groupFa3D = new THREE.Group () ;
-						groupFa3D.customFactor = getRandomNumber( 1, 5);
-						scene.add( groupFa3D );
-
-						console.log("------ ITERATION GR / keyFa, keyGroup, groupName, groupLen : " , keyFa, keyGroup, groupName, groupLen );
-						var distGroup  = sphereRadius(indexGroup, RmarginDist  ) ;
-						var angleGroup = groupAngle(  indexGroup, faGroupsLen, 5. );
-
-						// Object.keys(faGroups).forEach( function (keyGroup, indexGroup) {
-
-						// addPointsCloud -->          particlesLength, angleFamily, angleGroup, radiusGroup,     radiusCluster
-						var geomTri_buffer = addPointsCloud(maxCluster, angleFa,     angleGroup, maxCircleRad*.8, Rbasis*1.,     "wire") ; // distGroup or Rbasis
-
-						var materialLines_shader_custom = createShaderMaterial (
-																																		indexFa,
-																																		familiesLen,
-																																		indexGroup,
-																																		faGroupsLen,
-																																		is_wire = true,
-																																		is_texture = false
-																																	) ;
-
-						// console.log("--- materialLines_shader_custom : ",materialLines_shader_custom);
-						// linesMesh = new THREE.LineSegments( geomTri_buffer, materialLines_shader_custom) ;
-						var linesMesh = new THREE.LineSegments( geomTri_buffer, materialLines_shader_custom) ;
-						// meshesList.push(linesMesh) ;
-
-						// linesMesh = new THREE.LineSegments( geomTri_buffer, wireframeMaterial) ;
-
-						// linesMesh = new THREE.Mesh( geomTri, wireframeMaterial) ;
-						// console.log( "--- linesMesh : ", linesMesh );
+				var faGroups     = json_notices[keyFa]["CHILDREN"];
+				var faGroupsLen  = Object.keys(faGroups).length   ;
+				console.log("--- ITERATION FA / keyFa, faGroupsLen : " , keyFa, faGroupsLen );
 
 
-						// apply rotation on sub-group
-						// var rot = new THREE.Euler( angleGroup, angleFa, 0, 'XYZ' );
-						// linesMesh.position.applyEuler(rot) ;
+				Object.keys(faGroups).forEach( function (keyGroup, indexGroup) {
 
-						// linesMesh.eulerOrder = "ZYX" ;
-						linesMesh.rotation.order = "ZYX" ;
-						linesMesh.rotation.y += angleFa ;
-						linesMesh.rotation.x += angleGroup ;
+					// --- FOR EACH FAMILY
+					var groupName = faGroups[keyGroup]["NAME"]  ;
+					var groupLen  = faGroups[keyGroup]["STATS"] ;
+
+					var groupFa3D          = new THREE.Group () ;
+					groupFa3D.customFactor = getRandomNumber( 1, 5);
+					scene.add( groupFa3D );
+
+					console.log("------ ITERATION GR / keyFa, keyGroup, groupName, groupLen : " , keyFa, keyGroup, groupName, groupLen );
+					var distGroup  = sphereRadius( indexGroup, RmarginDist  ) ;
+					var angleGroup = groupAngle(   indexGroup, faGroupsLen, 5. );
+
+					// Object.keys(faGroups).forEach( function (keyGroup, indexGroup) {
+
+					
+					
+						////////////////////////////////////////////////////////////
+					// addPointsCloud -->          particlesLength, angleFamily, angleGroup, radiusGroup,     radiusCluster
+					
+					//var geomTri_buffer = addPointsCloud(maxCluster, angleFa,  angleGroup, maxCircleRad*.8, Rbasis*1.,     "wire") ; // distGroup or Rbasis // <--
+
+					// var materialLines_shader_custom = createShaderMaterial ( // <--
+					// 															indexFa,
+					// 															familiesLen,
+					// 															indexGroup,
+					// 															faGroupsLen,
+					// 															is_wire    = true,
+					// 															is_texture = false
+					// 														) ;
+
+					// console.log("--- materialLines_shader_custom : ",materialLines_shader_custom);
+					// linesMesh = new THREE.LineSegments( geomTri_buffer, materialLines_shader_custom) ;
+					
+					// var linesMesh = new THREE.LineSegments( geomTri_buffer, materialLines_shader_custom) ; // <--
+					
 
 
-
-						groupFa3D.add( linesMesh );
-
-
-
-					});
-
-
-					console.log(" ======================================== ");
+					////////////////////////////////////
+					var geomTri_buffer_p = addPointsCloud(maxCluster, angleFa,  angleGroup, maxCircleRad*.8, distGroup*0.7,     "points") ; // distGroup or Rbasis
+					
+					var material_points  = createShaderMaterial (
+																	indexFa,
+																	familiesLen,
+																	indexGroup,
+																	faGroupsLen,
+																	is_wire    = false,
+																	is_texture = true
+																) ;
+					
+					console.log("geomTri_buffer_p : ", geomTri_buffer_p)
+					
+					var geoMesh = new THREE.Points(geomTri_buffer_p, material_points ) ;
+					
 
 
 
-				}) ;
+					// meshesList.push(linesMesh) ;
+
+					// geoMesh = new THREE.LineSegments( geomTri_buffer, wireframeMaterial) ;
+
+					// geoMesh = new THREE.Mesh( geomTri, wireframeMaterial) ;
+					// console.log( "--- geoMesh : ", geoMesh );
+
+
+					// apply rotation on sub-group
+					// var rot = new THREE.Euler( angleGroup, angleFa, 0, 'XYZ' );
+					// geoMesh.position.applyEuler(rot) ;
+
+					// geoMesh.eulerOrder = "ZYX" ;
+					geoMesh.rotation.order = "ZYX" ;
+					geoMesh.rotation.y += angleFa ;
+					geoMesh.rotation.x += angleGroup ;
+
+
+					groupFa3D.add( geoMesh );
+
+				});
+
+
+				console.log(" ======================================== ");
+
+
+			}) ;
 
 
 
@@ -1105,35 +1144,35 @@
 
 
 
-				// --- RENDERING --- //
+			// --- RENDERING --- //
 	        // RENDERER
-	  			renderer = new THREE.WebGLRenderer( { antialias: true, alpha : true } ); // alpha true for css background-color
-	  			renderer.setPixelRatio( window.devicePixelRatio );
-	  			renderer.setSize( WIDTH, HEIGHT );
-	  			renderer.gammaInput  = true;
-	  			renderer.gammaOutput = true;
-	  			container.appendChild( renderer.domElement );
+			renderer = new THREE.WebGLRenderer( { antialias: true, alpha : true } ); // alpha true for css background-color
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( WIDTH, HEIGHT );
+			renderer.gammaInput  = true;
+			renderer.gammaOutput = true;
+			container.appendChild( renderer.domElement );
 
 
 
-					// CONTROLS
+			// CONTROLS
 	        controls = new THREE.OrbitControls( camera, container );
 	        // controls = new THREE.TrackballControls( camera, container );
-					// cf : https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_pointerlock.html
-	  			controls.minDistance   = 1. ;
-	  			controls.maxDistance   = 1000.;
-	  			controls.dampingFactor = 0.   ;
+			// cf : https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_pointerlock.html
+			controls.minDistance   = 1. ;
+			controls.maxDistance   = 1000.;
+			controls.dampingFactor = 0.   ;
 
 	        // set stats box
-	  			// stats = new Stats();
-	  			// container.appendChild( stats.dom );
+	  		// stats = new Stats();
+	  		// container.appendChild( stats.dom );
 
 
 	        // raycasting for mouse interaction
 					raycaster = new THREE.Raycaster();
 					mouse     = new THREE.Vector2();
 
-					// onWindowResize();
+			// onWindowResize();
 	        window.addEventListener(   'resize',    onWindowResize,      false );
 	        document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
@@ -1143,17 +1182,17 @@
 
 
 			// UI FUNCTIONS
-      function onDocumentMouseMove( event ) {
+      		function onDocumentMouseMove( event ) {
 				event.preventDefault();
 				mouse.x =   ( event.clientX / WIDTH )  * 2 - 1;
 				mouse.y = - ( event.clientY / HEIGHT ) * 2 + 1;
 			};
 
-      // function onWindowResize() {
+      		// function onWindowResize() {
 			// 	renderer.setSize( WIDTH, HEIGHT );
-  		// 	camera.aspect = WIDTH / HEIGHT ;
-  		// 	camera.updateProjectionMatrix();
-  		// };
+			// 	camera.aspect = WIDTH / HEIGHT ;
+			// 	camera.updateProjectionMatrix();
+			// };
 
 			// RESIZE FUNCTION
 			function onWindowResize() {
@@ -1193,47 +1232,47 @@
 			};
 
 
-      // ANIMATE FUNCTION
-  		function animate() {
+			// ANIMATE FUNCTION
+			function animate() {
 
 
-				// scene.traverse( function( node ) {
-				//
-			  //   if ( node instanceof THREE.LineSegments | node instanceof THREE.Points ) {
-				//
-		    //     // insert your code here, for example:
-		    //     // node.material = new THREE.MeshNormalMaterial() ;
-				//
-				// 		node.geometry.attributes.position.needsUpdate = true;
-				// 		node.geometry.verticesNeedUpdate = true;
-				// 	}
-				//
-				// } );
+					// scene.traverse( function( node ) {
+					//
+					//   if ( node instanceof THREE.LineSegments | node instanceof THREE.Points ) {
+					//
+					//     // insert your code here, for example:
+					//     // node.material = new THREE.MeshNormalMaterial() ;
+					//
+					// 		node.geometry.attributes.position.needsUpdate = true;
+					// 		node.geometry.verticesNeedUpdate = true;
+					// 	}
+					//
+					// } );
 
-				// optimize rendering = every 1/24 second
-				setTimeout( function() {
-				  requestAnimationFrame( animate );
-				}, 1000 / 20 );
+					// optimize rendering = every 1/24 second
+					setTimeout( function() {
+					requestAnimationFrame( animate );
+					}, 1000 / 20 );
 
-				// requestAnimationFrame( animate );
-				render();
+					// requestAnimationFrame( animate );
+					render();
 
-        // stats.update();
+				// stats.update();
 
 
-      }
+			}
 
 
 			// RENDER FUNCTION
-  		function render() {
+			function render() {
 
 				// UPDATE TIME VALUE IN UNIFORMS
-  			// var time  = Date.now() * 0.01;
+				// var time  = Date.now() * 0.01;
 				var time_ = ( Date.now() - start ) * .001 ;
 
 				scene.traverse( function( node ) {
 
-			    if ( node instanceof THREE.LineSegments | node instanceof THREE.Points ) {
+				if ( node instanceof THREE.LineSegments | node instanceof THREE.Points ) {
 
 						if (node.name != "helper") {
 							// console.log("--- traverse / node : ", node );
@@ -1250,7 +1289,7 @@
 
 				// scene.traverse( function( node ) {
 				// 	if ( node instanceof THREE.Group ) {
-		  	// 		node.rotation.x = time_ * 0.04 * effectController.rotationGroup * node.customFactor ;
+				// 		node.rotation.x = time_ * 0.04 * effectController.rotationGroup * node.customFactor ;
 				// 		node.rotation.y = time_ * 0.02 * effectController.rotationGroup * node.customFactor ;
 				// 	}
 				// }) ;
@@ -1258,7 +1297,7 @@
 				renderer.render( scene, camera );
 
 
-  		}
+			}
 
 
 

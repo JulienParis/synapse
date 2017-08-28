@@ -1,6 +1,7 @@
 
 // INITIATE SOCKET IO CONNECTION
-var socket = io.connect('http://' + document.domain + ':' + location.port);
+// var socket = io.connect('http://' + document.domain + ':' + location.port);
+var socket = io.connect('http://' + document.domain + ':' + location.port, { transports: ["websocket"] });
 socket.on('connect', function() {
   socket.emit( 'connect_' );
 });

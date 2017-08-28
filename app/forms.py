@@ -36,14 +36,15 @@ choices_type.sort( key=lambda art : art[0].lower() )
 ### forms classes/typologies
 
 class LoginForm(FlaskForm):
-    userName     = StringField   ( 'user name'    , validators = [ Optional() ],     render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_username] }  )
+    # userName     = StringField   ( 'user name'    , validators = [ Optional() ],     render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_username] }  )
+    userEmail    = EmailField    ( 'user email'   , validators = [ DataRequired(), Length(min=7, max=50) ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_email]    }  )
     userCard     = IntegerField  ( 'user card'    , validators = [ Optional() ],     render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_n_carte]  }  )
     userPassword = PasswordField ( 'user password', validators = [ DataRequired() ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_password] }  )
     #remember_me  = BooleanField  ( 'remember_me', default=False )
 
 class UserRegisterForm(FlaskForm):
-    userName        = StringField   ( 'user name'    , validators = [ DataRequired(), Length(min=3, max=50) ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_username] }  )
-    userCard        = IntegerField   ( 'user card'    , validators = [ Optional() ],                            render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_n_carte]  }  )
+    # userName        = StringField   ( 'user name'    , validators = [ DataRequired(), Length(min=3, max=50) ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_username] }  )
+    userCard        = IntegerField  ( 'user card'    , validators = [ Optional() ],                            render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_n_carte]  }  )
     userEmail       = EmailField    ( 'user email'   , validators = [ DataRequired(), Length(min=7, max=50) ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_email]    }  )
     userPassword    = PasswordField ( 'user password',
         [
@@ -57,7 +58,7 @@ class UserRegisterForm(FlaskForm):
     #remember_me     = BooleanField  ( 'remember_me', default=False )
 
 class UserUpdateForm(FlaskForm):
-    new_userName        = StringField   ( 'user name'    , validators = [ DataRequired(), Length(min=3, max=50) ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre nouveau ' + dict_db_user[key_username] }  )
+    # new_userName        = StringField   ( 'user name'    , validators = [ DataRequired(), Length(min=3, max=50) ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre nouveau ' + dict_db_user[key_username] }  )
     new_userCard        = StringField   ( 'user card'    , validators = [ DataRequired() ],                        render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre nouveau ' + dict_db_user[key_n_carte]  }  )
     new_userEmail       = EmailField    ( 'user email'   , validators = [ Optional(), Length(min=7, max=50) ],     render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre nouveau ' + dict_db_user[key_email]    }  )
     new_userPassword    = PasswordField ( 'user password',

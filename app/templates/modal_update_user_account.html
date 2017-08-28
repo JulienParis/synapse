@@ -1,0 +1,134 @@
+
+<div class="modal fade" id="update_user_account_form" tabindex="-1" role="dialog" aria-labelledby="update_user_form_label">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+  
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+    
+            <h3 class="modal-title text-center"
+                id="update_user_form">
+                bienvenue {{ isUser }}
+            </h3>
+    
+            </div>
+    
+            <div class="modal-body">
+
+
+
+
+                <!-- INFOS USER FROM user_data -->
+                <button class="btn btn-default btn-block"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#collapse_user_infos"
+                        aria-expanded="true"
+                        aria-controls="collapse_user_infos">
+                mes infos
+                </button>
+
+                <div class="collapse in" id="collapse_user_infos">
+
+                    <table class="table">
+                        <tbody>
+                        {% for key, value in user_data.iteritems()  %}
+                            <tr>
+                            <th> {{ dict_db_user[key]|safe }}   </th>
+                            <td> {{ value|safe }} </td>
+                            </tr>
+                        {% endfor %}
+
+                        <tbody>
+                    </table>
+
+                </div>
+
+
+                <br>
+                <button class="btn btn-default btn-block"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#collapse_update_infos"
+                        aria-expanded="false"
+                        aria-controls="collapse_update_infos">
+                mettre à jour mes informations
+                </button>
+
+                <div class="collapse" id="collapse_update_infos">
+                    <br>
+                    <!-- FORM UPDATE USER -->
+                    <form class  = "form-horizontal"
+                            action = "{{ url_for('index') }}"
+                            method = "post"
+                            name   = "update_user">
+
+                        {{ userUpdateForm.hidden_tag() }}
+                        <input type="hidden" name="req_type" value="update_user">
+
+
+
+
+                        <!-- <div class="form-group">
+                        <label for="new_userName" class="col-sm-3 control-label">pseudo</label>
+                        <div class="col-sm-9">
+                            { { userUpdateForm.new_userName } }
+                        </div>
+                        </div> -->
+
+                        <div class="form-group">
+                        <label for="new_userCard" class="col-sm-3 control-label">n° de carte</label>
+                        <div class="col-sm-9">
+                            {{ userUpdateForm.new_userCard }}
+                        </div>
+                        </div>
+
+                        <div class="form-group">
+                        <label for="new_userEmail" class="col-sm-3 control-label">email</label>
+                        <div class="col-sm-9">
+                            {{ userUpdateForm.new_userEmail }}
+                        </div>
+                        </div>
+
+                        <div class="form-group">
+                        <label for="new_userPassword" class="col-sm-3 control-label">password</label>
+                        <div class="col-sm-9">
+                            {{ userUpdateForm.new_userPassword }}
+                        </div>
+                        </div>
+
+                        <div class="form-group">
+                        <label for="confirmPassword" class="col-sm-3 control-label">répéter votre nouveau password</label>
+                        <div class="col-sm-9">
+                            {{ userUpdateForm.confirmPassword }}
+                        </div>
+                        </div>
+
+
+
+
+                        <div class="form-group">
+
+                        <div class="col-sm-offset-3 col-sm-9"> <!-- REGISTER AND LOG IN -->
+                            <button type="submit"
+                                    class="btn btn-info btn-block">
+                            mettre à jour mes informations
+                            </button>
+                        </div>
+
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+        
+
+            </div> <!-- end modal-body -->
+        
+        </div>
+    </div>
+</div>

@@ -52,11 +52,13 @@ def Is_Admin():
 
     print
 
-    if 'username' in session:
-        print '**** Is_Admin **** you are logged in as : ' + session[key_username]
-        isUser        = session[key_username]
+    if key_email in session:
+        # print '**** Is_Admin **** you are logged in as : ' + session[key_username]
+        # isUser        = session[key_username]
+        print '**** Is_Admin **** you are logged in as : ' + session[key_email]
+        isUser        = session[key_email]
 
-        existing_user = users_mongo.find_one({ key_n_carte : session[key_n_carte] })
+        existing_user = users_mongo.find_one({ key_email : session[key_email] })
         print '**** Is_Admin ****  existing_user : ', isUser
 
         if existing_user[key_status] == 'admin' :
@@ -341,7 +343,7 @@ def get_users():
 
 # @app.route('/notices', defaults={'fields': [], 'limit': None})
 # @app.route('/notices/fields=<fields>+limit=<int:limit>')
-### REST API on pattern : .../notices/?limit=3&field=auteur_princ&field=titre
+### REST API on pattern : .../notices/?limit=3&field1=auteur_princ&field2=titre
 @app.route('/<coll>/', methods=['GET'] )
 def get_coll(coll):
 
@@ -419,7 +421,7 @@ def index():
 
         ### prepopulating userUpdateForm
         userUpdateForm = UserUpdateForm()
-        userUpdateForm.new_userName.data  = session[key_username]
+        # userUpdateForm.new_userName.data  = session[key_username]
         userUpdateForm.new_userCard.data  = session[key_n_carte]
         userUpdateForm.new_userEmail.data = session[key_email]
 
@@ -722,26 +724,31 @@ def index():
         ### LOG IN or REGISTER
         elif req_type == 'log' or req_type == 'reg' or req_type == 'logout' :
 
-            userName     = request.form['userName'].encode('utf-8')
-            userCard     = request.form['userCard']
-            userPassword = request.form['userPassword'].encode('utf-8')
+            print "--- INDEX / POST --- req_type : ", req_type
+
+            # userName      = request.form['userName'].encode('utf-8')
+            userEmail     = request.form['userEmail']
+            userCard      = request.form['userCard']
+            userPassword  = request.form['userPassword'].encode('utf-8')
 
             session["is_userdata"] = False
 
-            print "---- INDEX / POST / log-reg-logout ---- userName : ",     userName
+            # print "---- INDEX / POST / log-reg-logout ---- userName : ",     userName
             print "---- INDEX / POST / log-reg-logout ---- userCard : ",     userCard
             print "---- INDEX / POST / log-reg-logout ---- userPassword : ", userPassword
 
             print "---- INDEX / POST / log-reg-logout ---- searching for existing user "
             try :
-                existing_user = users_mongo.find_one( { key_n_carte : userCard } )
+                existing_user = users_mongo.find_one( { key_email : userEmail } )
+                # existing_user = users_mongo.find_one( { key_n_carte : userCard } )
                 if not existing_user:
                     raise ValueError('empty string')
             except :
-                existing_user = users_mongo.find_one( { key_username : userName } )
+                existing_user = users_mongo.find_one( { key_n_carte : userCard } )
+                # existing_user = users_mongo.find_one( { key_username : userName } )
 
             if existing_user != None :
-                print "---- INDEX / POST / log-reg-logout ---- existing user : ", existing_user[ key_username ]
+                print "---- INDEX / POST / log-reg-logout ---- existing user : ", existing_user
 
 
             ### if form == register
@@ -765,7 +772,7 @@ def index():
                     ### create new user in MongoDB
                     hashpass   = bcrypt.hashpw(userPassword, bcrypt.gensalt() )
                     users_mongo.insert({
-                                  key_username   : userName,
+                                #   key_username   : userName,
                                   key_email      : userEmail,
                                   key_n_carte    : userCard,
                                   key_is_card    : userIsCard,
@@ -778,7 +785,7 @@ def index():
                                   } ,
                                   #'test'     : ["value1", "value2"]
                                   })
-                    session[key_username] = userName
+                    # session[key_username] = userName
                     session[key_n_carte]  = userCard
                     session[key_email]    = userEmail
                     session[key_user_id]  = str(users_mongo.find_one({ key_n_carte : userCard })[key_user_id])
@@ -797,15 +804,16 @@ def index():
             elif existing_user and req_type == "log" :
 
                 form = LoginForm(request.form)
-                print "---- INDEX / POST / log ---- LoginForm : ", form.userName, form.userPassword, form.userPassword.data
+                print "---- INDEX / POST / log ---- LoginForm : ", form.userEmail, form.userPassword, form.userPassword.data
                 print "---- INDEX / POST / log ---- LoginForm validation : ", form.validate() #, form.validate_on_submit()
 
                 if form.validate() and bcrypt.hashpw( userPassword, existing_user['password'].encode('utf-8') ) == existing_user['password'].encode('utf-8') :
-                    session[key_username]    = existing_user[key_username]
+                    # session[key_username]    = existing_user[key_username]
                     session[key_n_carte]     = existing_user[key_n_carte]
                     session[key_email]       = existing_user[key_email]
                     session[key_user_id]     = str(existing_user[key_user_id])
                     # session["is_userdata"] = False
+                    # isUser                 = session['username']
                     # isUser                 = session['username']
                     # flash(u'vous êtes connecté en tant que ' + isUser, "success")
                     return redirect(url_for('index') )
