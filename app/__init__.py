@@ -4,7 +4,7 @@
 --------------------------------------------
 
 ---------------------------------------------
-licence :
+licence    : .... 
 ---------------------------------------------
 project by : Julien Paris
 
@@ -33,9 +33,9 @@ SITE_STATIC           = SITE_ROOT   +  static_dir
 STATIC_DATA           = SITE_STATIC + '/data'
 
 #app = Flask(__name__)
-app = Flask(__name__, static_path = SITE_STATIC ) ### change static directory adress to custom address for Flask
+app = Flask( __name__, static_path = SITE_STATIC ) ### change static directory adress to custom address for Flask
 
-### get config.py for forms/DB config
+### get config.py for forms/DB config and the rest
 app.config.from_object('config')
 
 ### set socketio
