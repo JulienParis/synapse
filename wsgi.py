@@ -25,5 +25,5 @@ if __name__ == "__main__":
 
 ### start gunicorn from terminal :
 ### from : /apps/synapse/
-### run command                 : gunicorn --bind 0.0.0.0:8000 wsgi:app
-### run command in background   : gunicorn --bind 0.0.0.0:8000 wsgi:app &
+### run command                 : gunicorn --bind 0.0.0.0:5000 wsgi:app
+### run command in background   : gunicorn --bind 0.0.0.0:5000 wsgi:app &
