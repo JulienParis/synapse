@@ -15,7 +15,12 @@
 }
 
 
-
+/*.btn.btn-no-highlight {*/
+.no-higlight {
+    /*background-color: #51b9a3;*/
+    /*border-color: inherit ;*/
+    outline: none !important;
+    }
 
 .label{
     line-height: 2;

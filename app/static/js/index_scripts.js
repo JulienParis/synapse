@@ -60,6 +60,14 @@ $(document).ready( function(){
   });
 
 
+  // restore btns unfocused state after closing modals
+  $('.modal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget); // Button that triggered the modal
+    button.one('focus', function (event) {
+        $(this).blur();
+    });
+  });
+
 
   // dynamic tables
   // var table = $('.tableParcours').DataTable( {

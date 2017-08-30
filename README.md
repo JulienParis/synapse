@@ -273,7 +273,7 @@ This application proposes several features :
   - configure NGINX (reroute port 5000 to root) :
   >
   ```
-  $ cd ~/etc/nginx/sites-enabled`
+  $ cd ~/etc/nginx/sites-enabled
   ```
 
   - create NGINX configuration file for synapse
@@ -294,7 +294,7 @@ This application proposes several features :
   	server {
   	  # running port
   	  listen 80 default_server ;
-  	  server_name synapse.com ;
+  	  server_name synapse.la-bibliotheque.com ;
   	  # Proxy connection to the application servers
   	  location / {
   	    proxy_pass http://app_server ;
@@ -320,6 +320,20 @@ This application proposes several features :
 
   - restart the NGINX process to read the our new config : `$ sudo service nginx restart`
 
+
+  - DNS settings : https://askubuntu.com/questions/346838/how-do-i-configure-my-dns-settings-in-ubuntu-server
+  >
+  ```
+  $ cd ~/etc/networks
+  $ sudo nano interfaces
+  ...
+  dns-nameservers ... 80.82.225.40
+  ...
+  $ sudo ifdown eth0 && sudo ifup eth0
+
+  ```
+
+
   - copy original config.py file to server (from local machine)
   - cf : <https://unix.stackexchange.com/questions/106480/how-to-copy-files-from-one-machine-to-another-using-ssh>
   >
@@ -330,7 +344,7 @@ This application proposes several features :
   - GIT maintainance : pull when changes
   >
   ```
-  $ ssh julien@80.82.225.40
+  $ ssh julien@80.82.225.40    ... + pwd
   $ cd apps/synapse
   $ git pull
   ```
@@ -339,7 +353,7 @@ This application proposes several features :
   >
   ```
   $ cd apps/synapse
-  $ gunicorn --bind 0.0.0.0:5000 —-timeout=120 --workers=1 —-worker-class eventlet wsgi:app &
+  $ gunicorn --bind=0.0.0.0:5000 —-timeout=120 --workers=1 —-worker-class=eventlet wsgi:app &
   ```
 
   - ( if needed / stop unicorn server ) : `$ pkill gunicorn`

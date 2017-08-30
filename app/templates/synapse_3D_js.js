@@ -570,6 +570,9 @@ preload_notices( function(json) {
 
     initGUI();
 
+    
+    console.log("--- initGUI / gui :", gui);
+    
     animate();
     // render() ;
 
@@ -597,12 +600,17 @@ preload_notices( function(json) {
         // var f3 = gui.addFolder("limits");
         //     f3.add( effectController, "rotationGroup",  0.,  1., 0.1 );
         //     f3.open() ;
-
-        console.log("--- initGUI / gui :", gui);
+       
+        gui.closed = true ;
+        // gui.TEXT_CLOSED = "fermer les réglages" ;
+        // gui.TEXT_OPEN   = "ouvrir les réglages" ;
+        
+        // console.log("--- initGUI / gui :", gui);
 
     };
 
 
+    
     // INIT FUNCTION
     function init() {
         
@@ -953,6 +961,8 @@ preload_notices( function(json) {
     // ANIMATE FUNCTION
     function animate() {
 
+        // change main GUI button text
+        $('.close-button').text("REGLAGES");
 
         // scene.traverse( function( node ) {
         //
