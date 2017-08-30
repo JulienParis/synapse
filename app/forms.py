@@ -38,7 +38,7 @@ choices_type.sort( key=lambda art : art[0].lower() )
 class LoginForm(FlaskForm):
     # userName     = StringField   ( 'user name'    , validators = [ Optional() ],     render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_username] }  )
     userEmail    = EmailField    ( 'user email'   , validators = [ DataRequired(), Length(min=7, max=50) ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_email]    }  )
-    userCard     = IntegerField  ( 'user card'    , validators = [ Optional() ],     render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_n_carte]  }  )
+    # userCard     = IntegerField  ( 'user card'    , validators = [ Optional() ],     render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_n_carte]  }  )
     userPassword = PasswordField ( 'user password', validators = [ DataRequired() ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_password] }  )
     #remember_me  = BooleanField  ( 'remember_me', default=False )
 

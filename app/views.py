@@ -728,13 +728,14 @@ def index():
 
             # userName      = request.form['userName'].encode('utf-8')
             userEmail     = request.form['userEmail']
-            userCard      = request.form['userCard']
+            # userCard      = request.form['userCard']
             userPassword  = request.form['userPassword'].encode('utf-8')
 
             session["is_userdata"] = False
 
             # print "---- INDEX / POST / log-reg-logout ---- userName : ",     userName
-            print "---- INDEX / POST / log-reg-logout ---- userCard : ",     userCard
+            # print "---- INDEX / POST / log-reg-logout ---- userCard : ",     userCard
+            print "---- INDEX / POST / log-reg-logout ---- userEmail : ",     userEmail
             print "---- INDEX / POST / log-reg-logout ---- userPassword : ", userPassword
 
             print "---- INDEX / POST / log-reg-logout ---- searching for existing user "
@@ -744,7 +745,8 @@ def index():
                 if not existing_user:
                     raise ValueError('empty string')
             except :
-                existing_user = users_mongo.find_one( { key_n_carte : userCard } )
+                existing_user = None 
+                # existing_user = users_mongo.find_one( { key_n_carte : userCard } )
                 # existing_user = users_mongo.find_one( { key_username : userName } )
 
             if existing_user != None :

@@ -330,9 +330,10 @@ This application proposes several features :
   dns-nameservers ... 80.82.225.40
   ...
   $ sudo ifdown eth0 && sudo ifup eth0
-
   ```
-
+  
+  > edit etc/hosts --> https://www.imore.com/how-edit-your-macs-hosts-file-and-why-you-would-want
+  > add IP to redirect 
 
   - copy original config.py file to server (from local machine)
   - cf : <https://unix.stackexchange.com/questions/106480/how-to-copy-files-from-one-machine-to-another-using-ssh>
