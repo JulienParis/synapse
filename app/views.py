@@ -140,7 +140,7 @@ def WS_user_hist(card_number=None, password=None):
     isUser, isAdmin  = Is_Admin()
     print '~ ~ ~ WS_user_hist --- isUser  : ', isUser
     # print '--- WS_user_hist --- session : ', session
-    print '~ ~ ~ WS_user_hist --- session["username"] : ', session[key_username]
+    # print '~ ~ ~ WS_user_hist --- session["username"] : ', session[key_username]
     print '~ ~ ~ WS_user_hist --- session["n_carte"]  : ', session[key_n_carte]
     print u'~ '*70
 
@@ -194,7 +194,7 @@ def WS_user_hist(card_number=None, password=None):
 
 
         print u'~ '*70
-        print '~ ~ ~ WS_user_hist --- card_number : %s / password : %s ' %(card_number, password)
+        print '~ ~ ~ WS_user_hist --- card_number : %s / password : %s ' %( card_number, password )
         print u'~ '*70
 
 
