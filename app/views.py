@@ -275,7 +275,7 @@ def WS_user_hist(card_number=None, password=None):
 ########################################################################################
 ### MYSQL ROUTES #####
 @app.route('/<update_reset>' )
-def update_coll(update_reset="update", secret_key_update=None):
+def update_coll( update_reset="update", secret_key_update=None ):
 
     isUser, isAdmin  = Is_Admin()
 
@@ -416,7 +416,52 @@ def index():
     print "---- INDEX ---- session : %s " % ( session )
     print
 
-    ### RETRIEVE COMPLETE DATA PARCOURS AND STORE IT IF USER
+
+    ### RETRIEVE PARCOURS FOR ALL USERS AS LIST WITH STRUCTURE LIKE  :  
+    listEdges = []
+
+    # listEdges = [  { user1 :  { "_id"      : ... }, 
+    #                           { "parcours" : 
+    #                               { "envies"   : [ id_o1, id_o2, ... ] } ,
+    #                               { "emprunts" : [ id_o1, id_o2, ... ] } , 
+    #                               { "lus"      : [ id_o1, id_o2, ... ] } , 
+    #                           } 
+    #                , ... 
+    #             ]
+
+    edges_mongocursor = mongodb_read( "users", fields = [ "_id", key_parcours ] , get_edges = True )
+    print "---- INDEX ---- edges_mongocursor  : %s " % ( edges_mongocursor )
+
+    edges_mongocursor_ = edges_mongocursor.get_coll_as_json()
+    print "---- INDEX ---- edges_mongocursor_  : %s " % ( edges_mongocursor_ )
+
+    listEdges_mongo = list( edges_mongocursor_ )
+    print "---- INDEX ---- listEdges_  : %s " % ( listEdges_mongo )
+    print 
+
+    for user_ in listEdges_mongo :
+        
+        user_dict = {   
+                        # "_id"       : user_["_id"], 
+                        key_parcours  : [ ]  
+                    }
+        
+        if  user_[key_parcours] != { } :
+            for k, v in user_[ key_parcours ].iteritems() : 
+                if v != [] :
+                    # user_dict[ key_parcours ][ k ] = [ ref[ key_synapse ]  for ref in v  if ref[ key_synapse ] != None ]
+                    user_dict[ key_parcours ].extend ( [ ref[ key_synapse ]  for ref in v  if ref[ key_synapse ] != None ] )
+                    # for ref in v : 
+                    #     user_dict[ key_synapse ][ k ].append( ref[ key_synapse ] )
+
+        listEdges.append( user_dict )
+
+    print "---- INDEX ---- listEdges  : %s " % ( listEdges )
+    print 
+
+
+
+    ### RETRIEVE COMPLETE DATA PARCOURS AND STORE IT IF USER ### <-- PERHAPS BETTER WITH SOCKETIO
     if isUser :
 
         ### prepopulating userUpdateForm
@@ -505,7 +550,7 @@ def index():
             # else :
             #     pass
 
-            print "---- INDEX ---- user_parcours : ",  user_parcours
+            print "---- INDEX ---- end user_parcours : ... " #,  user_parcours
 
 
             # user_parcours_ = json.dumps( user_parcours )
@@ -765,10 +810,10 @@ def index():
                 if form.validate():
 
                     ### generate dummy card number if does not exist
-                    # Magalie : 915526
+                    # ex Magalie : 915526
                     if userCard == "" or len(userCard)!= 6 :
                         userIsCard        = False
-                        countNotRegistred = users_mongo.find( { key_is_card : False} ).count()
+                        countNotRegistred = users_mongo.find( { key_is_card : False } ).count()
                         userCard          = "X" + str(countNotRegistred+1)
 
                     ### create new user in MongoDB
@@ -835,26 +880,27 @@ def index():
     print "---- INDEX END ---- session : %s " % ( session )
 
     return render_template('index.html',
-                           app_metas            = app_metas,
-                           app_colors           = app_colors,
-                           app_bib_infos        = app_bib_infos,
-                           dict_db_user         = dict_db_user,
-                           bootstrap_vars       = bootstrap_vars,
-                           session_u            = session,
+                            app_metas           = app_metas,
+                            app_colors          = app_colors,
+                            app_bib_infos       = app_bib_infos,
+                            dict_db_user        = dict_db_user,
+                            bootstrap_vars      = bootstrap_vars,
+                            session_u           = session,
 
-                           user_data            = user_data,
-                           user_parcours        = user_parcours,
+                            listEdges           = listEdges, 
+                            user_data           = user_data,
+                            user_parcours       = user_parcours,
 
-                           parcours_indexes     = parcours_indexes,
-                           isUser               = isUser,
-                           isAdmin              = isAdmin,
-                           sessionError         = sessionError,
+                            parcours_indexes    = parcours_indexes,
+                            isUser              = isUser,
+                            isAdmin             = isAdmin,
+                            sessionError        = sessionError,
 
-                           loginForm            = loginForm,
-                           registerForm         = registerForm,
-                           aloesForm            = aloesForm,
-                           userUpdateForm       = userUpdateForm,
-                           requestCabForm       = requestCabForm
+                            loginForm           = loginForm,
+                            registerForm        = registerForm,
+                            aloesForm           = aloesForm,
+                            userUpdateForm      = userUpdateForm,
+                            requestCabForm      = requestCabForm
     )
 
 ### LOGOUT ######
@@ -889,18 +935,18 @@ def view_3D():
                            bootstrap_vars       = bootstrap_vars
     )
 
-@app.route('/view_3D_mock')
-def view_3D_mock():
+# @app.route('/view_3D_mock')
+# def view_3D_mock():
 
-    print
-    print "/// test view 3D "
-    return render_template('synapse_3D_mock.html',
-                           app_metas            = app_metas,
-                           app_colors           = app_colors,
-                           app_bib_infos        = app_bib_infos,
-                           dict_db_user         = dict_db_user,
-                           bootstrap_vars       = bootstrap_vars
-    )
+#     print
+#     print "/// test view 3D "
+#     return render_template('synapse_3D_mock.html',
+#                            app_metas            = app_metas,
+#                            app_colors           = app_colors,
+#                            app_bib_infos        = app_bib_infos,
+#                            dict_db_user         = dict_db_user,
+#                            bootstrap_vars       = bootstrap_vars
+#     )
 
 
 ########################################################################################

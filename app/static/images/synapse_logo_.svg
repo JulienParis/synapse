@@ -15,7 +15,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="synapse_logo.png">
+   sodipodi:docname="synapse_logo_.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -25,16 +25,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.58"
-     inkscape:cx="192.3477"
-     inkscape:cy="162.7898"
+     inkscape:zoom="1.6404877"
+     inkscape:cx="163.20898"
+     inkscape:cy="59.271282"
      inkscape:document-units="px"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer7"
      showgrid="false"
      inkscape:window-width="1366"
      inkscape:window-height="719"
-     inkscape:window-x="17"
-     inkscape:window-y="14"
+     inkscape:window-x="19"
+     inkscape:window-y="158"
      inkscape:window-maximized="0"
      fit-margin-top="5"
      fit-margin-left="5"
@@ -188,17 +188,30 @@
          id="flowPara4254">synapse</flowPara></flowRoot>  </g>
   <g
      inkscape:groupmode="layer"
+     id="layer7"
+     inkscape:label="logo_2"
+     style="display:inline">
+    <rect
+       style="fill:#f3f0e3;fill-opacity:1;stroke:none;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4195"
+       width="326.12253"
+       height="136.54475"
+       x="24.992567"
+       y="44.552277" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="logo_1"
      style="display:inline"
      transform="translate(-44.671824,-51.516283)">
     <g
        inkscape:groupmode="layer"
-       id="layer5"
-       inkscape:label="fond"
-       style="display:inline">
+       id="layer6"
+       inkscape:label="fond_"
+       style="display:none">
       <circle
-         style="fill:#80ffe6;fill-opacity:1;stroke:none;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="display:inline;fill:#80ffe6;fill-opacity:1;stroke:none;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="path4421"
          cx="230.95332"
          cy="160.35205"
@@ -208,14 +221,19 @@
          cy="160.35205"
          cx="130.95332"
          id="circle4423"
-         style="fill:#80ffe6;fill-opacity:1;stroke:none;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="display:inline;fill:#80ffe6;fill-opacity:1;stroke:none;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <circle
-         style="fill:#80ffe6;fill-opacity:1;stroke:none;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="display:inline;fill:#80ffe6;fill-opacity:1;stroke:none;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="circle4425"
          cx="332.95331"
          cy="160.35205"
          r="68.564964" />
     </g>
+    <g
+       inkscape:groupmode="layer"
+       id="layer5"
+       inkscape:label="fond"
+       style="display:inline" />
     <path
        inkscape:connector-curvature="0"
        id="path4311"

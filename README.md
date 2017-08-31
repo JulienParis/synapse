@@ -46,11 +46,17 @@ This application proposes several features :
 
 ## _LOCAL SETTINGS_ | Installation on a local machine :
 
+
+  > mysql use (temporary) : https://stackoverflow.com/questions/8195418/cant-access-mysql-from-command-line-mac
+  ```
+  $ export PATH=$PATH:/usr/local/mysql/bin
+  ```
+
   >
-  '''
+  ```
   $ git config --global user.name 'jpySynapse_prod'
   $ git config --global user.email ‘jparis.py@gmail.com’
-  '''
+  ```
 
   - clone synapse project from gitlab :
   >

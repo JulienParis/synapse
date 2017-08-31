@@ -282,20 +282,21 @@ class mongodb_updates :
 
 class mongodb_read :
 
-    def __init__(self,  coll, fields=None, limit=0, get_ligth=False) :
+    def __init__(self,  coll, fields=None, limit=0, get_ligth=False, get_edges = False ) :
 
         print ">>> mongodb_read --- "
-        self.coll = coll
+        self.coll       = coll
         self.mongoColl  = mongoColls[ self.coll ]
 
         self.limit  = limit
         self.fields = fields
-        self.query_fields = { "_id":0 }
+        self.query_fields = { "_id" : 0 }
         self.get_ligth = get_ligth
 
-        if self.coll == "users" :
+
+        if self.coll == "users" and get_edges == False :
             self.query_fields["password"] = 0
-            self.query_fields["email"] = 0
+            self.query_fields["email"]    = 0
 
 
         if self.fields != None :
@@ -304,17 +305,20 @@ class mongodb_read :
         elif self.fields == None and limit == 0 :
             self.get_ligth = True
 
+
         if self.get_ligth == True :
             if self.coll == "notices" :
-                self.query_fields = {"_id":0, key_synapse:1}
+                self.query_fields = {"_id": 0, key_synapse: 1}
             if self.coll == "exemplaires" :
-                self.query_fields = {"_id":0, key_barcode:1}
+                self.query_fields = {"_id": 0, key_barcode: 1}
 
 
         print ">>> mongodb_read --- coll : %s, limit : %s, fields : %s, get_ligth : %s "  %( coll, (self.limit if self.limit else "None"), (self.fields if self.fields!=[] else "None"), (self.get_ligth if self.get_ligth else "False"))
 
 
     def get_coll_as_json(self):
+
+        print ">>> mongodb_read --- get_coll_as_json --- self.query_fields : ", self.query_fields
 
         coll_light = self.mongoColl.find( {}, self.query_fields ).limit(self.limit)
 
@@ -439,3 +443,12 @@ class mongodb_stats :
         print ">>> mongodb_stats --- "
 
         self.stats_mongo = stats_mongo
+
+
+def tasks_test (string1, string2, secret_key ) :
+    print "+++ tasks_test ( apscheduler ) +++ : %s / %s / %s " %(string1, string2, secret_key)
+    ### update_coll( update_reset="update", secret_key_update=secret_key )
+
+def tasks_update (string1, string2, secret_key ) :
+    print "+++ tasks_update ( apscheduler ) +++ : %s / %s / %s " %(string1, string2, secret_key)
+    ### update_coll( update_reset="update", secret_key_update=secret_key )

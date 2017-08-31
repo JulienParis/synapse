@@ -226,7 +226,7 @@ function createShaderMaterial ( constantsGroup,
     // var colorG  = new THREE.Color( famColor )  ;
 
 
-    console.log( ">>> familyIndex" , familyIndex );
+    console.log( "/// createShaderMaterial / familyIndex" , familyIndex );
 
     var uniforms = {
         time        : { type  : "f"  , value: 1.0 },
@@ -293,16 +293,32 @@ var wireframeMaterial = new THREE.MeshBasicMaterial( {
 var vertices3Dict     = { } ; 
 var vertices3UserList = [ ] ; 
 
+
 // get data for ALL USERS HISTORY from server
-var fake_id_o_list1 = [ "1412057", "1431565" , "0163823" , "1353951" , "0880467" ] ;
-var fake_id_o_list2 = [ "1424811", "0732204" , "0942578" , "0880467"  ] ;            
+
+// fake data
+var fake_id_o_list1 = { "parcours" : [ "1412057", "1431565" , "0163823" , "1353951" , "0880467" ]} ;
+var fake_id_o_list2 = { "parcours" : [ "1424811", "0732204" , "0942578" , "0880467"  ] } ;            
 var fakeUserBooksLists = [ fake_id_o_list1 , fake_id_o_list2 ] ;
 
-$.each( fakeUserBooksLists, function ( i, list_id_o ){
-    $.each( list_id_o, function (i_, id_o ) {
+// real data
+var realUserBooksLists = {{ listEdges | tojson }};
+
+console.log( "-+- realUserBooksLists -+- :", realUserBooksLists ) ; 
+
+// iteratate list
+$.each( realUserBooksLists, function ( i , user ){
+
+    // iterate object user 
+    $.each( user.parcours, function ( i_ , id_o ) {
+
         vertices3UserList.push( id_o ) ;
+
     }) ;
 }) ;
+
+
+
 console.log( "-+- vertices3UserList -+- ", vertices3UserList ) ;
 
 // -------------------------------------------------------
@@ -507,8 +523,6 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
 
 
 
-
-
 $(document).ready(function(){
 
 // --- FAKE LIGHT JSON NOTICES
@@ -550,8 +564,14 @@ var json_fake = {
 
 // --- LOAD JSON NOTICES AS CALLBACK
 function preload_notices(callback){
-    $.getJSON( "{{ url_for('static', filename='data/JSON_notices_nested.json') }}", function( json ) {
-    console.log("... JSON_notices_nested loaded with getJSON");
+
+    // get parcours all users for edges 
+        //
+
+    // get notices for points
+        $.getJSON( "{{ url_for('static', filename='data/JSON_notices_nested.json') }}", function( json ) {
+        console.log("... JSON_notices_nested loaded with getJSON");
+
     callback(json);
 }
 )};
@@ -569,8 +589,6 @@ preload_notices( function(json) {
 
 
     initGUI();
-
-    
     console.log("--- initGUI / gui :", gui);
     
     animate();
@@ -796,6 +814,8 @@ preload_notices( function(json) {
 
         // --- CREATE EDGES --- //
 
+            console.log( "-+- realUserBooksLists -+- :", realUserBooksLists ) ; 
+        
             console.log( "-+- vertices3UserList -+- ", vertices3UserList ) ;
             console.log( "-+- vertices3Dict -+- "    , vertices3Dict     ) ;
             console.log(" ======================================== ");
@@ -804,51 +824,64 @@ preload_notices( function(json) {
             var groupEdges3D = new THREE.Group () ;
             scene.add( groupEdges3D ) ;
 
-            // CREATE LINE for each user from users' history list : fakeUserBooksLists
-            $.each( fakeUserBooksLists , function( index , id_o_list ) { 
-
-                // create geometry
-                var geoUser_buffer  = new THREE.BufferGeometry();
-
-                var segments   = id_o_list.length ; 
-                var positionsL = new Float32Array( segments * 3 ); 
-                var vertexL_constants ; 
-
-                // get back vertex coordinates from id_o attribute in clickableObjects
-                $.each( id_o_list, function( i, id_o ) {
-                    
-                    // find vertex for this id_o
-                    var vertexL           = vertices3Dict[id_o]["vertex"] ;
-                    vertexL_constants = vertices3Dict[id_o]["constantsGroup"] ;
-                    console.log( "-- id_o -- ",    id_o    ) ;
-                    console.log( "-- vertexL -- ", vertexL ) ;
-                    console.log( "-- vertexL_constants -- ", vertexL_constants ) ;
-                    console.log(  ) ;
-                    
-                    // push to positionsl
-                    vertexL.toArray( positionsL, i * 3 );
-                    // positionsL[ i * 3 ]     = vertexL.x ;
-					// positionsL[ i * 3 + 1 ] = vertexL.y ;
-					// positionsL[ i * 3 + 2 ] = vertexL.z ;
-
-                });
-
-
-                geoUser_buffer.addAttribute( 'position', new THREE.BufferAttribute( positionsL, 3 ) );
-
-
-                // create material with same caracteristics than original vertex
-                // var geoUser_material = new THREE.LineBasicMaterial( { vertexColors : THREE.VertexColors } );
-                var geoUser_material = createShaderMaterial (   vertexL_constants,
-                                                                is_wire    = true,
-                                                                is_texture = false
-                ) ;
+            // CREATE LINE for each user from users' history list : realUserBooksLists
+            // $.each( fakeUserBooksLists , function( index , data_user ) { 
+            $.each( realUserBooksLists , function( index , data_user ) { 
                 
-                // compose mesh 
-                line_mesh = new THREE.Line( geoUser_buffer, geoUser_material );
+                if ( data_user.parcours.length > 0 ) {
+                    
+                    console.log( "-- data_user -- ",    data_user    ) ;
+                    
+                    var id_o_list = data_user.parcours ; 
+                    
+                    // create geometry
+                    var geoUser_buffer  = new THREE.BufferGeometry();
+
+                    var segments   = id_o_list.length ; 
+                    var positionsL = new Float32Array( segments * 3 ); 
+                    var vertexL_constants ; 
+
+                    // get back vertex coordinates from id_o attribute in clickableObjects
+                    $.each( id_o_list, function( i, id_o ) {
+                        
+                        console.log( "-- id_o -- ",    id_o    ) ;
+                        
+                        // find vertex in vertices3Dict for this id_o
+                        var vertexL       = vertices3Dict[id_o]["vertex"] ;
+                        console.log( "-- vertexL -- ", vertexL ) ;
+
+                        vertexL_constants = vertices3Dict[id_o]["constantsGroup"] ;
+                        console.log( "-- vertexL_constants -- ", vertexL_constants ) ;
+                                                
+                        // push to positionsl
+                        vertexL.toArray( positionsL, i * 3 );
+                        // positionsL[ i * 3 ]     = vertexL.x ;
+                        // positionsL[ i * 3 + 1 ] = vertexL.y ;
+                        // positionsL[ i * 3 + 2 ] = vertexL.z ;
+                        
+                    });
+
+                    geoUser_buffer.addAttribute( 'position', new THREE.BufferAttribute( positionsL, 3 ) );
+
+
+                    // create material with same caracteristics than original vertex
+                    // var geoUser_material = new THREE.LineBasicMaterial( { vertexColors : THREE.VertexColors } );
+                    var geoUser_material = createShaderMaterial (   vertexL_constants,
+                                                                    is_wire    = true,
+                                                                    is_texture = false
+                    ) ;
+                    
+                    // compose mesh 
+                    line_mesh = new THREE.Line( geoUser_buffer, geoUser_material );
+                    
+                    // add to groupEdges3D 
+                    groupEdges3D.add( line_mesh ) ; 
                 
-                // add to groupEdges3D 
-                groupEdges3D.add( line_mesh ) ; 
+                }; // end if statement
+                
+                console.log( " °°° " ) ;
+
+                
             });
 
 
