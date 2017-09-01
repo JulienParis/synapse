@@ -41,15 +41,17 @@ var defaultPointSize    = 10. ; // max size for icon
 var effectController = {
     // showGroup        : true,
     showHelper       : false,
+    showParticles    : true,
+    showEdges        : true,
     // minDistance     : 120,
     // limitConnections: true,
     // maxConnections  : 10,
     // particleCount   : particleCount,
     velocityFactor  : .05 ,
-    scaleFactor     : -.65 ,
+    scaleFactor     : -.6 ,
     breathing       : 2. ,
-    waveFreq        : .7 ,
-    waveAmp         : .2 ,
+    waveFreq        : .9 ,
+    waveAmp         : .6 ,
     // rotationGroup   : 1. ,
 };
 
@@ -266,7 +268,7 @@ function createShaderMaterial ( constantsGroup,
 
     if ( is_wire == true ) {
         material_shader.fragmentShader = document.getElementById( 'fragmentShader' ).textContent ;
-        material_shader.transparent    = false ;
+        material_shader.transparent    = true ;
         material_shader.wireframe      = false ;
     } ;
 
@@ -291,7 +293,7 @@ var wireframeMaterial = new THREE.MeshBasicMaterial( {
 
 // --- prestock edges --- //
 var vertices3Dict     = { } ; 
-var vertices3UserList = [ ] ; 
+var vertices3UserList_ = [ ] ; 
 
 
 // get data for ALL USERS HISTORY from server
@@ -306,18 +308,18 @@ var realUserBooksLists = {{ listEdges | tojson }};
 
 console.log( "-+- realUserBooksLists -+- :", realUserBooksLists ) ; 
 
-// iteratate list
+// iteratate list realUserBooksLists
 $.each( realUserBooksLists, function ( i , user ){
 
     // iterate object user 
     $.each( user.parcours, function ( i_ , id_o ) {
 
-        vertices3UserList.push( id_o ) ;
+        vertices3UserList_.push( id_o ) ;
 
     }) ;
 }) ;
-
-
+// unique values from vertices3UserList_
+var vertices3UserList = Array.from(new Set(vertices3UserList_))
 
 console.log( "-+- vertices3UserList -+- ", vertices3UserList ) ;
 
@@ -326,7 +328,9 @@ console.log( "-+- vertices3UserList -+- ", vertices3UserList ) ;
 function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily, angleGroup, radiusGroup, radiusCluster, wireORpoints ) {
 
     // empty arrays variables
-        pPositions   = new Float32Array( particlesLength * 3 );
+        pPositions   = new Float32Array ( particlesLength * 3 );
+        pId_o        = new Uint32Array  ( particlesLength     );
+
         // pColors      = new Float32Array( particlesLength * 3 );
         // pSizes       = new Float32Array( particlesLength     );
         // pFamily      = new Float32Array( particlesLength     ); // those are uniforms --> set in ShaderMaterial
@@ -371,11 +375,14 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
         
         // get back id_o notice
         var id_o = groupNot[i]["id_o"] ;
-
-        // prestock if is in edges
+        var id_o_ = parseInt( id_o ) ; 
+        // console.log(id_o_);
+        pId_o[i] = id_o_ ;
+        
+        // prestock if is in edges : vertices3UserList from realUserBooksLists
         if ( vertices3UserList.indexOf( id_o ) > -1  ) {
-            console.log( "------- id_o in edges list : ", id_o ) ; 
-            console.log( "------- vertex3 : ", vertex3 ) ; 
+            console.log( "------- id_o is in vertices3UserList  : ", id_o ) ; 
+            // console.log( "------- vertex3 : ", vertex3 ) ; 
             vertices3Dict[ id_o.toString() ] = { "vertex" : vertex3, "constantsGroup" : constantsGroup } ;
             // console.log( "------- vertices3Dict : ", vertices3Dict ) ; 
         };
@@ -407,15 +414,14 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
 
     }
 
-
     // console.log("--- pPositions : ", pPositions);
     // console.log("--- vertices2 : ",  vertices2);
     // console.log("--- vertices3 : ",  vertices3);
 
 
     var geomTri_buffer = new THREE.BufferGeometry();
-    geomTri_buffer.addAttribute( 'position',  new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) );
-    // geomTri_buffer.addAttribute( 'id_o',      new THREE.BufferAttribute( id_o,         1 ) ); //.setDynamic( true ) );
+    geomTri_buffer.addAttribute( 'position',  new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) ) ;
+    geomTri_buffer.addAttribute( 'id_o',      new THREE.BufferAttribute( pId_o,        1 ) )                    ; //.setDynamic( true ) );
     
 
     if ( wireORpoints == "points" ) {
@@ -602,11 +608,13 @@ preload_notices( function(json) {
 
         gui = new dat.GUI();
 
-        var f1 = gui.addFolder("Display") ;
+        var f1 = gui.addFolder("objects") ;
             // f1.add( effectController, "showGroup"  ).onChange( function( value ) {  group.visible   = value; } );
             f1.add( effectController, "showHelper" ).onChange( function( value ) {  groupH.visible  = value; } );
-
-        var f2 = gui.addFolder("factors");
+            f1.add( effectController, "showParticles" ).onChange( function( value ) {  groupFa3D_.visible  = value; } );
+            f1.add( effectController, "showEdges" ).onChange( function( value ) {  groupEdges3D_.visible  = value; } );
+            
+        var f2 = gui.addFolder("rendering");
             // f2.add( effectController, "minDistance"   ,  10, 300 , 1       );
             f2.add( effectController, "velocityFactor",  0.,  2.  , 0.01   ); // .onChange( onChangeControl(scene, "velFactor") ) ;
             f2.add( effectController, "scaleFactor",     -1.,  1.  , 0.01    ); // .onChange( onChangeControl(scene, "scaFactor") ) ;
@@ -638,15 +646,19 @@ preload_notices( function(json) {
 
             // set scene
             camera            = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 10000 );
-            camera.position.x = 200;
-            camera.position.y = 300;
-            camera.position.z = 200;
+            camera.position.x = 200. ;
+            camera.position.y = 0.   ;
+            camera.position.z = 200. ;
 
             scene     = new THREE.Scene();
             scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
 
-            group = new THREE.Group();
-            scene.add( group );
+            // empty groups for particles and edges
+            groupFa3D_ = new THREE.Group();
+            scene.add( groupFa3D_ );
+            groupEdges3D_ = new THREE.Group();
+            scene.add( groupEdges3D_ );
+
 
             groupH = new THREE.Group();
             scene.add( groupH ) ;
@@ -712,8 +724,9 @@ preload_notices( function(json) {
                     groupFa3D.syn_name  = groupName ;
                     groupFa3D.syn_stats = groupLen ;
                     
-                    scene.add( groupFa3D );
-
+                    // scene.add( groupFa3D );
+                    groupFa3D_.add( groupFa3D );
+                    
                     console.log("------ ITERATION GR / keyFa, keyGroup, groupName, groupLen : " , keyFa, keyGroup, groupName, groupLen );
                     var distGroup  = sphereRadius( indexGroup, RmarginDist  ) ;
                     var angleGroup = groupAngle(   indexGroup, faGroupsLen, 5. );
@@ -822,8 +835,9 @@ preload_notices( function(json) {
             
             // global group for edges
             var groupEdges3D = new THREE.Group () ;
-            scene.add( groupEdges3D ) ;
-
+            // scene.add( groupEdges3D ) ;
+            groupEdges3D_.add( groupEdges3D ) ;
+            
             // CREATE LINE for each user from users' history list : realUserBooksLists
             // $.each( fakeUserBooksLists , function( index , data_user ) { 
             $.each( realUserBooksLists , function( index , data_user ) { 
@@ -844,14 +858,14 @@ preload_notices( function(json) {
                     // get back vertex coordinates from id_o attribute in clickableObjects
                     $.each( id_o_list, function( i, id_o ) {
                         
-                        console.log( "-- id_o -- ",    id_o    ) ;
+                        // console.log( "-- id_o -- ",    id_o    ) ;
                         
                         // find vertex in vertices3Dict for this id_o
                         var vertexL       = vertices3Dict[id_o]["vertex"] ;
-                        console.log( "-- vertexL -- ", vertexL ) ;
+                        // console.log( "-- vertexL -- ", vertexL ) ;
 
                         vertexL_constants = vertices3Dict[id_o]["constantsGroup"] ;
-                        console.log( "-- vertexL_constants -- ", vertexL_constants ) ;
+                        // console.log( "-- vertexL_constants -- ", vertexL_constants ) ;
                                                 
                         // push to positionsl
                         vertexL.toArray( positionsL, i * 3 );
@@ -900,7 +914,7 @@ preload_notices( function(json) {
             // controls = new THREE.TrackballControls( camera, container );
             // cf : https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_pointerlock.html
             controls.minDistance   = 1. ;
-            controls.maxDistance   = 100000000.;
+            controls.maxDistance   = 100000.;
             controls.dampingFactor = 0.1   ;
 
         // set stats box
@@ -929,6 +943,7 @@ preload_notices( function(json) {
 
     // CLICKABLE SPRITES
     function onDocumentClick ( event ) {
+        
         var rect = renderer.domElement.getBoundingClientRect();
         mouse.x =   ( ( event.clientX - rect.left ) / ( rect.width  - rect.left ) ) * 2 - 1;
         mouse.y = - ( ( event.clientY - rect.top  ) / ( rect.bottom - rect.top) )   * 2 + 1;
@@ -936,12 +951,44 @@ preload_notices( function(json) {
         raycaster.setFromCamera( mouse, camera );
     
         intersects = raycaster.intersectObjects( clickableObjects );
-    
-        if ( intersects.length > 0 ) {
-            ///////////////////////////////
+        
+        // check if modal infos notice already shown or not
+        var isModalInfoOpen = $("#mod_info_notice").hasClass("in") ;             
+        
+        if ( intersects.length > 0 && isModalInfoOpen==false ) {
+            
             var INTERSECTED = intersects[0] ;
-            info.innerHTML = 'INTERSECTED uuid : ' + INTERSECTED.object.uuid ;  
+
+            // get back id_o from point
             console.log( " INTERSECTED ", INTERSECTED )  ;
+
+            var INTERSECTED_index    = INTERSECTED.index ;
+            // console.log( " INTERSECTED_index ", INTERSECTED_index )  ;
+            
+            var INTERSECTED_ido_list = INTERSECTED.object.geometry.attributes.id_o.array ;
+            // console.log( " INTERSECTED_ido_list ", INTERSECTED_ido_list )  ;
+            
+            var INTERSECTED_id_o  = INTERSECTED_ido_list [ INTERSECTED_index ] ;
+            console.log( " INTERSECTED_id_o ", INTERSECTED_id_o )  ;
+            
+            // get back info with id_o from server : socket_io
+            ///////////////////////////////
+
+            
+            // include info in div 
+            info.innerHTML = 'INTERSECTED_id_o : ' + INTERSECTED_id_o ;  
+            $("#not3D_id_o").html(INTERSECTED_id_o) ; 
+            
+
+            // show modal notice
+            // $("#mod_info_notice").collapse('show') ; 
+            // $('[data-dismiss="modal"]').on('click', function(){
+            //     $('.modal').collapse("hide");
+            //     $('.modal-backdrop').collapse("hide");
+            // });
+
+            console.log(" ");
+
         }                
 
 
@@ -995,7 +1042,7 @@ preload_notices( function(json) {
     function animate() {
 
         // change main GUI button text
-        $('.close-button').text("REGLAGES");
+        $('.close-button').text("réglages");
 
         // scene.traverse( function( node ) {
         //
@@ -1042,7 +1089,7 @@ preload_notices( function(json) {
                     // UPDATE VALUES FROM CONTROLS
                     if ( node.name != "helper" ) {
                         // console.log("--- traverse / node : ", node );
-                        node.material.uniforms.time.value       =  time_ ;
+                        node.material.uniforms.time.value       = time_ ;
                         node.material.uniforms.velFactor.value  = effectController.velocityFactor ;
                         node.material.uniforms.scaFactor.value  = effectController.scaleFactor ;
                         node.material.uniforms.breathing.value  = effectController.breathing ;

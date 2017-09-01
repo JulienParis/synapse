@@ -429,7 +429,7 @@ def index():
     #                , ... 
     #             ]
 
-    edges_mongocursor = mongodb_read( "users", fields = [ "_id", key_parcours ] , get_edges = True )
+    edges_mongocursor = mongodb_read( "users", fields = [ "_id", key_parcours, key_n_carte ] , get_edges = True )
     print "---- INDEX ---- edges_mongocursor  : %s " % ( edges_mongocursor )
 
     edges_mongocursor_ = edges_mongocursor.get_coll_as_json()
@@ -442,11 +442,11 @@ def index():
     for user_ in listEdges_mongo :
         
         user_dict = {   
-                        # "_id"       : user_["_id"], 
+                        key_n_carte   : user_[ key_n_carte ], 
                         key_parcours  : [ ]  
                     }
         
-        if  user_[key_parcours] != { } :
+        if  user_[ key_parcours ] != { } :
             for k, v in user_[ key_parcours ].iteritems() : 
                 if v != [] :
                     # user_dict[ key_parcours ][ k ] = [ ref[ key_synapse ]  for ref in v  if ref[ key_synapse ] != None ]

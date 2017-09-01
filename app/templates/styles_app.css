@@ -14,6 +14,10 @@ hr {
     font-size: medium;
 }*/
 
+h1 {
+    font-size: 50px;    
+}
+
 h2 {
     color: {{ app_colors.navbar }};
     margin-top: 0px;
@@ -37,8 +41,11 @@ a {
   color: #fff;
 }
 a:hover{
-  color: {{ app_colors.btn_info }};
-  text-decoration : none;
+  /* color: {{ app_colors.btn_info }}; */
+  color : white ;
+  text-decoration : none ;
+  -webkit-text-stroke : 1px white ; 
+  
 }
 
 .a_ {
@@ -46,7 +53,7 @@ a:hover{
 }
 
 .a_:hover {
-  text-decoration: underline;;
+  text-decoration: underline ;
 }
 
 a.aFake {

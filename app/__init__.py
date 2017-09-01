@@ -57,9 +57,9 @@ socketio = SocketIO( app, async_mode="eventlet" )
 ### set an apscheduler for updating the db / each 24h with cron at 4.00 am
 ############################################################
 
-host_IP = socket.gethostbyname( socket.gethostname() )
+# host_IP = socket.gethostbyname( socket.gethostname() )
+# print "__init__ / setting scheduler ... host_IP : ", host_IP
 
-print "__init__ / setting scheduler ... host_IP : ", host_IP
 # logging.basicConfig()
 scheduler               = APScheduler()
 # scheduler.allowed_hosts = [ 'localhost', host_IP, app.config["SYNAPSE_IP"], "127.0.0.1" ]

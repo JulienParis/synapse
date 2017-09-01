@@ -4,36 +4,104 @@
       role="dialog"
       aria-labelledby="mod_howto">
 
-  <div class="modal-dialog modal-lg" role="document">
+  <div class="modal-dialog modal-lg " role="document">
 
-    <div class="modal-content">
+    <div class="modal-content modal_transparent ">
 
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h3 class="modal-title text-center" id="ModalHowTo">
-          Comment utiliser {{ app_metas.title }}
-        </h3>
+      <!-- <div class="modal-header">
+
+      </div> -->
+
+
+      <div class="modal-body text-center" style="color:white">
+
+          <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:white">
+            <span aria-hidden="true">&times;</span>
+          </button> -->
+          
+          <!-- <h1 class="text-center" id="ModalHowTo">
+            {{ app_metas.title }}
+          </h1>  -->
+
+          <img  src="{{ url_for('static', filename='images/logo_index.png') }}" 
+          style="margin-top:-5px ; max-height : 85px ;" >
+
+          <h3 class="" style="color:white">
+              tout le catalogue de la bibliothèque en 3D
+          </h3>
+
+          <br>
+          <br>
+
+          <!-- <span class="fa fa-circle-o fa-md" area-hidden="true"></span> -->
+          <hr>
+
+          
+          <h3 class="lead text-left" style="color:white ; margin-left: 80px">
+            
+            <ul>
+
+              <li>les points de couleurs représentent les 300.000+ documents du fonds </li>
+              <li>les traits blanc représentent les emprunts des utilisateurs </li>
+              <li>le trait noir représente votre propre parcours d'emprunts </li>
+              <li>vous pouvez mettre à jour votre propre parcours d'emprunts</li>
+              <li>vous pouvez bouger autour de synapse ou zoomer avec la souris </li>
+              <li>vous pouvez changer les réglages de l'animation </li>
+            
+            </ul>
+
+          </h3>
+
+          <hr>
+
+          <br>
+
+          <h3 class="text-center">
+              <a data-dismiss="modal">× commencer à explorer le catalogue ×</a>
+          </h3>
+
+          <h3 class="text-center">
+              <a id="log_from_howto">× se connecter pour mettre à jour votre propre parcours ×</a>
+          </h3>
+
+          <h3 class="text-center">
+              <a href="http://www.la-bibliotheque.com" target="_blank">× retour à la bibliothèque ×</a>
+          </h3>
+
+
       </div>
 
-      <div class="modal-body">
-
-
-
-
-
-
-
-      </div>
-
-      <div class="modal-footer">
+      <!-- <div class="modal-footer">
         <button type="button" class="btn btn-info btn-sm custom-btn" data-dismiss="modal">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
           Fermer
         </button>
-      </div>
+      </div> -->
 
-    </div> <!-- end modal-content -->
+    </div> 
 
   </div>
 
-</div><!-- END MODAL HOW_TO -->
+</div>
+<!-- END MODAL HOW_TO -->
+
+
+<!-- <div class="cb_infos">
+
+  <h3 class="text-right"><span aria-hidden="true" style="">&times;</span></h3>
+
+  <h1> {{ app_metas.title }} </h1>
+  
+  <p>...
+    <a title="jpy" href="http://www.jpylab.com/"> Julien </a>
+    <br> 
+    Le catalogue de La Bibliothèque en 3D.
+  </p>
+  
+  <h2 class="cb_autres_cb">
+    <a href="http://www.la-bibliotheque.com">× retour à la bibliothèque ×</a>
+  </h2>
+  
+  <h2 class="cb_fermer_info"> × Lancer l’application × </h2>
+  <br>
+</div> -->

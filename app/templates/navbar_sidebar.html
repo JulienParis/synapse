@@ -104,27 +104,24 @@
       <!-- <li class="divider-vertical"></li> -->
 
 
+      <li>
+          <button  type="button"
+              class="btn btn-sm navbar-btn btn-link bstooltip no-higlight"
+              data-toggle="modal"
+              data-target="#mod_howto"
 
-      <li >
-        
-        <button type="button"
-          class="btn btn-default btn-sm navbar-btn bstooltip no-higlight"
-          data-toggle="modal"
-          data-target="#mod_howto"
-
-          data-trigger='manual'
-          data-tooltip="tooltip"
-          data-placement="bottom"
-          title="Comment utiliser {{ app_metas.title }} ?"
-          data-container="body"
-          >
-            <!-- <a  role="button"
-            data-toggle="modal"
-            data-target="#mod_howto"> -->
-            <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+              data-trigger='manual'
+              data-tooltip="tooltip"
+              data-placement="bottom"
+              title="Comment utiliser {{ app_metas.title }} ?"
+              data-container="body"
+              >
+            <i class="fa fa-asterisk fa-lg" area-hidden="true"></i>
           </button>
-        <!-- </a> -->
       </li>
+
+
+
 
 
       <!-- <li class="divider-vertical"></li> -->
@@ -158,6 +155,21 @@
 
     <ul class="nav navbar-nav navbar-right">
 
+      <li>
+          <button type="button"
+                  class="btn btn-default btn-sm navbar-btn bstooltip no-higlight"
+
+                  data-trigger='manual'
+                  data-tooltip="tooltip"
+                  data-placement="bottom"
+                  title="mettre en pause l'animation"
+                  data-container="body"
+                  >
+              <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+
+          </button>
+      </li>
+      
       {% if isUser != None %}
       <!-- <li>
           <p class="navbar-text" id="navbar-text" >

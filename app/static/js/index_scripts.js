@@ -35,7 +35,8 @@ $(document).ready( function(){
   var isUser_data = $("#meta_isUser").attr("data") ;
   console.log("--- check if isUser / isUser_data : ", isUser_data);
   if (isUser_data == "None"){
-    $('#mod_intro').modal('show');
+    // $('#mod_intro').modal('show');
+    $('#mod_howto').modal('show');
   } else {
     $('#update_user_form').modal('show');
   };
@@ -59,6 +60,11 @@ $(document).ready( function(){
     close_n_load();
   });
 
+  // open login modal from intro
+  $("#log_from_howto").click( function() {
+    $.when( $(".modal").modal("hide") )
+     .then( $("#login_form").modal("show") ) 
+  }) ;
 
   // restore btns unfocused state after closing modals
   $('.modal').on('show.bs.modal', function (event) {
