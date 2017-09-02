@@ -278,7 +278,7 @@ function createShaderMaterial ( constantsGroup,
         waveAmp     : { value : effectController.waveAmp },
         color       : { value : colorG },
         transp      : { value : transp_ },
-        
+
         // familyI     : { value : familyIndex },
         // familiesL   : { value : familiesLength },
         // groupI      : { value : groupIndex  },
@@ -693,7 +693,7 @@ preload_notices( function(json) {
             // f2.add( effectController, "minDistance"   ,  10, 300 , 1       );
             f2.add( effectController, "velocityFactor",  0.,  2.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "velFactor") ) ;
             f2.add( effectController, "scaleFactor",     -1.,  1.  , 0.01 ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;
-            f2.add( effectController, "breathing"  ,     0.,  2.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
+            f2.add( effectController, "breathing"  ,     0.,  3.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
             f2.add( effectController, "waveFreq"   ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
             f2.add( effectController, "waveAmp"    ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
             f2.open() ;
