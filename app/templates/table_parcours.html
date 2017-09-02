@@ -40,14 +40,24 @@
     <tbody>
 
     {% for key, values in user_parcours.iteritems() %}
+      
       {% for val in values %}
-      <tr id="{{ val['cab'] }}">
+
+        {% if val["titre"] != "notice introuvable"  %}
+        
+        <tr id="{{ val['cab'] }}">
           <th> {{ key|safe }}   </th>
           {% for index in parcours_indexes %}
             <td> {{ val[index]|safe }} </td>
           {% endfor %}
-        {% endfor %}
-      </tr>
+
+        </tr>
+
+        {% endif %}
+
+      {% endfor %}
+
+
     {% endfor %}
 
     </tbody>

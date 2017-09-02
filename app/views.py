@@ -57,6 +57,7 @@ def Is_Admin():
         # isUser        = session[key_username]
         print '**** Is_Admin **** you are logged in as : ' + session[key_email]
         isUser        = session[key_email]
+        isCard        = session[key_n_carte]
 
         existing_user = users_mongo.find_one({ key_email : session[key_email] })
         print '**** Is_Admin ****  existing_user : ', isUser
@@ -68,12 +69,13 @@ def Is_Admin():
 
     else :
         isUser        = None
+        isCard        = None
         isAdmin       = False
 
     print '**** Is_Admin ****  session : ', session
     print
 
-    return isUser, isAdmin
+    return isUser, isCard, isAdmin
 
 ### cookies
 @app.route("/setcookie/<data>")
@@ -418,7 +420,7 @@ def index():
     userUpdateForm = UserUpdateForm()
     requestCabForm = RequestCabForm()
 
-    isUser, isAdmin  = Is_Admin()
+    isUser, isCard, isAdmin  = Is_Admin()
     print "---- INDEX ---- isAdmin : %s " % ( isAdmin )
     print "---- INDEX ---- isUser  : %s " % ( isUser )
     print "---- INDEX ---- session : %s " % ( session )
@@ -534,7 +536,7 @@ def index():
                         ex_title  = notice[key_title]
                         ex_author = notice[key_author]
                         ex_C1     = dict_emplacements_[ notice[key_group_level_1] ]["PARENT"]
-                        ex_C2     = dict_reverse_C2[ notice[key_group_level_2] ]
+                        ex_C2     = dict_reverse_C2[ notice[ key_group_level_2 ] ]
                     except :
                         ex_title  = unknown_notice
                         ex_author = unknown_notice
@@ -554,7 +556,7 @@ def index():
                     }
                     # print count_debug
                     # print "---- ", ex_dict
-                    user_parcours[parcours_type].append(ex_dict)
+                    user_parcours[ parcours_type ].append(ex_dict)
                     # count_debug += 1
                     # print '.'
 
@@ -911,6 +913,7 @@ def index():
 
                             parcours_indexes    = parcours_indexes,
                             isUser              = isUser,
+                            isCard              = isCard, 
                             isAdmin             = isAdmin,
                             sessionError        = sessionError,
 

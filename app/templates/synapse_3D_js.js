@@ -6,6 +6,8 @@ var last_pause ;
 var time_paused_total = 0 ; 
 var time_  ; 
 
+var userCard = "{{ isCard }}" ; 
+
 var group, groupH ;
 var container, controls, stats ;
 var particlesData    = [] ;
@@ -222,7 +224,9 @@ function createShaderMaterial ( constantsGroup,
                                 // groupIndex,
                                 // groupsLen,
                                 is_wire,
-                                is_texture ) {
+                                is_texture, 
+                                is_from_user = false 
+                            ) {
     
     console.log("/// createShaderMaterial / constantsGroup : " , constantsGroup) ; 
     
@@ -233,9 +237,20 @@ function createShaderMaterial ( constantsGroup,
     var groupIndex      = constantsGroup["indexGroup"] ;
     var groupsLen       = constantsGroup["faGroupsLen"] ;
     
+    var transp_ = 1. ; 
     
-    // var colorG  = new THREE.Color( 0xffffff ) ;
-    var colorG = new THREE.Color ( notices_groups_[keyFa]["color"] ) ;  
+    if ( is_wire == false ) {
+        var colorG = new THREE.Color ( notices_groups_[ keyFa ]["color"] ) ;  
+    } else {
+        if ( is_from_user === true  ) {
+            var colorG  = new THREE.Color( "#ff0000" ) ;
+            console.log( "colorG / is_from_user : ", colorG ) ; 
+        } else {
+            var transp_ = .6 ; 
+            var colorG  = new THREE.Color( "#ffffff" ) ;            
+            console.log( "colorG / !is_from_user : ", colorG ) ; 
+        }
+    };
     
     // var randColor = Math.random() ;
     // var famColor = familyIndex / familiesLength ;
@@ -257,6 +272,7 @@ function createShaderMaterial ( constantsGroup,
         waveFreq    : { value : effectController.waveFreq },
         waveAmp     : { value : effectController.waveAmp },
         color       : { value : colorG },
+        transp      : { value : transp_ },
         // familyI     : { value : familyIndex },
         // familiesL   : { value : familiesLength },
         // groupI      : { value : groupIndex  },
@@ -268,7 +284,6 @@ function createShaderMaterial ( constantsGroup,
     } ;
 
     if ( is_texture == true ) {
-        
         // uniforms.texture = { value: new THREE.TextureLoader().load( "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" ) } ;
         // uniforms.texture = { value: new THREE.TextureLoader().load( "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" ) } ;
         uniforms.texture = { value: new THREE.TextureLoader().load( notices_groups_[keyFa]["icon"] ) } ;
@@ -310,36 +325,31 @@ var wireframeMaterial = new THREE.MeshBasicMaterial( {
 
 
 // --- prestock edges --- //
-var vertices3Dict     = { } ; 
+var vertices3Dict      = { } ; 
 var vertices3UserList_ = [ ] ; 
 
-
 // get data for ALL USERS HISTORY from server
-
 // fake data
-var fake_id_o_list1 = { "parcours" : [ "1412057", "1431565" , "0163823" , "1353951" , "0880467" ]} ;
-var fake_id_o_list2 = { "parcours" : [ "1424811", "0732204" , "0942578" , "0880467"  ] } ;            
-var fakeUserBooksLists = [ fake_id_o_list1 , fake_id_o_list2 ] ;
+    var fake_id_o_list1 = { "parcours" : [ "1412057", "1431565" , "0163823" , "1353951" , "0880467" ]} ;
+    var fake_id_o_list2 = { "parcours" : [ "1424811", "0732204" , "0942578" , "0880467"  ] } ;            
+    var fakeUserBooksLists = [ fake_id_o_list1 , fake_id_o_list2 ] ;
 
 // real data
-var realUserBooksLists = {{ listEdges | tojson }};
+    var realUserBooksLists = {{ listEdges | tojson }};
 
 console.log( "-+- realUserBooksLists -+- :", realUserBooksLists ) ; 
 
-// iteratate list realUserBooksLists
-$.each( realUserBooksLists, function ( i , user ){
-
-    // iterate object user 
-    $.each( user.parcours, function ( i_ , id_o ) {
-
-        vertices3UserList_.push( id_o ) ;
-
+// iteratate list realUserBooksLists to store id_o as 
+    $.each( realUserBooksLists, function ( i , user ){
+        // iterate object user 
+        $.each( user.parcours, function ( i_ , id_o ) {
+            vertices3UserList_.push( id_o ) ;
+        }) ;
     }) ;
-}) ;
-// unique values from vertices3UserList_
-var vertices3UserList = Array.from(new Set(vertices3UserList_))
+    // unique values from vertices3UserList_
+    var vertices3UserList = Array.from( new Set(vertices3UserList_) ) ;
 
-console.log( "-+- vertices3UserList -+- ", vertices3UserList ) ;
+    console.log( "-+- vertices3UserList -+- ", vertices3UserList ) ;
 
 // -------------------------------------------------------
 // SET PARTICLES SYSTEM <-- returns geomTri_buffer
@@ -395,7 +405,7 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
         var id_o = groupNot[i]["id_o"] ;
         var id_o_ = parseInt( id_o ) ; 
         // console.log(id_o_);
-        pId_o[i] = id_o_ ;
+        pId_o[ i ] = id_o_ ;
         
         // prestock if is in edges : vertices3UserList from realUserBooksLists
         if ( vertices3UserList.indexOf( id_o ) > -1  ) {
@@ -587,44 +597,40 @@ var json_fake = {
 };
 
 
-// RESET - PAUSE FUNCTION
+// RESET - PAUSE FUNCTIONS
 
-function pauseAnimation() {
-    // console.log("pauseAnimation / gui : ", gui ) ;
-    effectController = effectController_pause ;
-    gui.updateDisplay();
-};
-function reanimateAnimation () {
-    // console.log("reanimateAnimation / gui : ", gui ) ;
-    effectController = effectController_animate ;
-    gui.updateDisplay() ;
-};
-
-$("#animation_pause_start").on( "click", function () {
-
-    // start = Date.now()  ;
-    
-    // console.log($("#pause_start_span")) ;
-    if ( $("#pause_start_span").hasClass("glyphicon-pause" ) ) {
-        // console.log("pause_start_span pause") ;
-        last_pause = Date.now()  ; 
-        // pauseAnimation();
-    } else {
-        // console.log("pause_start_span play") ;
-        // last_delta_ = Date.now() - last_delta_ ;     
-        var time_replay       = Date.now() ; 
-        var new_paused_lap    = time_replay - last_pause ;
-        time_paused_total += new_paused_lap ;
-        // reanimateAnimation();
+    function pauseAnimation() {
+        // console.log("pauseAnimation / gui : ", gui ) ;
+        effectController = effectController_pause ;
+        gui.updateDisplay();
     };
-    $(this).find("span").toggleClass("glyphicon-pause").toggleClass("glyphicon-play");
-    
-});
+    function reanimateAnimation () {
+        // console.log("reanimateAnimation / gui : ", gui ) ;
+        effectController = effectController_animate ;
+        gui.updateDisplay() ;
+    };
 
+    $("#animation_pause_start").on( "click", function () {
 
-// $("#animation_pause_start").click( function () {
-//     reanimateAnimation();
-// });
+        // start = Date.now()  ;
+        
+        // console.log($("#pause_start_span")) ;
+        if ( $("#pause_start_span").hasClass("glyphicon-pause" ) ) {
+            // console.log("pause_start_span pause") ;
+            last_pause = Date.now()  ; 
+            // pauseAnimation();
+        } else {
+            // console.log("pause_start_span play") ;
+            // last_delta_ = Date.now() - last_delta_ ;     
+            var time_replay       = Date.now() ; 
+            var new_paused_lap    = time_replay - last_pause ;
+            time_paused_total += new_paused_lap ;
+            // reanimateAnimation();
+        };
+        $(this).find("span").toggleClass("glyphicon-pause").toggleClass("glyphicon-play");
+        
+    });
+
 
 // --- LOAD JSON NOTICES AS CALLBACK
 function preload_notices(callback){
@@ -698,7 +704,6 @@ preload_notices( function(json) {
     // INIT FUNCTION
     function init() {
         
-
         // --- BASIC STUFF --- //
             container = document.getElementById( 'canvas3D' );
 
@@ -900,6 +905,15 @@ preload_notices( function(json) {
             // $.each( fakeUserBooksLists , function( index , data_user ) { 
             $.each( realUserBooksLists , function( index , data_user ) { 
                 
+                console.log( " --- userCard --- ", userCard ) ;
+                
+                // check if it is the user's line 
+                if ( data_user["n_carte"] === userCard ) {
+                    var line_user = true ;
+                } else {
+                    var line_user = false ;                    
+                } 
+                
                 if ( data_user.parcours.length > 0 ) {
                     
                     console.log( "-- data_user -- ",    data_user    ) ;
@@ -928,12 +942,11 @@ preload_notices( function(json) {
                             
                         // console.log( "-- id_o -- ",    id_o    ) ;
                         
-
                         // find vertex in vertices3Dict for this id_o /////////////////////// EXCEPT ERRORS 
                         var vertexL       = vertices3Dict[ id_o ]["vertex"] ;
                         // console.log( "-- vertexL -- ", vertexL ) ;
 
-                        vertexL_constants = vertices3Dict[id_o]["constantsGroup"] ;
+                        vertexL_constants = vertices3Dict[ id_o ]["constantsGroup"] ;
                         // console.log( "-- vertexL_constants -- ", vertexL_constants ) ;
                                                 
                         // push to positionsl
@@ -944,14 +957,15 @@ preload_notices( function(json) {
                         
                     });
 
-                    geoUser_buffer.addAttribute( 'position', new THREE.BufferAttribute( positionsL, 3 ) );
+                    geoUser_buffer.addAttribute( 'position', new THREE.BufferAttribute( positionsL, 3 ).setDynamic( true ) );
 
 
                     // create material with same caracteristics than original vertex
                     // var geoUser_material = new THREE.LineBasicMaterial( { vertexColors : THREE.VertexColors } );
                     var geoUser_material = createShaderMaterial (   vertexL_constants,
                                                                     is_wire    = true,
-                                                                    is_texture = false
+                                                                    is_texture = false, 
+                                                                    is_from_user = line_user,
                     ) ;
                     
                     // compose mesh 

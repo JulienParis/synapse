@@ -71,10 +71,10 @@
 
               {% else %}
               <li><span class="label label-default"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>                  
-                vous pouvez modifier vos informations
+                vous pouvez modifier <strong> vos informations personnelles</strong> 
               </li>
               <li><span class="label label-default"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span></span>                  
-                vous pouvez vous déconnecter
+                vous pouvez vous <a href="{{ url_for('logout') }}"><strong> déconnecter</strong> </a>
                 <!-- <a href="{{ url_for('logout') }}"><strong> déconnecter </strong>  </a> -->
               </li>
 
@@ -86,7 +86,7 @@
               <li><span class="label label-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>                  
                 vous pouvez <strong>ajouter des envies</strong> à votre parcours d'emprunts</li>
               <li><span class="label label-default"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></span>                  
-                le trait noir représente <strong>votre propre parcours</strong> d'emprunts </li>
+                le trait rouge représente <strong>votre propre parcours</strong> d'emprunts </li>
 
             </ul>
 

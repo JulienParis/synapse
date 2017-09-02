@@ -154,7 +154,30 @@
     </ul>
 
 
+    <ul class="nav navbar-nav navbar-center">
+        
+    {% with messages = get_flashed_messages(with_categories = true) %}
+    {% if messages %} 
+    {% for category, message in messages %}
 
+    <li>
+
+        <div class="alert alert-dismissible center-block text-center" role="alert">
+
+            <strong>
+            <p class="text-center p_alert alert_fade">
+            <small>{{ message }}</small>
+            </p>
+            </strong>
+        </div>
+
+    </li>
+
+    {% endfor %} 
+    {% endif %} 
+    {% endwith %}
+
+    </ul>
 
     <ul class="nav navbar-nav navbar-right">
 

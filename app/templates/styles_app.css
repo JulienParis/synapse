@@ -61,6 +61,21 @@ a.aFake {
   color : #333;
 }
 
+alert {
+    height  : auto ;
+    display : inline-block;
+    margin  : 0 auto;
+    background-color : transparent ;
+    border-color : transparent ;
+}
+@media (min-width: 768px) {
+    .navbar-nav.navbar-center {
+      position: absolute;
+      left: 50%;
+      transform: translatex(-50%);
+    }
+  }
+  
 .lead {
     margin-bottom: 16px;
     line-height: 1.2;

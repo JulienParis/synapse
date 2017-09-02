@@ -72,6 +72,14 @@ $(document).ready( function(){
      .then( $("#register_form").modal("show") ) 
   }) ;
 
+  // // fades alerts
+  window.setTimeout(function() {
+    $(".alert_fade").fadeTo(1500, 0).slideUp(1500, function(){
+      $(this).remove();
+    });
+  }, 3000);
+
+
   // restore btns unfocused state after closing modals
   $('.modal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget); // Button that triggered the modal
