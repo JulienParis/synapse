@@ -1,218 +1,218 @@
 // --- GLOBAL VARIABLES --- //
 // ------------------------ //
 
-var start       = Date.now() ;
-var last_pause ;
-var time_paused_total = 0 ; 
-var time_  ; 
+    var start       = Date.now() ;
+    var last_pause ;
+    var time_paused_total = 0 ; 
+    var time_  ; 
 
-var userCard = "{{ isCard }}" ; 
+    var userCard = "{{ isCard }}" ; 
 
-var group, groupH ;
-var container, controls, stats ;
-var particlesData    = [] ;
-var clickableObjects = [] ;
-var camera, scene, renderer ;
-var gui ;
+    var group, groupH ;
+    var container, controls, stats ;
+    var particlesData    = [] ;
+    var clickableObjects = [] ;
+    var camera, scene, renderer ;
+    var gui ;
 
-var raycaster, intersects ;
-var mouse, INTERSECTED ;
+    var raycaster, intersects ;
+    var mouse, INTERSECTED ;
 
-var WIDTH  = window.innerWidth;
-var HEIGHT = window.innerHeight;
+    var WIDTH  = window.innerWidth;
+    var HEIGHT = window.innerHeight;
 
 
-var pPositions, pSizes, pColors, pFrequencies, pVelocities ;
-var particlesGeom ;
-var pointCloud, convexHullMesh ;
+    var pPositions, pSizes, pColors, pFrequencies, pVelocities ;
+    var particlesGeom ;
+    var pointCloud, convexHullMesh ;
 
-var positionsL, colorsL ;
-// var linesMesh ;
-// var meshesList = [] ;
-// var sphereMesh ;
+    var positionsL, colorsL ;
+    // var linesMesh ;
+    // var meshesList = [] ;
+    // var sphereMesh ;
 
-var maxParticleCount 	= 1000;
-var particleCount    	= 0;
-var Rbasis     	        = 100.;
-var RmarginAngle   		= 0.4 ;
-var RmarginDist   		= Rbasis / 10. ;
-var RbasisHalf 	   		= RmarginAngle / 2.;
-var maxCircleRad ;
-var defaultPointSize    = 10. ; // max size for icon
+    var maxParticleCount 	= 1000;
+    var particleCount    	= 0;
+    var Rbasis     	        = 100.;
+    var RmarginAngle   		= 0.4 ;
+    var RmarginDist   		= Rbasis / 10. ;
+    var RbasisHalf 	   		= RmarginAngle / 2.;
+    var maxCircleRad ;
+    var defaultPointSize    = 10. ; // max size for icon
 
-// var velocityFactor = 1. ;
-// var scaleFactor    = 1. ;
+    // var velocityFactor = 1. ;
+    // var scaleFactor    = 1. ;
 
-var effectController_animate = {
-    // showGroup        : true,
-    showHelper       : false,
-    showParticles    : true,
-    showEdges        : true,
-    // minDistance     : 120,
-    // limitConnections: true,
-    // maxConnections  : 10,
-    // particleCount   : particleCount,
-    velocityFactor  : .1 ,
-    scaleFactor     : -.6 ,
-    breathing       : 2. ,
-    waveFreq        : .9 ,
-    waveAmp         : .6 ,
-    // rotationGroup   : 1. ,
-};
+    var effectController_animate = {
+        // showGroup        : true,
+        showHelper       : false,
+        showParticles    : true,
+        showEdges        : true,
+        // minDistance     : 120,
+        // limitConnections: true,
+        // maxConnections  : 10,
+        // particleCount   : particleCount,
+        velocityFactor  : .1 ,
+        scaleFactor     : -.6 ,
+        breathing       : 2. ,
+        waveFreq        : .9 ,
+        waveAmp         : .6 ,
+        // rotationGroup   : 1. ,
+    };
 
-var effectController_pause = {
-    showHelper       : false,
-    showParticles    : true,
-    showEdges        : true,
-    velocityFactor  : .0 ,
-    scaleFactor     : -.6 ,
-    breathing       : .0 ,
-    waveFreq        : .0 ,
-    waveAmp         : .0 ,
-};
+    var effectController_pause = {
+        showHelper       : false,
+        showParticles    : true,
+        showEdges        : true,
+        velocityFactor  : .0 ,
+        scaleFactor     : -.6 ,
+        breathing       : .0 ,
+        waveFreq        : .0 ,
+        waveAmp         : .0 ,
+    };
 
-var effectController = effectController_animate ;
+    var effectController = effectController_animate ;
     
 
 
-// var familiesColors = [
-//     "rgb(255,188,158)",
-//     "rgb(79,116,255)",
-//     "rgb(213,209,0)",
-//     "rgb(201,52,72)",
-//     "rgb(156,255,168)",
-//     "rgb(255,133,16)",
-//     "rgb(1,136,116)",
-// ];
+    // var familiesColors = [
+    //     "rgb(255,188,158)",
+    //     "rgb(79,116,255)",
+    //     "rgb(213,209,0)",
+    //     "rgb(201,52,72)",
+    //     "rgb(156,255,168)",
+    //     "rgb(255,133,16)",
+    //     "rgb(1,136,116)",
+    // ];
 
 
-// info div (temp for debugging)
-    // var count = 0 ;
-    info = document.createElement( 'div' );
-    info.style.position = 'absolute';
-    info.style.top = '30px';
-    info.style.width = '100%';
-    info.style.textAlign = 'center';
-    info.style.color = '#f00';
-    info.style.display = 'none';
-    // info.style.backgroundColor = 'transparent';
-    info.style.zIndex = '1';
-    info.style.fontFamily = 'Monospace';
-    info.innerHTML = 'infos' ;
-    info.style.userSelect = "none";
-    info.style.webkitUserSelect = "none";
-    info.style.MozUserSelect = "none";
-    document.body.appendChild( info );
+    // info div (temp for debugging)
+        // var count = 0 ;
+        info = document.createElement( 'div' );
+        info.style.position = 'absolute';
+        info.style.top = '30px';
+        info.style.width = '100%';
+        info.style.textAlign = 'center';
+        info.style.color = '#f00';
+        info.style.display = 'none';
+        // info.style.backgroundColor = 'transparent';
+        info.style.zIndex = '1';
+        info.style.fontFamily = 'Monospace';
+        info.innerHTML = 'infos' ;
+        info.style.userSelect = "none";
+        info.style.webkitUserSelect = "none";
+        info.style.MozUserSelect = "none";
+        document.body.appendChild( info );
 
 
 
 // --- GEOMETRICAL FUNCTIONS --- //
 
-// random number within interval
-function getRandomNumber(min, max) {
-    return Math.random() * (max - min) + min;
-} ;
+    // random number within interval
+    function getRandomNumber(min, max) {
+        return Math.random() * (max - min) + min;
+    } ;
 
-// function rand() {
-    // 	var x = Math.random() ;
-    // 	return x ;
-// };
+    // function rand() {
+        // 	var x = Math.random() ;
+        // 	return x ;
+    // };
 
-// randomly create vertex position on a sphere arc
-// function positionVertexOnSphere(radius, phiStart, phiEnd, thetaStart, thetaEnd) {
-    //
-    // 	var position = new THREE.Vector3();
-    //
-    // 	var phi   = getRandomNumber(phiStart  , phiEnd)   ;
-    // 	var theta = getRandomNumber(thetaStart, thetaEnd) ;
-    //
-    // 	position.x = radius * Math.sin(phi) * Math.cos(theta) ;
-    // 	position.y = radius * Math.sin(phi) * Math.sin(theta) ;
-    // 	position.z = radius * Math.cos(phi) ;
-    //
-    // 	console.log(">>> position V / phiStart / phi / theta", position, phiStart, phi, theta );
-    //
-    // 	return position ;
-// } ;
+    // randomly create vertex position on a sphere arc
+    // function positionVertexOnSphere(radius, phiStart, phiEnd, thetaStart, thetaEnd) {
+        //
+        // 	var position = new THREE.Vector3();
+        //
+        // 	var phi   = getRandomNumber(phiStart  , phiEnd)   ;
+        // 	var theta = getRandomNumber(thetaStart, thetaEnd) ;
+        //
+        // 	position.x = radius * Math.sin(phi) * Math.cos(theta) ;
+        // 	position.y = radius * Math.sin(phi) * Math.sin(theta) ;
+        // 	position.z = radius * Math.cos(phi) ;
+        //
+        // 	console.log(">>> position V / phiStart / phi / theta", position, phiStart, phi, theta );
+        //
+        // 	return position ;
+    // } ;
 
 
-// randomly create vertex position on a sphere arc
-// cf : http://mathinsight.org/spherical_coordinates
-function positionVertexOnProjectedCircleOntoSphere( radiusCircleMax, radiusSphere ) {
+    // randomly create vertex position on a sphere arc
+    // cf : http://mathinsight.org/spherical_coordinates
+    function positionVertexOnProjectedCircleOntoSphere( radiusCircleMax, radiusSphere ) {
 
-    var position = new THREE.Vector3();
+        var position = new THREE.Vector3();
 
-    // populate circle with random point
-    var te = getRandomNumber( 0, 2. * Math.PI ) ;
-    var ra = getRandomNumber( radiusCircleMax/2., radiusCircleMax ) ;
-    position.x = ra * Math.cos(te) ;
-    position.y = ra * Math.sin(te) ;
+        // populate circle with random point
+        var te = getRandomNumber( 0, 2. * Math.PI ) ;
+        var ra = getRandomNumber( radiusCircleMax/2., radiusCircleMax ) ;
+        position.x = ra * Math.cos(te) ;
+        position.y = ra * Math.sin(te) ;
 
-    // populate rectangle with random point
-    // position.x = getRandomNumber( -radiusCircleMax*1.0, radiusCircleMax*1.0 );
-    // position.y = getRandomNumber( -radiusCircleMax*0.6, radiusCircleMax*0.6 );
+        // populate rectangle with random point
+        // position.x = getRandomNumber( -radiusCircleMax*1.0, radiusCircleMax*1.0 );
+        // position.y = getRandomNumber( -radiusCircleMax*0.6, radiusCircleMax*0.6 );
 
-    lenXY = Math.sqrt( Math.pow( position.x, 2.) + Math.pow(position.y, 2.)  ) ;
-    position.z = Math.sqrt( Math.pow(radiusSphere, 2.) - Math.pow( lenXY, 2.)  ) ;
-    if ( isNaN(position.z) ) {
-        position.z = 0. ;
+        lenXY = Math.sqrt( Math.pow( position.x, 2.) + Math.pow(position.y, 2.)  ) ;
+        position.z = Math.sqrt( Math.pow(radiusSphere, 2.) - Math.pow( lenXY, 2.)  ) ;
+        if ( isNaN(position.z) ) {
+            position.z = 0. ;
+        };
+        return position ;
+
     };
-    return position ;
-
-};
 
 
-// max radius for every plane circle
-function maxCircleRadius ( familiesLength ) {
-    var angleIsocele = ( Math.PI * 2. - ( familiesLength * RmarginAngle ) ) / familiesLength  ;
-    console.log("___ angleIsocele : ", angleIsocele);
-    var maxRadius    = Rbasis * Math.sin( angleIsocele ) * 0.8 ;
-    return maxRadius ;
-};
+    // max radius for every plane circle
+    function maxCircleRadius ( familiesLength ) {
+        var angleIsocele = ( Math.PI * 2. - ( familiesLength * RmarginAngle ) ) / familiesLength  ;
+        console.log("___ angleIsocele : ", angleIsocele);
+        var maxRadius    = Rbasis * Math.sin( angleIsocele ) * 0.8 ;
+        return maxRadius ;
+    };
 
-// for rotation whole family on Y axis
-function familyAngle( familyIndex, familiesLength ) {
-    // var angleFa = Math.PI * 2 * familyIndex / familiesLength ;
-    var angleFa = ( Math.PI * 2. - ( familiesLength * RmarginAngle ) ) / familiesLength ;
-    angleFa += RmarginAngle ;
-    angleFa *= familyIndex  ;
-    return angleFa ;
-};
+    // for rotation whole family on Y axis
+    function familyAngle( familyIndex, familiesLength ) {
+        // var angleFa = Math.PI * 2 * familyIndex / familiesLength ;
+        var angleFa = ( Math.PI * 2. - ( familiesLength * RmarginAngle ) ) / familiesLength ;
+        angleFa += RmarginAngle ;
+        angleFa *= familyIndex  ;
+        return angleFa ;
+    };
 
-// for rotation whole group on X axis
-function groupAngle( groupIndex, groupsLength, angleLap ) {
-    // var angleGr = 1. * ( Math.PI / groupsLength ) ;
-    // if ( groupIndex % 2 ) {
-    // 	angleGr  *= - groupIndex ;
-    // } else {
-    // 	angleGr  *= groupIndex ;
-    // }
-    var angleGr = ( groupIndex - groupsLength/2. ) * Math.PI / angleLap ;
-    // if ( groupIndex % 2 ) {
-    // 	angleGr  *= - 1 ;
-    // }
-    return angleGr ;
-};
+    // for rotation whole group on X axis
+    function groupAngle( groupIndex, groupsLength, angleLap ) {
+        // var angleGr = 1. * ( Math.PI / groupsLength ) ;
+        // if ( groupIndex % 2 ) {
+        // 	angleGr  *= - groupIndex ;
+        // } else {
+        // 	angleGr  *= groupIndex ;
+        // }
+        var angleGr = ( groupIndex - groupsLength/2. ) * Math.PI / angleLap ;
+        // if ( groupIndex % 2 ) {
+        // 	angleGr  *= - 1 ;
+        // }
+        return angleGr ;
+    };
 
-// for radius orginal cluster's circle
-function groupRadius( groupsLength ) {
-    var absMargin   = Rbasis - Math.cos(RmarginAngle) ;
-    var sphereDiam  = Rbasis * 2. -  2. * absMargin ;
-    var clusterDiam = sphereDiam / groupsLength - ( absMargin * groupsLength - 1 ) ;
-    var clusterRad  = clusterDiam / 2.    ;
+    // for radius orginal cluster's circle
+    function groupRadius( groupsLength ) {
+        var absMargin   = Rbasis - Math.cos(RmarginAngle) ;
+        var sphereDiam  = Rbasis * 2. -  2. * absMargin ;
+        var clusterDiam = sphereDiam / groupsLength - ( absMargin * groupsLength - 1 ) ;
+        var clusterRad  = clusterDiam / 2.    ;
 
-    if (clusterRad > maxCircleRad)  {
-        clusterRad = maxCircleRad ;
-};
+        if (clusterRad > maxCircleRad)  {
+            clusterRad = maxCircleRad ;
+        };
 
-return clusterRad ;
-};
+        return clusterRad ;
+    };
 
-// for distance origin to cluster
-function sphereRadius( clusterIndex, margin ) {
-    var clusterDist = Rbasis + clusterIndex * margin * 1.4 ;
-    return clusterDist ;
-};
+    // for distance origin to cluster
+    function sphereRadius( clusterIndex, margin ) {
+        var clusterDist = Rbasis + clusterIndex * margin * 1.4 ;
+        return clusterDist ;
+    };
 
 
 
@@ -236,7 +236,12 @@ function createShaderMaterial ( constantsGroup,
     var familiesLength  = constantsGroup["familiesLen"] ;
     var groupIndex      = constantsGroup["indexGroup"] ;
     var groupsLen       = constantsGroup["faGroupsLen"] ;
+
+    var roty_angleFa    = constantsGroup["roty_angleFa"] ;
+    var rotx_angleGroup = constantsGroup["rotx_angleGroup"] ;
     
+
+
     var transp_ = 1. ; 
     
     if ( is_wire == false ) {
@@ -261,10 +266,10 @@ function createShaderMaterial ( constantsGroup,
     // var colorG  = new THREE.Color( famColor )  ;
 
 
-    console.log( "/// createShaderMaterial / familyIndex" , familyIndex );
+    // console.log( "/// createShaderMaterial / familyIndex" , familyIndex );
 
     var uniforms = {
-        time        : { type  : "f"  , value: 1.0 },
+        time        : { type  : "f"  , value: 0. }, // 1.
         resolution  : { type  : "v2" , value: new THREE.Vector2() },
         velFactor   : { value : effectController.velocityFactor },
         scaFactor   : { value : effectController.scaleFactor },
@@ -273,14 +278,21 @@ function createShaderMaterial ( constantsGroup,
         waveAmp     : { value : effectController.waveAmp },
         color       : { value : colorG },
         transp      : { value : transp_ },
+        
         // familyI     : { value : familyIndex },
         // familiesL   : { value : familiesLength },
         // groupI      : { value : groupIndex  },
         // groupsL     : { value : groupsLen  },
+
+        // roty_byFa : { value : roty_angleFa },
+        // rotx_byGr : { value : rotx_angleGroup },
+
     } ;
 
     if ( is_wire == false ) {
         uniforms.size = { value : defaultPointSize } ;
+        uniforms.roty_byFa = { value : roty_angleFa } ;
+        uniforms.rotx_byGr = { value : rotx_angleGroup } ;
     } ;
 
     if ( is_texture == true ) {
@@ -300,7 +312,8 @@ function createShaderMaterial ( constantsGroup,
     });
 
     if ( is_wire == true ) {
-        material_shader.fragmentShader = document.getElementById( 'fragmentShader' ).textContent ;
+        material_shader.vertexShader   = document.getElementById( 'vertexshader_lines' ).textContent ;
+        material_shader.fragmentShader = document.getElementById( 'fragmentShader_lines' ).textContent ;
         material_shader.transparent    = true ;
         material_shader.wireframe      = false ;
     } ;
@@ -311,45 +324,45 @@ function createShaderMaterial ( constantsGroup,
 
 
 //// --- DEFINE BASIC LINES MATERIAL
-var materialLines = new THREE.LineBasicMaterial( {
-    vertexColors: THREE.VertexColors,
-    blending    : THREE.AdditiveBlending,
-    transparent : true
-} );
+    var materialLines = new THREE.LineBasicMaterial( {
+        vertexColors: THREE.VertexColors,
+        blending    : THREE.AdditiveBlending,
+        transparent : true
+    } );
 
-var wireframeMaterial = new THREE.MeshBasicMaterial( {
-    color      : 0xffffff,
-    wireframe  : true,
-    // transparent: true
-} );
+    var wireframeMaterial = new THREE.MeshBasicMaterial( {
+        color      : 0xffffff,
+        wireframe  : true,
+        // transparent: true
+    } );
 
 
 // --- prestock edges --- //
-var vertices3Dict      = { } ; 
-var vertices3UserList_ = [ ] ; 
+    var vertices3Dict      = { } ; 
+    var vertices3UserList_ = [ ] ; 
 
-// get data for ALL USERS HISTORY from server
-// fake data
-    var fake_id_o_list1 = { "parcours" : [ "1412057", "1431565" , "0163823" , "1353951" , "0880467" ]} ;
-    var fake_id_o_list2 = { "parcours" : [ "1424811", "0732204" , "0942578" , "0880467"  ] } ;            
-    var fakeUserBooksLists = [ fake_id_o_list1 , fake_id_o_list2 ] ;
+    // get data for ALL USERS HISTORY from server
+        // fake data
+            var fake_id_o_list1 = { "parcours" : [ "1412057", "1431565" , "0163823" , "1353951" , "0880467" ]} ;
+            var fake_id_o_list2 = { "parcours" : [ "1424811", "0732204" , "0942578" , "0880467"  ] } ;            
+            var fakeUserBooksLists = [ fake_id_o_list1 , fake_id_o_list2 ] ;
 
-// real data
-    var realUserBooksLists = {{ listEdges | tojson }};
+        // real data
+            var realUserBooksLists = {{ listEdges | tojson }};
 
-console.log( "-+- realUserBooksLists -+- :", realUserBooksLists ) ; 
+        console.log( "-+- realUserBooksLists -+- :", realUserBooksLists ) ; 
 
-// iteratate list realUserBooksLists to store id_o as 
-    $.each( realUserBooksLists, function ( i , user ){
-        // iterate object user 
-        $.each( user.parcours, function ( i_ , id_o ) {
-            vertices3UserList_.push( id_o ) ;
+    // iteratate list realUserBooksLists to store id_o as 
+        $.each( realUserBooksLists, function ( i , user ){
+            // iterate object user 
+            $.each( user.parcours, function ( i_ , id_o ) {
+                vertices3UserList_.push( id_o ) ;
+            }) ;
         }) ;
-    }) ;
-    // unique values from vertices3UserList_
-    var vertices3UserList = Array.from( new Set(vertices3UserList_) ) ;
+        // unique values from vertices3UserList_
+        var vertices3UserList = Array.from( new Set(vertices3UserList_) ) ;
 
-    console.log( "-+- vertices3UserList -+- ", vertices3UserList ) ;
+        console.log( "-+- vertices3UserList -+- ", vertices3UserList ) ;
 
 // -------------------------------------------------------
 // SET PARTICLES SYSTEM <-- returns geomTri_buffer
@@ -370,7 +383,6 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
         var vertices3     = [] ;
         var vertices2     = [] ;
 
-
         // sphere arc variables
         // var radiusCircle 				= Rbasis*2/3 ;
         // var radiusSphere 				= Rbasis ;
@@ -379,7 +391,6 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
         // var thetaStart 		= 2. ;
         // var thetaLength 	= ( Math.PI * 2 ) - ( thetaStart ) ;
         // console.log("sphere variables : radius / thetaLength / phiLength ",radius, thetaLength, phiLength  );
-
  
 
     // CREATE EACH PARTICLE
@@ -388,7 +399,7 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
         
         // var vertex3 = positionVertexOnSphere(radius, phiStart, phiLength, thetaStart, thetaLength) ;
         // var vertex3 = positionVertexOnProjectedCircleOntoSphere(radiusCircle, radiusSphere) ;
-        var vertex3 = positionVertexOnProjectedCircleOntoSphere(radiusGroup, radiusCluster) ;
+        var vertex3 = positionVertexOnProjectedCircleOntoSphere( radiusGroup, radiusCluster ) ;
 
         // var vertex3 = new THREE.Vector3();
         var vertex2 = new Vertex();
@@ -407,10 +418,11 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
         // console.log(id_o_);
         pId_o[ i ] = id_o_ ;
         
-        // prestock if is in edges : vertices3UserList from realUserBooksLists
+        // prestore if is in edges : vertices3UserList from realUserBooksLists
         if ( vertices3UserList.indexOf( id_o ) > -1  ) {
             console.log( "------- id_o is in vertices3UserList  : ", id_o ) ; 
-            // console.log( "------- vertex3 : ", vertex3 ) ; 
+            console.log( "------- vertex3 : ", vertex3 ) ; 
+            console.log( "------- constantsGroup : ", constantsGroup ) ; 
             vertices3Dict[ id_o.toString() ] = { "vertex" : vertex3, "constantsGroup" : constantsGroup } ;
             // console.log( "------- vertices3Dict : ", vertices3Dict ) ; 
         };
@@ -552,7 +564,6 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
 
     return geomTri_buffer ;
 
-
 };
 
 
@@ -633,18 +644,18 @@ var json_fake = {
 
 
 // --- LOAD JSON NOTICES AS CALLBACK
-function preload_notices(callback){
+    function preload_notices(callback){
 
-    // get parcours all users for edges 
-        //
+        // get parcours all users for edges 
+            //
 
-    // get notices for points
-        $.getJSON( "{{ url_for('static', filename='data/JSON_notices_nested.json') }}", function( json ) {
-        console.log("... JSON_notices_nested loaded with getJSON");
+        // get notices for points
+            $.getJSON( "{{ url_for('static', filename='data/JSON_notices_nested.json') }}", function( json ) {
+            console.log("... JSON_notices_nested loaded with getJSON");
 
-    callback(json);
-    }
-)};
+        callback(json);
+        }
+    )};
 
 // --- START 3D RENDERING AFTER CALLBACK
 preload_notices( function(json) {
@@ -674,7 +685,7 @@ preload_notices( function(json) {
 
         var f1 = gui.addFolder("objects") ;
             // f1.add( effectController, "showGroup"  ).onChange( function( value ) {  group.visible   = value; } );
-            f1.add( effectController, "showHelper" ).onChange(    function( value ) {  groupH.visible        = value; } ).listen();
+            // f1.add( effectController, "showHelper" ).onChange(    function( value ) {  groupH.visible        = value; } ).listen();
             f1.add( effectController, "showParticles" ).onChange( function( value ) {  groupFa3D_.visible    = value; } ).listen();
             f1.add( effectController, "showEdges" ).onChange(     function( value ) {  groupEdges3D_.visible = value; } ).listen();
             
@@ -828,24 +839,23 @@ preload_notices( function(json) {
                         "familiesLen"  : familiesLen , 
                         "indexGroup"   : indexGroup , 
                         "faGroupsLen"  : faGroupsLen , 
+
+                        "roty_angleFa"      : angleFa, 
+                        "rotx_angleGroup"   : angleGroup,
                     };  
 
                     // var geomTri_buffer_p = addPointsCloud( groupNot, maxCluster, angleFa,  angleGroup, maxCircleRad*.8, distGroup*0.7, "points") ; // distGroup or Rbasis
+                    // addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily, angleGroup, radiusGroup, radiusCluster, wireORpoints )
                     var geomTri_buffer_p = addPointsCloud(          groupNot, constantsGroup,
                                                                     groupLen, 
                                                                     angleFa,  
                                                                     angleGroup, 
-                                                                    maxCircleRad*groupLen/10000., 
-                                                                    distGroup*groupRandom, 
+                                                                    maxCircleRad * groupLen/10000., // radiusGroup
+                                                                    distGroup * groupRandom,        // radiusCluster
                                                                     "points"
                                                         ) ; // distGroup or Rbasis
                     
                     var material_points  = createShaderMaterial (   constantsGroup,
-                                                                    // keyFa, keyGroup,
-                                                                    // indexFa,
-                                                                    // familiesLen,
-                                                                    // indexGroup,
-                                                                    // faGroupsLen,
                                                                     is_wire    = false,
                                                                     is_texture = true
                                                                 ) ;
@@ -868,9 +878,10 @@ preload_notices( function(json) {
                     // geoMesh.position.applyEuler(rot) ;
 
                     // geoMesh.eulerOrder = "ZYX" ;
-                    geoMesh.rotation.order = "ZYX" ;
-                    geoMesh.rotation.y += angleFa ;
-                    geoMesh.rotation.x += angleGroup ;
+
+                    // geoMesh.rotation.order = "ZYX" ;
+                    // geoMesh.rotation.y += angleFa ;
+                    // geoMesh.rotation.x += angleGroup ;
 
 
                     groupFa3D.add( geoMesh );
@@ -905,7 +916,7 @@ preload_notices( function(json) {
             // $.each( fakeUserBooksLists , function( index , data_user ) { 
             $.each( realUserBooksLists , function( index , data_user ) { 
                 
-                console.log( " --- userCard --- ", userCard ) ;
+                console.log( " --- new line (edge) for userCard --- ", userCard ) ;
                 
                 // check if it is the user's line 
                 if ( data_user["n_carte"] === userCard ) {
@@ -923,10 +934,6 @@ preload_notices( function(json) {
                     // create geometry
                     var geoUser_buffer  = new THREE.BufferGeometry();
 
-                    var segments   = id_o_list.length ; 
-                    var positionsL = new Float32Array( segments * 3 ); 
-                    var vertexL_constants ; 
-
                     // temporary id_o list to except potential errors
                     var id_o_list_except = [] ;
                     $.each( id_o_list, function( i, id_o ) {
@@ -936,7 +943,16 @@ preload_notices( function(json) {
                         }
                     }); 
 
-                    // get back vertex coordinates from id_o attribute in clickableObjects
+                    console.log( "-- id_o_list_except -- ",    id_o_list_except    ) ;
+
+                    var segments   = id_o_list_except.length ; 
+                    // var segments   = id_o_list.length ; 
+                    var positionsL = new Float32Array( segments * 3 ); 
+                    var rotyL      = new Float32Array( segments     ); 
+                    var rotxL      = new Float32Array( segments     ); 
+                    var vertexL_constants ; 
+
+                    // get back vertex coordinates from id_o attribute in vertices3Dict
                     $.each( id_o_list_except, function( i, id_o ) {
                     // $.each( id_o_list, function( i, id_o ) {
                             
@@ -950,15 +966,20 @@ preload_notices( function(json) {
                         // console.log( "-- vertexL_constants -- ", vertexL_constants ) ;
                                                 
                         // push to positionsl
-                        vertexL.toArray( positionsL, i * 3 );
-                        // positionsL[ i * 3 ]     = vertexL.x ;
-                        // positionsL[ i * 3 + 1 ] = vertexL.y ;
-                        // positionsL[ i * 3 + 2 ] = vertexL.z ;
-                        
+                        // vertexL.toArray( positionsL, i * 3 );
+                        positionsL[ i * 3 ]     = vertexL.x ;
+                        positionsL[ i * 3 + 1 ] = vertexL.y ;
+                        positionsL[ i * 3 + 2 ] = vertexL.z ;
+
+                        rotyL[ i ]              = vertexL_constants["roty_angleFa"]    ;
+                        rotxL[ i ]              = vertexL_constants["rotx_angleGroup"] ;
+                         
                     });
 
-                    geoUser_buffer.addAttribute( 'position', new THREE.BufferAttribute( positionsL, 3 ).setDynamic( true ) );
-
+                    geoUser_buffer.addAttribute( 'position', new THREE.BufferAttribute(  positionsL, 3 ).setDynamic( true ) );
+                    geoUser_buffer.addAttribute( 'roty_byFa', new THREE.BufferAttribute( rotyL, 1 ) );
+                    geoUser_buffer.addAttribute( 'rotx_byGr', new THREE.BufferAttribute( rotxL, 1 ) );
+                    
 
                     // create material with same caracteristics than original vertex
                     // var geoUser_material = new THREE.LineBasicMaterial( { vertexColors : THREE.VertexColors } );
@@ -970,6 +991,7 @@ preload_notices( function(json) {
                     
                     // compose mesh 
                     line_mesh = new THREE.Line( geoUser_buffer, geoUser_material );
+                    // line_mesh = new THREE.Line( geoUser_buffer, geoUser_material );
                     
                     // add to groupEdges3D 
                     groupEdges3D.add( line_mesh ) ; 
@@ -1187,7 +1209,7 @@ preload_notices( function(json) {
                     // UPDATE VALUES FROM CONTROLS
                     if ( node.name != "helper" ) {
                         // console.log("--- traverse / node : ", node );
-                        node.material.uniforms.time.value       = time_shader ;
+                        node.material.uniforms.time.value       = time_shader ; // replace time_shader by 1. for debugging 
                         node.material.uniforms.velFactor.value  = .01 + effectController.velocityFactor ;
                         node.material.uniforms.scaFactor.value  = effectController.scaleFactor ;
                         node.material.uniforms.breathing.value  = effectController.breathing ;

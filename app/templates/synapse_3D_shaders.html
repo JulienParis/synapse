@@ -205,6 +205,10 @@
         uniform   float waveFreq  ;
         uniform   float waveAmp   ;
         uniform   float size      ;
+        
+        uniform   float roty_byFa ;
+        uniform   float rotx_byGr ;
+        
         // uniform   float familyI   ;
         // uniform   float familiesL ;
         // uniform   float groupI    ;
@@ -291,12 +295,15 @@
             // cf : https://stackoverflow.com/questions/1073606/is-there-a-one-line-function-that-generates-a-triangle-wave
     
             // float vnoise = float( sin( time * velFactor * customFrequency ) ) ;
-            // float vnoise   = noise( position + time * familyI * .1 * scaFactor ) ;
+            // float vnoise = noise( position + time * familyI * .1 * scaFactor ) ;
             
+            ///////////////////////////////////////
+            // create noise for breathing on normal 
             float vnoise   = noise( position + time * .01  ) ;
             
             vec3 posNormal =  10. * normalize( position ) * vnoise * ( .01  +  float( sin(time) ) *  breathing ) ;
-    
+            // vec3 posNormal =  10. * normalize( position ) * ( .01  +  float( sin(time) ) *  breathing ) ;
+            
             // float newPosX = position.x + posNormal.x * scale * 10. ; // * .02 ; // float( limitsXYZ.x/2. * sin( time * customVelocity.x * velFactor + position.x  ) ) ;
             // float newPosY = position.y + posNormal.y * scale * 10. ; // * .02 ; // float( limitsXYZ.y/2. * sin( time * customVelocity.y * velFactor + position.y  ) ) ;
             // float newPosZ = position.z + posNormal.z * scale * 10. ; // * .02 ;
@@ -309,17 +316,21 @@
             vec3 newPos_  = position + posNormal ;
             vec4 newPos   = vec4( newPos_ , 1.0 ) ;
             
-            // rotate point
-            mat4 rotP  = rotMat( time * .1  * velFactor , sin( time * .1 * velFactor ) , time * velFactor ) ;
+            ///////////////////////////////////////
+            // rotate point  
+            mat4 rotP  = rotMat( time * .1  * velFactor * rotx_byGr , sin( time * .1 * velFactor * roty_byFa ) , time * velFactor ) ;
+            // mat4 rotP  = rotMat( time * .1  * velFactor , sin( time * .1 * velFactor ) , time * velFactor ) ;
             // mat4 rotP  = rotMat( time * .01 , sin( time * .01 ) , time * .5  ) ;
             // mat4 rotP_ = rotMat( velFactor , sin( velFactor ) , velFactor ) ;
             
+            ///////////////////////////////////////
             // apply position to view matrix
             vec4 mvPosition    =  modelViewMatrix * rotP * newPos ;       // new position
             // vec4 mvPosition    =  modelViewMatrix * rotP_ * rotP  * newPos ;       // new position
             // vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 ); // original position
     
     
+            ///////////////////////////////////////
             // apply projection matrix to viewPosition
             gl_Position  = projectionMatrix * mvPosition ;
     
@@ -327,6 +338,8 @@
             // gl_PointSize    = size * ( 400.0 / -mvPosition.z ) ;
             // gl_PointSize = ( 1.0 + sin( time )) * size ; // ; * ( 300.0 / length( mvPosition.xyz ) );
             
+            ///////////////////////////////////////
+            // update size
             gl_PointSize    = size  + ( size * waveAmp * .5 * sin( time * .01 * waveFreq * mvPosition.z ) ) ; // + ( size * sin( time * .1 * waveFreq * mvPosition.y  ) );
             gl_PointSize    = gl_PointSize * ( 1. + scaFactor) ;
     
@@ -386,17 +399,110 @@
     
     
     <!--  tests shaders  -->
-    <script type="x-shader/x-vertex" id="vertexShader">
-        // attribute vec3 center;
-        // varying vec3 vCenter;
-        void main() {
-            // vCenter = center;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+    <script type="x-shader/x-vertex" id="vertexshader_lines">
+
+    uniform float rotationX ;
+    uniform float rotationY ;
+    uniform float rotationZ ;
+
+    // rotation matrice function
+    mat4 rotMat ( float rotationX, float rotationY, float rotationZ ) {
+
+        mat4 rXPos = mat4(vec4(1.0,0.0,0.0,0.0),
+                                            vec4(0.0,cos(rotationX),-sin(rotationX),0.0),
+                                            vec4(0.0,sin(rotationX),cos(rotationX),0.0),
+                                            vec4(0.0,0.0,0.0,1.0)
+                                        );
+
+        mat4 rYPos = mat4(vec4(cos(rotationY),0.0,sin(rotationY),0.0),
+                                            vec4(0.0,1.0,0.0,0.0),
+                                            vec4(-sin(rotationY),0.0,cos(rotationY),0.0),
+                                            vec4(0.0,0.0,0.0,1.0)
+                                        );
+
+        mat4 rZPos = mat4(vec4(cos(rotationZ),-sin(rotationZ),0.0,0.0),
+                                            vec4(sin(rotationZ),cos(rotationZ),0.0,0.0),
+                                            vec4(0.0,0.0,1.0,0.0),
+                                            vec4(0.0,0.0,0.0,1.0)
+                                        );
+
+        mat4  vPosition ;
+        vPosition =  rXPos * rZPos * rYPos ;
+
+        return vPosition ;
+
+    }
+
+    uniform   float time      ;
+    uniform   float velFactor ;
+    uniform   float scaFactor ;
+    uniform   float breathing ;
+    uniform   float waveFreq  ;
+    uniform   float waveAmp   ;
+    uniform   float size      ;
+    
+    attribute float roty_byFa ;
+    attribute float rotx_byGr ;
+
+    // GENERIC NOISE --- cf : https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
+
+        float mod289( float x ){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
+        vec4  mod289( vec4  x ){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
+        vec4  perm(   vec4  x ){ return mod289(((x * 34.0) + 1.0) * x); }
+    
+        float noise(vec3 p){
+
+            vec3 a = floor(p);
+            vec3 d = p - a;
+            d      = d * d * (3.0 - 2.0 * d);
+    
+            vec4 b  = a.xxyy + vec4(0.0, 1.0, 0.0, 1.0);
+            vec4 k1 = perm(b.xyxy);
+            vec4 k2 = perm(k1.xyxy + b.zzww);
+    
+            vec4 c  = k2 + a.zzzz;
+            vec4 k3 = perm(c);
+            vec4 k4 = perm(c + 1.0);
+    
+            vec4 o1 = fract(k3 * (1.0 / 50.0));
+            vec4 o2 = fract(k4 * (1.0 / 50.0));
+    
+            vec4 o3 = o2 * d.z + o1 * (1.0 - d.z);
+            vec2 o4 = o3.yw * d.x + o3.xz * (1.0 - d.x);
+    
+            return o4.y * d.y + o4.x * (1.0 - d.y) ;
         }
+
+
+
+    void main() {
+        
+        ///////////////////////////////////////
+        // create noise for breathing on normal 
+        float vnoise   = noise( position + time * .01  ) ;
+        vec3 posNormal =  10. * normalize( position ) * vnoise * ( .01  +  float( sin(time) ) *  breathing ) ;
+        vec3 newPos_  = position + posNormal ;
+        vec4 newPos   = vec4( newPos_ , 1.0 ) ;
+        
+        ///////////////////////////////////////
+        // rotate point  
+        mat4 rotP  = rotMat( time * .1  * velFactor * rotx_byGr , sin( time * .1 * velFactor * roty_byFa ) , time * velFactor ) ;
+
+        
+        ///////////////////////////////////////
+        // apply position to view matrix
+        vec4 mvPosition    =  modelViewMatrix * rotP * newPos ;       // new position
+
+        ///////////////////////////////////////
+        // apply projection matrix to viewPosition
+        gl_Position  = projectionMatrix * mvPosition ;
+
+
+    }
     </script>
     
     <!-- shader lines edges -->
-    <script type="x-shader/x-fragment" id="fragmentShader">
+    <script type="x-shader/x-fragment" id="fragmentShader_lines">
     
         // uniform   float familyI   ;
         // uniform   float familiesL ;
