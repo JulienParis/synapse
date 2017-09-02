@@ -43,7 +43,7 @@
           
           <h3 class="lead text-left" style="color:white ; margin-left: 80px">
             
-            <ul>
+            <ul class="list-unstyled">
 
               <li><span class="label label-default"><span class="glyphicon glyphicon-record" aria-hidden="true"></span></span>
                 les points de couleurs représentent les 300.000+ documents du fonds </li>
@@ -56,12 +56,32 @@
               <li><span class="label label-default"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></span>                  
                 vous pouvez modifier les réglages de l'animation </li>
               <li><span class="label label-default"><span class="fa fa-mouse-pointer" aria-hidden="true"></span></span>                  
-                vous pouvez cliquer sur chacun des points pour voir les détails d'un ouvrage </li>
+                vous pouvez cliquer sur chacun des points 3D pour voir les détails d'un ouvrage </li>
 
               <br>
               
+              
+              {% if not isUser %}
               <li><span class="label label-default"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>                  
-                vous pouvez vous connecter ou vous créer un compte</li>
+                vous pouvez vous
+                <a class="log_from_howto"><strong> connecter </strong>  </a>
+                ou vous 
+                <a class="register_trigger"><strong> créer un compte </strong>  </a>
+              </li>
+
+              {% else %}
+              <li><span class="label label-default"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>                  
+                vous pouvez modifier vos informations
+              </li>
+              <li><span class="label label-default"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span></span>                  
+                vous pouvez vous déconnecter
+                <!-- <a href="{{ url_for('logout') }}"><strong> déconnecter </strong>  </a> -->
+              </li>
+
+              {% endif %}
+
+              
+
               <li><span class="label label-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></span>                  
                 vous pouvez mettre à jour votre propre parcours d'emprunts</li>
               <li><span class="label label-default"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></span>                  
@@ -73,21 +93,25 @@
 
           <hr>
 
-          <br>
 
-          <h3 class="text-center">
+          <h3 class="text-center" style="margin-top:30px">
               <a data-dismiss="modal">× commencer à explorer le catalogue ×</a>
           </h3>
 
           {% if not isUser %}
           
           <h3 class="text-center">
-              <a id="log_from_howto">× se connecter pour mettre à jour votre propre parcours ×</a>
+              <a class="log_from_howto">× se connecter pour mettre à jour votre propre parcours ×</a>
+          </h3>
+          <h3 class="text-center">
+              <a class="register_trigger">× se créer un compte ×</a>
           </h3>
 
           {% endif %}
-          
-          <h3 class="text-center">
+          <br>
+          <hr> 
+
+          <h3 class="text-center" style="margin-top:30px">
               <a href="http://www.la-bibliotheque.com" target="_blank">× retourner à la bibliothèque ×</a>
           </h3>
 

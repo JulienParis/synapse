@@ -61,9 +61,15 @@ $(document).ready( function(){
   });
 
   // open login modal from intro
-  $("#log_from_howto").click( function() {
+  $(".log_from_howto").click( function() {
     $.when( $(".modal").modal("hide") )
      .then( $("#login_form").modal("show") ) 
+  }) ;
+
+  // open register modal from login modal or modal howto
+  $(".register_trigger").click( function() {
+    $.when( $(".modal").modal("hide") )
+     .then( $("#register_form").modal("show") ) 
   }) ;
 
   // restore btns unfocused state after closing modals

@@ -1,11 +1,11 @@
 
 <div>
   <!--FORM LOGIN-->
-  <form class="form-horizontal form_login"
-        id="form_login"
-        action = "{{ url_for('index') }}"
-        method = "post"
-        name   = "login">
+  <form class="form-horizontal form_login" 
+        id="form_login" 
+        action = "{{ url_for('index') }}" 
+        method = "post" 
+        name   = "login" >
 
     <input type="hidden" name="req_type" value="log">
     {{ loginForm.hidden_tag() }}
@@ -62,10 +62,8 @@
 
   <div class="col-sm-offset-3 col-sm-9">
     Nouvel utilisateur ? vous pouvez vous
-    <a  class="register_trigger "
-        data-toggle="modal"
-        data-target="#register_form"
-        style="color:grey"
+    <a  class="register_trigger a_"
+        id="register_link" 
       > enregistrer ici </a>
   </div>
   <br>

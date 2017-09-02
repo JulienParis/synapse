@@ -447,8 +447,3 @@ class mongodb_stats :
 
 def tasks_test (string1, string2, secret_key ) :
     print "+++ tasks_test ( apscheduler ) +++ : %s / %s / %s " %(string1, string2, secret_key)
-    ### update_coll( update_reset="update", secret_key_update=secret_key )
-
-def tasks_update (string1, string2, secret_key ) :
-    print "+++ tasks_update ( apscheduler ) +++ : %s / %s / %s " %(string1, string2, secret_key)
-    ### update_coll( update_reset="update", secret_key_update=secret_key )

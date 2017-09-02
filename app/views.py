@@ -296,12 +296,14 @@ def update_coll( update_reset="update", secret_key_update=None ):
         if update_reset == "update" :
             mongodb_updates().update_all_coll()
             print "/// update_coll / df_coll created "
-            flash(u'les collections sont mises à jour - update', "success")
+            if secret_key_update == None :
+                flash(u'les collections sont mises à jour - update', "success")
 
         elif update_reset == "reset":
             mongodb_updates().reset_all_coll()
             print "/// update_coll / df_coll created "
-            flash(u'les collections sont remises à jour - reset', "success")
+            if secret_key_update == None :
+                flash(u'les collections sont remises à jour - reset', "success")
 
         elif update_reset == "reset" or update_reset == "reset" or update_reset == "rewrite_JSON" :
             ### update / rewrite json local static file
@@ -315,7 +317,9 @@ def update_coll( update_reset="update", secret_key_update=None ):
         print
         return redirect( url_for('index') )
 
-
+def tasks_update (string1, string2, secret_key ) :
+    print "+++ tasks_update ( apscheduler ) +++ : %s / %s / %s " %(string1, string2, secret_key)
+    update_coll( update_reset="reset", secret_key_update=secret_key )
 
 ########################################################################################
 ### MONGODB ROUTES BACKDOORS #####
@@ -476,7 +480,7 @@ def index():
         ### get user informations from users_mongo
         # user_rawdata  = users_mongo.find_one( { key_n_carte : session[key_n_carte] }, { "_id":0, "password":0, "status":0 } )
         # user_data = { key : user_rawdata[key] for key in user_rawdata.keys() if key not in ["parcours"] }
-        session_light = [ 'csrf_token', '_flashes', 'is_userdata' ]
+        session_light = [ 'csrf_token', '_flashes', 'is_userdata', '_id' ]
         user_data = { key : val for key, val in session.iteritems() if not key in session_light }
 
         ### get user's parcours
@@ -805,6 +809,8 @@ def index():
 
                 userIsCard    = True
                 userEmail     = form.userEmail.data
+                # userCard      = form.userCard.data                            
+                userCard      = request.form['userCard']
                 userStatus    = 'read'
 
                 if form.validate():

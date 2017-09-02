@@ -45,15 +45,16 @@ a:hover{
   color : white ;
   text-decoration : none ;
   -webkit-text-stroke : 1px white ; 
-  
 }
 
-.a_ {
+a.a_ {
   color: {{ app_colors.btn_info }} ;
 }
 
-.a_:hover {
-  text-decoration: underline ;
+a.a_:hover {
+    text-decoration: underline ;
+    -webkit-text-stroke : 0px white ; 
+    color: {{ app_colors.btn_info }} ;
 }
 
 a.aFake {
@@ -171,7 +172,7 @@ height: 120px;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
-    }
+}
 
 
 .loader {
