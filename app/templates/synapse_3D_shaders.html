@@ -310,10 +310,13 @@
             vec4 newPos   = vec4( newPos_ , 1.0 ) ;
             
             // rotate point
-            mat4 rotP = rotMat( time * .1  * velFactor , sin( time * .1 * velFactor ) , time * velFactor ) ;
-    
+            mat4 rotP  = rotMat( time * .1  * velFactor , sin( time * .1 * velFactor ) , time * velFactor ) ;
+            // mat4 rotP  = rotMat( time * .01 , sin( time * .01 ) , time * .5  ) ;
+            // mat4 rotP_ = rotMat( velFactor , sin( velFactor ) , velFactor ) ;
+            
             // apply position to view matrix
             vec4 mvPosition    =  modelViewMatrix * rotP * newPos ;       // new position
+            // vec4 mvPosition    =  modelViewMatrix * rotP_ * rotP  * newPos ;       // new position
             // vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 ); // original position
     
     

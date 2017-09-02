@@ -1,7 +1,10 @@
 // --- GLOBAL VARIABLES --- //
 // ------------------------ //
 
-var start = Date.now() ;
+var start       = Date.now() ;
+var last_pause ;
+var time_paused_total = 0 ; 
+var time_  ; 
 
 var group, groupH ;
 var container, controls, stats ;
@@ -38,7 +41,7 @@ var defaultPointSize    = 10. ; // max size for icon
 // var velocityFactor = 1. ;
 // var scaleFactor    = 1. ;
 
-var effectController = {
+var effectController_animate = {
     // showGroup        : true,
     showHelper       : false,
     showParticles    : true,
@@ -47,13 +50,28 @@ var effectController = {
     // limitConnections: true,
     // maxConnections  : 10,
     // particleCount   : particleCount,
-    velocityFactor  : .05 ,
+    velocityFactor  : .1 ,
     scaleFactor     : -.6 ,
     breathing       : 2. ,
     waveFreq        : .9 ,
     waveAmp         : .6 ,
     // rotationGroup   : 1. ,
 };
+
+var effectController_pause = {
+    showHelper       : false,
+    showParticles    : true,
+    showEdges        : true,
+    velocityFactor  : .0 ,
+    scaleFactor     : -.6 ,
+    breathing       : .0 ,
+    waveFreq        : .0 ,
+    waveAmp         : .0 ,
+};
+
+var effectController = effectController_animate ;
+    
+
 
 // var familiesColors = [
 //     "rgb(255,188,158)",
@@ -67,22 +85,22 @@ var effectController = {
 
 
 // info div (temp for debugging)
-// var count = 0 ;
-info = document.createElement( 'div' );
-info.style.position = 'absolute';
-info.style.top = '30px';
-info.style.width = '100%';
-info.style.textAlign = 'center';
-info.style.color = '#f00';
-info.style.display = 'none';
-// info.style.backgroundColor = 'transparent';
-info.style.zIndex = '1';
-info.style.fontFamily = 'Monospace';
-info.innerHTML = 'infos' ;
-info.style.userSelect = "none";
-info.style.webkitUserSelect = "none";
-info.style.MozUserSelect = "none";
-document.body.appendChild( info );
+    // var count = 0 ;
+    info = document.createElement( 'div' );
+    info.style.position = 'absolute';
+    info.style.top = '30px';
+    info.style.width = '100%';
+    info.style.textAlign = 'center';
+    info.style.color = '#f00';
+    info.style.display = 'none';
+    // info.style.backgroundColor = 'transparent';
+    info.style.zIndex = '1';
+    info.style.fontFamily = 'Monospace';
+    info.innerHTML = 'infos' ;
+    info.style.userSelect = "none";
+    info.style.webkitUserSelect = "none";
+    info.style.MozUserSelect = "none";
+    document.body.appendChild( info );
 
 
 
@@ -568,6 +586,46 @@ var json_fake = {
 
 };
 
+
+// RESET - PAUSE FUNCTION
+
+function pauseAnimation() {
+    // console.log("pauseAnimation / gui : ", gui ) ;
+    effectController = effectController_pause ;
+    gui.updateDisplay();
+};
+function reanimateAnimation () {
+    // console.log("reanimateAnimation / gui : ", gui ) ;
+    effectController = effectController_animate ;
+    gui.updateDisplay() ;
+};
+
+$("#animation_pause_start").on( "click", function () {
+
+    // start = Date.now()  ;
+    
+    // console.log($("#pause_start_span")) ;
+    if ( $("#pause_start_span").hasClass("glyphicon-pause" ) ) {
+        // console.log("pause_start_span pause") ;
+        last_pause = Date.now()  ; 
+        // pauseAnimation();
+    } else {
+        // console.log("pause_start_span play") ;
+        // last_delta_ = Date.now() - last_delta_ ;     
+        var time_replay       = Date.now() ; 
+        var new_paused_lap    = time_replay - last_pause ;
+        time_paused_total += new_paused_lap ;
+        // reanimateAnimation();
+    };
+    $(this).find("span").toggleClass("glyphicon-pause").toggleClass("glyphicon-play");
+    
+});
+
+
+// $("#animation_pause_start").click( function () {
+//     reanimateAnimation();
+// });
+
 // --- LOAD JSON NOTICES AS CALLBACK
 function preload_notices(callback){
 
@@ -579,7 +637,7 @@ function preload_notices(callback){
         console.log("... JSON_notices_nested loaded with getJSON");
 
     callback(json);
-}
+    }
 )};
 
 // --- START 3D RENDERING AFTER CALLBACK
@@ -610,17 +668,17 @@ preload_notices( function(json) {
 
         var f1 = gui.addFolder("objects") ;
             // f1.add( effectController, "showGroup"  ).onChange( function( value ) {  group.visible   = value; } );
-            f1.add( effectController, "showHelper" ).onChange( function( value ) {  groupH.visible  = value; } );
-            f1.add( effectController, "showParticles" ).onChange( function( value ) {  groupFa3D_.visible  = value; } );
-            f1.add( effectController, "showEdges" ).onChange( function( value ) {  groupEdges3D_.visible  = value; } );
+            f1.add( effectController, "showHelper" ).onChange(    function( value ) {  groupH.visible        = value; } ).listen();
+            f1.add( effectController, "showParticles" ).onChange( function( value ) {  groupFa3D_.visible    = value; } ).listen();
+            f1.add( effectController, "showEdges" ).onChange(     function( value ) {  groupEdges3D_.visible = value; } ).listen();
             
         var f2 = gui.addFolder("rendering");
             // f2.add( effectController, "minDistance"   ,  10, 300 , 1       );
-            f2.add( effectController, "velocityFactor",  0.,  2.  , 0.01   ); // .onChange( onChangeControl(scene, "velFactor") ) ;
-            f2.add( effectController, "scaleFactor",     -1.,  1.  , 0.01    ); // .onChange( onChangeControl(scene, "scaFactor") ) ;
-            f2.add( effectController, "breathing"  ,     0.,  2.  , 0.01    ); // .onChange( onChangeControl(scene, "breathing") ) ;
-            f2.add( effectController, "waveFreq"   ,     0.,  1.  , 0.01   ); // .onChange( onChangeControl(scene, "breathing") ) ;
-            f2.add( effectController, "waveAmp"    ,     0.,  1.  , 0.01   ); // .onChange( onChangeControl(scene, "breathing") ) ;
+            f2.add( effectController, "velocityFactor",  0.,  2.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "velFactor") ) ;
+            f2.add( effectController, "scaleFactor",     -1.,  1.  , 0.01 ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;
+            f2.add( effectController, "breathing"  ,     0.,  2.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
+            f2.add( effectController, "waveFreq"   ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
+            f2.add( effectController, "waveAmp"    ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
             f2.open() ;
 
         // var f3 = gui.addFolder("limits");
@@ -647,7 +705,7 @@ preload_notices( function(json) {
             // set scene
             camera            = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 10000 );
             camera.position.x = 200. ;
-            camera.position.y = 0.   ;
+            camera.position.y = 50.   ;
             camera.position.z = 200. ;
 
             scene     = new THREE.Scene();
@@ -914,7 +972,7 @@ preload_notices( function(json) {
             // controls = new THREE.TrackballControls( camera, container );
             // cf : https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_pointerlock.html
             controls.minDistance   = 1. ;
-            controls.maxDistance   = 100000.;
+            controls.maxDistance   = 1000.;
             controls.dampingFactor = 0.1   ;
 
         // set stats box
@@ -940,6 +998,9 @@ preload_notices( function(json) {
         mouse.x =   ( event.clientX / WIDTH )  * 2 - 1;
         mouse.y = - ( event.clientY / HEIGHT ) * 2 + 1;
     };
+
+
+
 
     // CLICKABLE SPRITES
     function onDocumentClick ( event ) {
@@ -1038,6 +1099,7 @@ preload_notices( function(json) {
     };
 
 
+
     // ANIMATE FUNCTION
     function animate() {
 
@@ -1057,10 +1119,11 @@ preload_notices( function(json) {
         //
         // } );
 
-        // optimize rendering = every 1/24 second
+         // optimize rendering = every 1/24 second
         setTimeout( function() {
         requestAnimationFrame( animate );
         }, 1000 / 19 );
+
 
         // requestAnimationFrame( animate );
         render();
@@ -1074,13 +1137,23 @@ preload_notices( function(json) {
     // RENDER FUNCTION
     function render() {
 
+            
         raycaster.setFromCamera( mouse, camera );
-
-        
 
         // UPDATE TIME VALUE IN UNIFORMS
             // var time  = Date.now() * 0.01;
-            var time_ = ( Date.now() - start ) * .001 ;
+
+            var isPlay = $("#pause_start_span").hasClass("glyphicon-pause" )  ; 
+
+            if ( isPlay ) { 
+                // last_delta_ = Date.now() - last_pause ; 
+                time_ = Date.now() - start - time_paused_total   ;
+            } else {
+                // time_ = Date.now() - start - last_pause   ;
+                time_ = time_ ;                
+            };
+
+            time_shader = time_ * .001   ;
 
             scene.traverse( function( node ) {
 
@@ -1089,14 +1162,13 @@ preload_notices( function(json) {
                     // UPDATE VALUES FROM CONTROLS
                     if ( node.name != "helper" ) {
                         // console.log("--- traverse / node : ", node );
-                        node.material.uniforms.time.value       = time_ ;
-                        node.material.uniforms.velFactor.value  = effectController.velocityFactor ;
+                        node.material.uniforms.time.value       = time_shader ;
+                        node.material.uniforms.velFactor.value  = .01 + effectController.velocityFactor ;
                         node.material.uniforms.scaFactor.value  = effectController.scaleFactor ;
                         node.material.uniforms.breathing.value  = effectController.breathing ;
                         node.material.uniforms.waveFreq.value   = effectController.waveFreq ;
                         node.material.uniforms.waveAmp.value    = effectController.waveAmp ;
                     }
-
 
                 }
 

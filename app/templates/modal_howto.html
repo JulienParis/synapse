@@ -19,6 +19,9 @@
             <span aria-hidden="true">&times;</span>
           </button> -->
           
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:white">
+            <span aria-hidden="true">x</span>
+          </button>
           <!-- <h1 class="text-center" id="ModalHowTo">
             {{ app_metas.title }}
           </h1>  -->
@@ -27,10 +30,11 @@
           style="margin-top:-5px ; max-height : 85px ;" >
 
           <h3 class="" style="color:white">
-              tout le catalogue de la bibliothèque en 3D
+              visualisez vos emprunts dans tout le catalogue de la bibliothèque 
+              <!-- <br>
+              en 3D interactive -->
           </h3>
 
-          <br>
           <br>
 
           <!-- <span class="fa fa-circle-o fa-md" area-hidden="true"></span> -->
@@ -41,13 +45,28 @@
             
             <ul>
 
-              <li>les points de couleurs représentent les 300.000+ documents du fonds </li>
-              <li>les traits blanc représentent les emprunts des utilisateurs </li>
-              <li>le trait noir représente votre propre parcours d'emprunts </li>
-              <li>vous pouvez mettre à jour votre propre parcours d'emprunts</li>
-              <li>vous pouvez bouger autour de synapse ou zoomer avec la souris </li>
-              <li>vous pouvez changer les réglages de l'animation </li>
-            
+              <li><span class="label label-default"><span class="glyphicon glyphicon-record" aria-hidden="true"></span></span>
+                les points de couleurs représentent les 300.000+ documents du fonds </li>
+              <li><span class="label label-default"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></span>
+                les traits blanc représentent les emprunts des utilisateurs </li>
+              <li><span class="label label-default"><span class="glyphicon glyphicon-move" aria-hidden="true"></span></span>                  
+                vous pouvez bouger autour de synapse ou zoomer avec la souris </li>
+              <li><span class="label label-default"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></span>                  
+                vous pouvez mettre en pause l'animation </li>
+              <li><span class="label label-default"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></span>                  
+                vous pouvez modifier les réglages de l'animation </li>
+              <li><span class="label label-default"><span class="fa fa-mouse-pointer" aria-hidden="true"></span></span>                  
+                vous pouvez cliquer sur chacun des points pour voir les détails d'un ouvrage </li>
+
+              <br>
+              
+              <li><span class="label label-default"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>                  
+                vous pouvez vous connecter ou vous créer un compte</li>
+              <li><span class="label label-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></span>                  
+                vous pouvez mettre à jour votre propre parcours d'emprunts</li>
+              <li><span class="label label-default"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></span>                  
+                le trait noir représente votre propre parcours d'emprunts </li>
+
             </ul>
 
           </h3>
@@ -60,12 +79,16 @@
               <a data-dismiss="modal">× commencer à explorer le catalogue ×</a>
           </h3>
 
+          {% if not isUser %}
+          
           <h3 class="text-center">
               <a id="log_from_howto">× se connecter pour mettre à jour votre propre parcours ×</a>
           </h3>
 
+          {% endif %}
+          
           <h3 class="text-center">
-              <a href="http://www.la-bibliotheque.com" target="_blank">× retour à la bibliothèque ×</a>
+              <a href="http://www.la-bibliotheque.com" target="_blank">× retourner à la bibliothèque ×</a>
           </h3>
 
 

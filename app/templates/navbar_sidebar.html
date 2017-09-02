@@ -58,10 +58,13 @@
 
 
   .label-default{
-    background-color: {{ app_colors.btn_info }};
+    background-color: mediumaquamarine ;
+    /* {{ app_colors.btn_info }}; */
   }
 
-
+  .label-info{
+    background-color: white ;
+  }
 
   .navbar-brand{
     z-index: 25;
@@ -157,16 +160,18 @@
 
       <li>
           <button type="button"
-                  class="btn btn-default btn-sm navbar-btn bstooltip no-higlight"
-
+                  class="btn btn-default btn-sm navbar-btn bstooltip no-higlight pause"
+                  id="animation_pause_start"
                   data-trigger='manual'
                   data-tooltip="tooltip"
                   data-placement="bottom"
-                  title="mettre en pause l'animation"
+                  title="mettre en pause ou reprendre l'animation"
                   data-container="body"
                   >
-              <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
-
+              <span class="glyphicon glyphicon-pause" 
+                    id="pause_start_span" 
+                    aria-hidden="true">
+              </span>
           </button>
       </li>
       
