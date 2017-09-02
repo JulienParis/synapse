@@ -317,9 +317,12 @@ def update_coll( update_reset="update", secret_key_update=None ):
         print
         return redirect( url_for('index') )
 
-def tasks_update (string1, string2, secret_key ) :
-    print "+++ tasks_update ( apscheduler ) +++ : %s / %s / %s " %(string1, string2, secret_key)
-    update_coll( update_reset="reset", secret_key_update=secret_key )
+def tasks_update (string1, reset_update, secret_key ) :
+    print "+++ tasks_update ( apscheduler ) +++ : %s / %s / %s " %(string1, reset_update, secret_key)
+    if reset_update == "test" :
+        print "+++ tasks_update +++ ONLY TEST"
+    else : 
+        update_coll( update_reset=reset_update, secret_key_update=secret_key )
 
 ########################################################################################
 ### MONGODB ROUTES BACKDOORS #####

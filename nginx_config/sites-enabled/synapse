@@ -8,7 +8,8 @@ server {
   # running port
     listen 80 default_server;
     # server_name synapse.com;
-    server_name 80.82.225.40 ;
+    # server_name 80.82.225.40 ;
+    server_name synapse.la-bibliotheque.com;
 
   # Proxy connections to the application servers
   # app_servers
