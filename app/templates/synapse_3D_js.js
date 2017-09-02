@@ -913,12 +913,23 @@ preload_notices( function(json) {
                     var positionsL = new Float32Array( segments * 3 ); 
                     var vertexL_constants ; 
 
-                    // get back vertex coordinates from id_o attribute in clickableObjects
+                    // temporary id_o list to except potential errors
+                    var id_o_list_except = [] ;
                     $.each( id_o_list, function( i, id_o ) {
-                        
+                        var isId_o = vertices3Dict[ id_o ] ;
+                        if ( isId_o != undefined ) {
+                            id_o_list_except.push(id_o)
+                        }
+                    }); 
+
+                    // get back vertex coordinates from id_o attribute in clickableObjects
+                    $.each( id_o_list_except, function( i, id_o ) {
+                    // $.each( id_o_list, function( i, id_o ) {
+                            
                         // console.log( "-- id_o -- ",    id_o    ) ;
                         
-                        // find vertex in vertices3Dict for this id_o ///////////////////////
+
+                        // find vertex in vertices3Dict for this id_o /////////////////////// EXCEPT ERRORS 
                         var vertexL       = vertices3Dict[ id_o ]["vertex"] ;
                         // console.log( "-- vertexL -- ", vertexL ) ;
 

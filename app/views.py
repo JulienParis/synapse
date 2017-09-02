@@ -308,7 +308,8 @@ def update_coll( update_reset="update", secret_key_update=None ):
         elif update_reset == "reset" or update_reset == "reset" or update_reset == "rewrite_JSON" :
             ### update / rewrite json local static file
             mongodb_read('notices', get_ligth=True ).write_notices_json_file( nested=True , debug=True )
-            flash(u'les collections sont réécrites en JSON en local ', "success")
+            if secret_key_update == None :
+                flash(u'les collections sont réécrites en JSON en local ', "success")
 
         print
         return redirect( url_for('index') )
@@ -442,14 +443,14 @@ def index():
         "count_exemplaires" : exemplaires_mongo.find({}).count() ,
     }
 
-    edges_mongocursor = mongodb_read( "users", fields = [ "_id", key_parcours, key_n_carte ] , get_edges = True )
+    edges_mongocursor = mongodb_read( "users", fields = [ key_parcours, key_n_carte ] , get_edges = True )
     print "---- INDEX ---- edges_mongocursor  : %s " % ( edges_mongocursor )
 
     edges_mongocursor_ = edges_mongocursor.get_coll_as_json()
     print "---- INDEX ---- edges_mongocursor_  : %s " % ( edges_mongocursor_ )
 
     listEdges_mongo = list( edges_mongocursor_ )
-    print "---- INDEX ---- listEdges_  : %s " % ( listEdges_mongo )
+    print "---- INDEX ---- listEdges_ (raw) : %s " % ( listEdges_mongo )
     print 
 
     for user_ in listEdges_mongo :
@@ -469,7 +470,7 @@ def index():
 
         listEdges.append( user_dict )
 
-    print "---- INDEX ---- listEdges  : %s " % ( listEdges )
+    print "---- INDEX ---- listEdges if id_o : %s " % ( listEdges )
     print 
 
 

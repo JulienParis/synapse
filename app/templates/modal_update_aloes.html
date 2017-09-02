@@ -22,18 +22,17 @@
 
 
 
-        <div class="col-sm-8 col-sm-offset-2">
+        <!-- <div class="col-sm-8 col-sm-offset-2">
           <ul class="list-group text-center">
-            <!-- <li class="list-group-item">bonjour <strong>{ { session_u["username"] } } </strong> </li> -->
             <li class="list-group-item">votre numéro de carte est : <strong>{{ session_u["n_carte"] }} </strong> </li>
           </ul>
-        </div>
+        </div> -->
 
         {% include "refresh_history.html" %}
 
-        <hr>
 
         {% if isAdmin%}
+        <hr>
         <h3 class="text-center">
           FONCTIONNALITES RESERVEES AUX ADMINISTRATEURS/TRICES
         </h3>
