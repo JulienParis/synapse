@@ -436,6 +436,12 @@ def index():
     #                , ... 
     #             ]
 
+    basic_stats = {
+        "count_users"       : users_mongo.find({}).count() ,
+        "count_notices"     : notices_mongo.find({}).count() , 
+        "count_exemplaires" : exemplaires_mongo.find({}).count() ,
+    }
+
     edges_mongocursor = mongodb_read( "users", fields = [ "_id", key_parcours, key_n_carte ] , get_edges = True )
     print "---- INDEX ---- edges_mongocursor  : %s " % ( edges_mongocursor )
 
@@ -895,6 +901,8 @@ def index():
                             dict_db_user        = dict_db_user,
                             bootstrap_vars      = bootstrap_vars,
                             session_u           = session,
+
+                            basic_stats         = basic_stats, 
 
                             listEdges           = listEdges, 
                             user_data           = user_data,

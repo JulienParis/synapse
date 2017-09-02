@@ -918,8 +918,8 @@ preload_notices( function(json) {
                         
                         // console.log( "-- id_o -- ",    id_o    ) ;
                         
-                        // find vertex in vertices3Dict for this id_o
-                        var vertexL       = vertices3Dict[id_o]["vertex"] ;
+                        // find vertex in vertices3Dict for this id_o ///////////////////////
+                        var vertexL       = vertices3Dict[ id_o ]["vertex"] ;
                         // console.log( "-- vertexL -- ", vertexL ) ;
 
                         vertexL_constants = vertices3Dict[id_o]["constantsGroup"] ;
@@ -1104,7 +1104,7 @@ preload_notices( function(json) {
     function animate() {
 
         // change main GUI button text
-        $('.close-button').text("réglages");
+        $('.close-button').html("<span class='glyphicon glyphicon-tasks' aria-hidden='true'></span> réglages");
 
         // scene.traverse( function( node ) {
         //
