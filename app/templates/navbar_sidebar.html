@@ -195,6 +195,23 @@
           </button>
       </li>
       
+      <li>
+          <button type="button"
+                  class="btn btn-default btn-sm navbar-btn bstooltip no-higlight"
+                  
+                  data-toggle="collapse"
+                  data-target="#collapseSettings"
+
+                  data-trigger='manual'
+                  data-tooltip="tooltip"
+                  data-placement="bottom"
+                  title="cliquer pour modifier l'animation"
+                  data-container="body"
+                  >
+              <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
+          </button>
+      </li>
+      
       {% if isUser != None %}
       <!-- <li>
           <p class="navbar-text" id="navbar-text" >
@@ -315,22 +332,6 @@
       </li>
       {% endif %}
 
-      <li>
-          <button type="button"
-                  class="btn btn-default btn-sm navbar-btn bstooltip no-higlight"
-                  
-                  data-toggle="collapse"
-                  data-target="#collapseSettings"
-
-                  data-trigger='manual'
-                  data-tooltip="tooltip"
-                  data-placement="bottom"
-                  title="cliquer pour modifier l'animation"
-                  data-container="body"
-                  >
-              <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
-          </button>
-      </li>
 
 
       <!-- <li class="divider-vertical"></li> -->
@@ -344,7 +345,7 @@
               data-trigger='manual'
               data-tooltip="tooltip"
               data-placement="bottom"
-              title="A propos de {{ app_metas.title }}"
+              title="à propos de {{ app_metas.title }}"
               data-container="body"
               >
             <i class="fa fa-copyright fa-lg" area-hidden="true"></i>

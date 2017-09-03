@@ -77,7 +77,7 @@ $(document).ready( function(){
     $(".alert_fade").fadeTo(1500, 0).slideUp(1500, function(){
       $(this).remove();
     });
-  }, 3000);
+  }, 10000);
 
 
   // restore btns unfocused state after closing modals
