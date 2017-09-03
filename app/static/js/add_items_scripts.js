@@ -22,7 +22,10 @@ $(document).ready(function(){
   };
 
   function show_resultsTable() {
+
     $("#search_results_table").css("display", "") ;
+    $("#collapseResults").collapse("show") ;
+
   };
 
 
