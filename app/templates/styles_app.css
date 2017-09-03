@@ -216,3 +216,9 @@ height: 120px;
 .progress-bar.active {
   animation-duration: 0.3s;
 }
+
+.img_partners {
+    max-height: 100px;
+    margin-left : 20px;
+    margin-right: 20px ;
+}
