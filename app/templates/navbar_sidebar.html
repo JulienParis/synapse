@@ -222,6 +222,9 @@
           </button>
       </li>
 
+      {% endif %}
+
+      
       <li>
           <button type="button"
                   class="btn btn-default btn-sm navbar-btn bstooltip no-higlight"
@@ -231,13 +234,16 @@
                   data-trigger='manual'
                   data-tooltip="tooltip"
                   data-placement="bottom"
-                  title="ajouter manuellement des titres à votre parcours"
+                  title="{% if isUser != None %}ajouter manuellement des titres à votre parcours {% else %} rechercher un ouvrage {% endif %}"
                   data-container="body"
                   >
-              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+              <span class="glyphicon glyphicon-{% if isUser != None %}plus{% else %}search{% endif %}" aria-hidden="true"></span>
                
           </button>
       </li>
+
+
+      {% if isUser != None %}
 
       <li>
           <button type="button"

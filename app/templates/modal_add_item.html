@@ -67,7 +67,11 @@
 
         <h3 class="modal-title text-center"
             id="update_aloes_form">
-          ajouter un ouvrage à votre liste personnelle
+            {% if isUser != None %}
+              ajouter un ouvrage à votre liste personnelle
+            {% else %}
+              rechercher un ouvrage
+            {% endif %}
         </h3>
 
       </div>
@@ -164,10 +168,38 @@
 
 
 
+        {% if isUser != None %}
+        
+          {% include "add_item_form.html" %}
 
-        {% include "add_item_form.html" %}
+        {% else %}
 
+        <div class="row">
+          <label for="input_title" class="col-sm-3 control-label text-right">par code barre</label>
+          <div class="col-sm-8">
+            {{ requestCabForm.cab_code }}
+          </div>
+        </div>
 
+        <div class="row">
+          <div class="col-sm-8 col-sm-offset-3">
+            <button
+                type="button"
+                class="btn btn-block btn-default btn-sm"
+                id="ckeck_oneref"
+                onclick="Check_OneRef()"
+                data-loading-text="recherche..."
+                >
+              rechercher le titre et l'auteur de cet ouvrage
+            </button>
+          </div>
+    
+        </div>
+
+        <br>
+
+        
+        {% endif %}
 
       </div> <!--  END modal-body -->
 

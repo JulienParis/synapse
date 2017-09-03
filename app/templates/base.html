@@ -118,12 +118,12 @@
 
     {% include "modal_howto.html" %}
     {% include "modal_infos_notice.html" %}
-
+    {% include 'modal_add_item.html' %}
+    
     {% if isUser %}
       {% include 'modal_update_aloes.html'%}
       {% include 'modal_update_user.html'%}
       {% include 'modal_update_user_account.html'%}
-      {% include 'modal_add_item.html' %}
     {% else %}
       {% include "modal_intro.html" %}
       {% include 'modal_login.html'%}

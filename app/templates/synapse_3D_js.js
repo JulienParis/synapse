@@ -251,7 +251,7 @@ function createShaderMaterial ( constantsGroup,
             var colorG  = new THREE.Color( "#ff0000" ) ;
             console.log( "colorG / is_from_user : ", colorG ) ; 
         } else {
-            var transp_ = .6 ; 
+            var transp_ = .8 ; 
             var colorG  = new THREE.Color( "#ffffff" ) ;            
             console.log( "colorG / !is_from_user : ", colorG ) ; 
         }
@@ -692,8 +692,8 @@ preload_notices( function(json) {
         var f2 = gui.addFolder("rendering");
             // f2.add( effectController, "minDistance"   ,  10, 300 , 1       );
             f2.add( effectController, "velocityFactor",  0.,  2.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "velFactor") ) ;
-            f2.add( effectController, "scaleFactor",     -1.,  1.  , 0.01 ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;
-            f2.add( effectController, "breathing"  ,     0.,  3.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
+            f2.add( effectController, "scaleFactor",    -1.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;
+            f2.add( effectController, "breathing"  ,     0.,  5.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
             f2.add( effectController, "waveFreq"   ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
             f2.add( effectController, "waveAmp"    ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
             f2.open() ;
