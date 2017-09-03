@@ -1,0 +1,169 @@
+<div class="modal fade in "
+id="mod_about"
+tabindex="-1"
+role="dialog"
+aria-labelledby="mod_about">
+
+<div class="modal-dialog modal-lg " role="document">
+
+<div class="modal-content modal_transparent ">
+
+
+
+<div class="modal-body text-center" style="color:white">
+
+    
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:white">
+      <span aria-hidden="true">x</span>
+    </button>
+
+
+    <img  src="{{ url_for('static', filename='images/logo_index.png') }}" 
+    style="margin-top:-5px ; max-height : 85px ;" >
+
+    <!-- <h3 class="" style="color:white">
+        à propos de {{ app_metas.title }}
+    </h3> -->
+
+    <br><br>
+
+    <hr>
+
+    
+    <h3 class="lead text-justify" style="color:white ; margin-left: 80px ; margin-right: 80px">
+      
+        <ul class="list-unstyled">
+
+            <li> {{ app_metas.title | title }} est un projet expérimental initié par la 
+                <a href="http://www.la-bibliotheque.com" target="_blank">
+                    <strong> bibliothèque de Saint Herblain </strong>
+                </a>
+                dans le cadre du cycle "Le livre dans 5 ans".
+            </li>
+            
+            <br>            
+            <li> 
+                {{ app_metas.title | title }} est le fruit d’une idée née de l’observation des pratiques de lecture. L’opportunité du cycle
+                "Le livre et la lecture dans 5 ans" initié par Mobilis en octobre 2016 a permis à La Bibliothèque de
+                confier cette idée à la curiosité d’usagers et d’étudiants qui l’ont d'abord explorée, questionnée et détournée
+                pour faire de ce bourgeon d’intuition la maquette d’un prototype. 
+                Cette première maquette a ensuite été interprétée par le développeur, 
+                qui a réalisé ce prototype d'un espace 3D interactif, mouvant, semi-géométrique, semi-organique.
+            </li>    
+            
+            <br>
+            <li> 
+                Ainsi {{ app_metas.title }} est aujourd'hui une application de data visualisation de l'ensemble du catalogue 
+                de la bibliothèque de Saint Herblain ainsi que des parcours d'emprunts des utilisateurs.
+            </li>
+            <br>
+            <li> 
+                Le premier défi de ce projet était à la fois de rendre graphique une somme considérable de données de manière interactive, 
+                Le second enjeu du projet était également de poser les bases d'un outil permettant l'exploration et l'analyse des parcours d'emprunts 
+                ainsi que la gestion d'un catalogue pour les professionnels des bibliothèques. 
+            </li>
+
+    </h3>
+
+    <hr>
+    
+    <h3 class="" style="color:white">
+        <strong> réalisation </strong>
+    </h3>
+    <h3 class="lead " style="color:white">
+                
+        <ul class="list-unstyled">
+            <li>
+                <!-- <span class="glyphicon glyphicon-console" aria-hidden="true"></span>                     -->
+                <span class="fa fa-code fa-sm" aria-hidden="true"></span>                    
+                <a href="http://www.jpylab.com" target="_blank">
+                    <strong>Julien Paris</strong>
+                </a>
+                <span class="fa fa-code fa-sm" aria-hidden="true"></span>                    
+                <!-- <span class="glyphicon glyphicon-console" aria-hidden="true"></span>                     -->
+                
+                <br>architecte DPLG de formation, reconverti comme développeur et entrepreneur
+            </li>
+        </ul>
+
+    </h3>
+
+    <hr>
+
+    <h3 class="" style="color:white">
+            <strong> remerciements </strong>
+    </h3>
+    
+    <h4 class="text-justify" style="color:white ; margin-left: 80px  ; margin-right: 80px">
+            
+        <ul class="list-unstyled">
+            
+            <li> 
+                <em>Médiathèque Hermeland</em> : Magalie Badion, Laurent Hautbois, Muriel Souchon 
+                <span class="fa fa-circle fa-sm" area-hidden="false"></span>
+                
+                <em>Ville de Saint Herblain</em> : Maxime Lemonnier 
+                <span class="fa fa-circle fa-sm" area-hidden="false"></span>
+                
+                <em>Ecole de Design de Nantes </em>: Laurent Neysensas 
+                <span class="fa fa-circle fa-sm" area-hidden="false"></span>
+                
+                <em>Stereolux</em> : Martin Lambert, Boris Letessier 
+                <span class="fa fa-circle fa-sm" area-hidden="false"></span>
+                
+                Damla Subasi Paris <span class="fa fa-heart fa-xs" area-hidden="false"></span> et 
+                <span class="fa fa-paw fa-sm" area-hidden="false"></span>
+            </li>
+            
+        </ul>
+        <br>
+    
+    </h4>
+
+    <hr>
+
+    <h3 class="" style="color:white">
+            <strong>technologies utilisés </strong>
+    </h3>
+
+    <h4 class="text-justify" style="color:white ; margin-left: 80px  ; margin-right: 80px ">
+            
+        <ul class="list-unstyled">
+            
+            <li> 
+                <em>Python</em> : Flask, Pandas, Zeep, SQLAlchemy, Pymongo, APScheduler, Gunicorn, Eventlet
+                <span class="fa fa-circle fa-sm" area-hidden="false"></span>
+                
+                <em>Javascript</em> : Three.js, Datatables.js, Jquery
+                <span class="fa fa-circle fa-sm" area-hidden="false"></span>
+
+                <em>Base de données de l'application</em> : MongoDB
+                <span class="fa fa-circle fa-sm" area-hidden="false"></span>
+
+                <em>Autres</em> : Bootstrap, Bootstrap-select, Font-Awesome
+                               
+            </li>
+            
+        </ul>
+        <br>
+    
+    </h4>
+
+    <hr>
+    
+    <h3 class="text-center" style="margin-top:30px">
+        <a data-dismiss="modal">× revenir à {{ app_metas.title }} ×</a>
+    </h3>
+
+    
+
+
+</div>
+
+
+</div> 
+
+</div>
+
+</div>
+<!-- END MODAL ABOUT -->

@@ -2,6 +2,7 @@
 // ------------------------ //
 
     var start       = Date.now() ;
+    var randomStart = Math.random() * 1000. + 100. ;
     var last_pause ;
     var time_paused_total = 0 ; 
     var time_  ; 
@@ -38,8 +39,12 @@
     var RmarginDist   		= Rbasis / 10. ;
     var RbasisHalf 	   		= RmarginAngle / 2.;
     var maxCircleRad ;
-    var defaultPointSize    = 10. ; // max size for icon
 
+    var defaultPointSize     = 10. ; // max size for icon
+    var defaultLineTransp    = .85 ;
+    var defaultLineColor     = "#ffffff" ;
+    var defaultLineColorUser = "#ff0000" ;
+    
     // var velocityFactor = 1. ;
     // var scaleFactor    = 1. ;
 
@@ -48,6 +53,9 @@
         showHelper       : false,
         showParticles    : true,
         showEdges        : true,
+        colorLines       : defaultLineColor , 
+        colorLineUser    : defaultLineColorUser , 
+        transpLines      : defaultLineTransp ,
         // minDistance     : 120,
         // limitConnections: true,
         // maxConnections  : 10,
@@ -64,6 +72,10 @@
         showHelper       : false,
         showParticles    : true,
         showEdges        : true,
+        colorLines       : defaultLineColor , 
+        colorLineUser    : defaultLineColorUser , 
+        transpLines      : defaultLineTransp ,
+        
         velocityFactor  : .0 ,
         scaleFactor     : -.6 ,
         breathing       : .0 ,
@@ -248,11 +260,11 @@ function createShaderMaterial ( constantsGroup,
         var colorG = new THREE.Color ( notices_groups_[ keyFa ]["color"] ) ;  
     } else {
         if ( is_from_user === true  ) {
-            var colorG  = new THREE.Color( "#ff0000" ) ;
+            var colorG  = new THREE.Color( defaultLineColorUser ) ;
             console.log( "colorG / is_from_user : ", colorG ) ; 
         } else {
-            var transp_ = .8 ; 
-            var colorG  = new THREE.Color( "#ffffff" ) ;            
+            var transp_ = defaultLineTransp ; 
+            var colorG  = new THREE.Color( defaultLineColor ) ;            
             console.log( "colorG / !is_from_user : ", colorG ) ; 
         }
     };
@@ -688,19 +700,22 @@ preload_notices( function(json) {
             // f1.add( effectController, "showHelper" ).onChange(    function( value ) {  groupH.visible        = value; } ).listen();
             f1.add( effectController, "showParticles" ).onChange( function( value ) {  groupFa3D_.visible    = value; } ).listen();
             f1.add( effectController, "showEdges" ).onChange(     function( value ) {  groupEdges3D_.visible = value; } ).listen();
-            
-        var f2 = gui.addFolder("rendering");
-            // f2.add( effectController, "minDistance"   ,  10, 300 , 1       );
-            f2.add( effectController, "velocityFactor",  0.,  2.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "velFactor") ) ;
-            f2.add( effectController, "scaleFactor",    -1.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;
-            f2.add( effectController, "breathing"  ,     0.,  5.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
-            f2.add( effectController, "waveFreq"   ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
-            f2.add( effectController, "waveAmp"    ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
+
+        var f2 = gui.addFolder("colors");
+            f2.add(      effectController, "transpLines",  0.,  1., 0.01 ).listen();
+            f2.addColor( effectController, "colorLines"    ).listen();
+            f2.addColor( effectController, "colorLineUser" ).listen();
             f2.open() ;
 
-        // var f3 = gui.addFolder("limits");
-        //     f3.add( effectController, "rotationGroup",  0.,  1., 0.1 );
-        //     f3.open() ;
+        var f3 = gui.addFolder("rendering");
+            // f3.add( effectController, "minDistance"   ,  10, 300 , 1       );
+            f3.add( effectController, "velocityFactor",  0.,  2.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "velFactor") ) ;
+            f3.add( effectController, "scaleFactor",    -1.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;
+            f3.add( effectController, "breathing"  ,     0.,  5.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
+            f3.add( effectController, "waveFreq"   ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
+            f3.add( effectController, "waveAmp"    ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
+            f3.open() ;
+
        
         gui.closed = true ;
         // gui.TEXT_CLOSED = "fermer les réglages" ;
@@ -991,7 +1006,13 @@ preload_notices( function(json) {
                     
                     // compose mesh 
                     line_mesh = new THREE.Line( geoUser_buffer, geoUser_material );
+                    
+                    // store line basic infos on user
+                    line_mesh.is_from_user = line_user ;
+                    line_mesh.from_card = data_user["n_carte"] ;
+
                     // line_mesh = new THREE.Line( geoUser_buffer, geoUser_material );
+                    console.log( " line_mesh : ", line_mesh ) ;
                     
                     // add to groupEdges3D 
                     groupEdges3D.add( line_mesh ) ; 
@@ -1200,11 +1221,11 @@ preload_notices( function(json) {
                 time_ = time_ ;                
             };
 
-            time_shader = time_ * .001   ;
+            time_shader = ( time_ * .001 ) + randomStart   ;
 
             scene.traverse( function( node ) {
 
-            if ( node instanceof THREE.LineSegments | node instanceof THREE.Points  | node instanceof THREE.Line ) {
+                if ( node instanceof THREE.LineSegments | node instanceof THREE.Points  | node instanceof THREE.Line ) {
 
                     // UPDATE VALUES FROM CONTROLS
                     if ( node.name != "helper" ) {
@@ -1216,7 +1237,17 @@ preload_notices( function(json) {
                         node.material.uniforms.waveFreq.value   = effectController.waveFreq ;
                         node.material.uniforms.waveAmp.value    = effectController.waveAmp ;
                     }
+                };
 
+                if ( node instanceof THREE.Line && node.name != "helper" ) {
+                    if ( node.is_from_user === true ) {
+                        var newColorLineU = new THREE.Color( effectController.colorLineUser  )  ;
+                        node.material.uniforms.color.value = newColorLineU ;
+                    } else {
+                        var newColorLines = new THREE.Color( effectController.colorLines  )  ;   
+                        node.material.uniforms.color.value  = newColorLines ;                        
+                        node.material.uniforms.transp.value = effectController.transpLines ;
+                    }
                 }
 
             });

@@ -124,9 +124,6 @@
       </li>
 
 
-
-
-
       <!-- <li class="divider-vertical"></li> -->
 
 
@@ -321,6 +318,22 @@
       <!-- <li class="divider-vertical"></li> -->
 
       <li>
+          <a  role="button"
+              class="bstooltip no-higlight"
+              data-toggle="modal"
+              data-target="#mod_about"
+
+              data-trigger='manual'
+              data-tooltip="tooltip"
+              data-placement="bottom"
+              title="A propos de {{ app_metas.title }}"
+              data-container="body"
+              >
+            <i class="fa fa-copyright fa-lg" area-hidden="true"></i>
+        </a>
+      </li>
+
+      <li>
         <a  href="https://gitlab.com/Julien_P/{{ app_metas.title }}" target="_blank"
             class="bstooltip" data-toggle="tooltip" data-placement="bottom"
             title="repo Gitlab">
@@ -345,6 +358,9 @@
           <i class="fa fa-paypal fa-lg" area-hidden="true"></i>
         </a>
       </li>
+
+
+
 
       <li> <a></a> </li>
     </ul>

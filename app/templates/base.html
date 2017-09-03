@@ -117,8 +117,8 @@
   	<!-- MODALS --------------------------------------------------------------------- -->
 
     {% include "modal_howto.html" %}
+    {% include "modal_about.html" %}
     {% include "modal_infos_notice.html" %}
-    {% include 'modal_add_item.html' %}
     
     {% if isUser %}
       {% include 'modal_update_aloes.html'%}
@@ -130,7 +130,8 @@
       {% include 'modal_register.html'%}
     {% endif %}
 
-
+    {% include 'modal_add_item.html' %}
+    
 
     <!-- {% with messages = get_flashed_messages(with_categories = true) %}
       {% if messages %}

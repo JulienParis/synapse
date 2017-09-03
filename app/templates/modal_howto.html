@@ -47,29 +47,57 @@
 
               <li><span class="label label-default"><span class="glyphicon glyphicon-record" aria-hidden="true"></span></span>
                 chaque point de couleur est une des <strong>{{ basic_stats["count_notices"] }} notices</strong> du catalogue</li>
+              <li><span class="label label-default"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></span>
+                chaque couleur représente <strong>une famille</strong> d'ouvrages</li>
+              <li><span class="label label-default"><span class="fa fa-mouse-pointer fa-md" aria-hidden="true"></span></span>                  
+                vous pouvez <strong>cliquer sur chacun des points 3D</strong> pour voir les détails d'un ouvrage </li>
+
               <li><span class="label label-default"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></span>
                 les traits blancs représentent les <strong>emprunts</strong> des utilisateurs </li>
-              <li><span class="label label-default"><span class="glyphicon glyphicon-move" aria-hidden="true"></span></span>                  
+
+              <li>
+                <span class="label label-default"><span class="glyphicon glyphicon-move" aria-hidden="true"></span></span>                  
+                <span class="label label-default"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span></span>                  
                 vous pouvez <strong>bouger</strong> autour de synapse ou <strong>zoomer</strong> avec la souris </li>
-              <li><span class="label label-default"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></span>                  
-                vous pouvez <strong>mettre en pause</strong> l'animation </li>
+              
+              <li>
+                <span class="label label-default"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></span>                  
+                <span class="label label-default"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></span>                  
+                vous pouvez <strong>mettre en pause</strong> ou <strong> reprendre </strong> l'animation </li>
+              
               <li><span class="label label-default"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></span>                  
                 vous pouvez modifier les <strong>réglages de l'animation</strong> </li>
-              <li><span class="label label-default"><span class="fa fa-mouse-pointer" aria-hidden="true"></span></span>                  
-                vous pouvez <strong>cliquer sur chacun des points 3D</strong> pour voir les détails d'un ouvrage </li>
+
 
               <br>
               
               
               {% if not isUser %}
-              <li><span class="label label-default"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>                  
+
+              <li>
+                <span class="label label-default"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span></span>                  
+                <span class="label label-default"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></span>                  
                 vous pouvez vous
                 <a class="log_from_howto"><strong> connecter </strong>  </a>
                 ou vous 
                 <a class="register_trigger"><strong> créer un compte </strong>  </a>
               </li>
 
+              <li><span class="label label-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>                  
+                vous pouvez <strong>rechercher</strong> un ouvrage</li>
+
               {% else %}
+
+
+              <li><span class="label label-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></span>                  
+                vous pouvez <strong>mettre à jour automatiquement</strong> votre propre parcours d'emprunts</li>
+              <li><span class="label label-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>                  
+                vous pouvez <strong>ajouter des envies</strong> à votre parcours d'emprunts</li>
+              <li><span class="label label-default"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></span>                  
+                le trait rouge représente <strong>votre propre parcours</strong> d'emprunts </li>
+
+              <br>
+
               <li><span class="label label-default"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>                  
                 vous pouvez modifier <strong> vos informations personnelles</strong> 
               </li>
@@ -77,16 +105,15 @@
                 vous pouvez vous <a href="{{ url_for('logout') }}"><strong> déconnecter</strong> </a>
                 <!-- <a href="{{ url_for('logout') }}"><strong> déconnecter </strong>  </a> -->
               </li>
-
+              
               {% endif %}
 
               
-              <li><span class="label label-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></span>                  
+              <!-- <li><span class="label label-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></span>                  
                 vous pouvez <strong>mettre à jour automatiquement</strong> votre propre parcours d'emprunts</li>
               <li><span class="label label-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>                  
-                vous pouvez <strong>ajouter des envies</strong> à votre parcours d'emprunts</li>
-              <li><span class="label label-default"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></span>                  
-                le trait rouge représente <strong>votre propre parcours</strong> d'emprunts </li>
+                vous pouvez <strong>ajouter des envies</strong> à votre parcours d'emprunts</li> -->
+
 
             </ul>
 
@@ -96,7 +123,7 @@
 
 
           <h3 class="text-center" style="margin-top:30px">
-              <a data-dismiss="modal">× commencer à explorer le catalogue ×</a>
+              <a data-dismiss="modal">× commencer à explorer {{ app_metas.title }} ×</a>
           </h3>
 
           {% if not isUser %}
@@ -133,23 +160,3 @@
 </div>
 <!-- END MODAL HOW_TO -->
 
-
-<!-- <div class="cb_infos">
-
-  <h3 class="text-right"><span aria-hidden="true" style="">&times;</span></h3>
-
-  <h1> {{ app_metas.title }} </h1>
-  
-  <p>...
-    <a title="jpy" href="http://www.jpylab.com/"> Julien </a>
-    <br> 
-    Le catalogue de La Bibliothèque en 3D.
-  </p>
-  
-  <h2 class="cb_autres_cb">
-    <a href="http://www.la-bibliotheque.com">× retour à la bibliothèque ×</a>
-  </h2>
-  
-  <h2 class="cb_fermer_info"> × Lancer l’application × </h2>
-  <br>
-</div> -->
