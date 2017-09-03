@@ -4,13 +4,13 @@ var notices_groups_ = {
             "color" : "#ff6633",
             "icon"  : "{{ url_for('static', filename='textures/sprites/disc.png') }}" ,
             "List"  : {
-                "ROMANS JEUNESSE"   : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "ROMANS ADULTES"    : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "BD ADULTES"        : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "BD JEUNESSE"       : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "ALBUMS"            : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "CINEMA ADULTES"    : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "CINEMA JEUNESSE"   : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "ROMANS JEUNESSE"   : {"color" : "#ff6633", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "ROMANS ADULTES"    : {"color" : "#ff6633", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "BD ADULTES"        : {"color" : "#ff6633", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "BD JEUNESSE"       : {"color" : "#ff6633", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "ALBUMS"            : {"color" : "#ff6633", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "CINEMA ADULTES"    : {"color" : "#ff6633", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "CINEMA JEUNESSE"   : {"color" : "#ff6633", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
             }
         }
     ,
@@ -20,19 +20,19 @@ var notices_groups_ = {
             "icon"  : "{{ url_for('static', filename='textures/sprites/disc.png') }}" ,
             
             "List"  : {
-                "SOCIETE"           : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "VIE PRATIQUE"      : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "SCIENCES"          : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "HISTOIRE"          : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "GEOGRAPHIE"        : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "PHILOSOPHIE"       : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "PSYCHOLOGIE"       : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "LITTERATURE"       : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "SPORTS ET LOISIRS" : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "LANGUES"           : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "INFORMATIQUE"      : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "RELIGIONS"         : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "FONDS LOCAL"       : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "SOCIETE"           : {"color" : "#ffcc33", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "VIE PRATIQUE"      : {"color" : "#ffcc33", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "SCIENCES"          : {"color" : "#ffcc33", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "HISTOIRE"          : {"color" : "#ffcc33", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "GEOGRAPHIE"        : {"color" : "#ffcc33", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "PHILOSOPHIE"       : {"color" : "#ffcc33", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "PSYCHOLOGIE"       : {"color" : "#ffcc33", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "LITTERATURE"       : {"color" : "#ffcc33", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "SPORTS ET LOISIRS" : {"color" : "#ffcc33", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "LANGUES"           : {"color" : "#ffcc33", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "INFORMATIQUE"      : {"color" : "#ffcc33", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "RELIGIONS"         : {"color" : "#ffcc33", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "FONDS LOCAL"       : {"color" : "#ffcc33", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
             }
         }
     ,
@@ -42,8 +42,8 @@ var notices_groups_ = {
             "icon"  : "{{ url_for('static', filename='textures/sprites/disc.png') }}" ,
             
             "List"  : {
-                "DANSE"             : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "THEATRE"           : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "DANSE"             : {"color" : "#3366ff", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "THEATRE"           : {"color" : "#3366ff", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
                 }
         }
     ,
@@ -53,23 +53,23 @@ var notices_groups_ = {
             "icon"  : "{{ url_for('static', filename='textures/sprites/disc.png') }}" ,
             
             "List"  : {
-                "MUSIQUE ADULTES"   : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "MUSIQUE JEUNESSE"  : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "MUSIQUE ADULTES"   : {"color" : "#ff3366", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "MUSIQUE JEUNESSE"  : {"color" : "#ff3366", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
             }
         }
     ,
     "JEU" :
         {   "CODE"  : "J",
-            "color" : "#ff6633",
+            "color" : "#ff3333",
             "icon"  : "{{ url_for('static', filename='textures/sprites/disc.png') }}" ,
             
             "List"  : {
-                "JEUX A REGLES"       : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "JEUX D'ASSEMBLAGE"   : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "LIVRES SUR LES JEUX" : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "JEUX D'EXERCICES"    : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "JEUX SYMBOLIQUES"    : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "JEUX VIDEO"          : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "JEUX A REGLES"       : {"color" : "#ff3333", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "JEUX D'ASSEMBLAGE"   : {"color" : "#ff3333", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "LIVRES SUR LES JEUX" : {"color" : "#ff3333", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "JEUX D'EXERCICES"    : {"color" : "#ff3333", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "JEUX SYMBOLIQUES"    : {"color" : "#ff3333", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "JEUX VIDEO"          : {"color" : "#ff3333", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
             }
         }
     ,
@@ -79,9 +79,9 @@ var notices_groups_ = {
             "icon"  : "{{ url_for('static', filename='textures/sprites/disc.png') }}" ,
             
             "List" : {
-                "ARTS"                : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "GRAPHISME"           : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "LOISIRS CREATIFS"    : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "ARTS"                : {"color" : "#cc33ff", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "GRAPHISME"           : {"color" : "#cc33ff", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "LOISIRS CREATIFS"    : {"color" : "#cc33ff", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
             }
         }
     ,
@@ -91,8 +91,8 @@ var notices_groups_ = {
             "icon"  : "{{ url_for('static', filename='textures/sprites/disc.png') }}" ,
             
             "List"  : {
-                "PRESSE"              : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "None"                : {"color" : "", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "PRESSE"              : {"color" : "#ff33cc", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "None"                : {"color" : "#ff33cc", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
             }
         }
     ,

@@ -89,6 +89,17 @@ $(document).ready( function(){
   });
 
 
+    // show settings
+    // $("#showSettings").click( function() {
+    //   $(".dg").toggle() ;
+    // }) ;
+
+    // $(".close-button").hide() ;
+
+    $("#closeSettings").click( function() {
+      $("#collapseSettings").collapse("hide") ;
+    });
+
   // dynamic tables
   // var table = $('.tableParcours').DataTable( {
   //

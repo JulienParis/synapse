@@ -85,7 +85,15 @@
 
     var effectController = effectController_animate ;
     
-
+    // add colors to effectcontroler
+    $.each( notices_groups_ , function( keyF , family ) { 
+        effectController[ keyF ] = family["color"] ;
+        $.each( family["List"] , function ( keyG, group )  {
+            if ( keyG == null ) { keyG = "None" } ;
+            effectController[ keyG ] = group["color"] ;
+        });
+    })
+    
 
     // var familiesColors = [
     //     "rgb(255,188,158)",
@@ -244,6 +252,7 @@ function createShaderMaterial ( constantsGroup,
     
     var keyFa           = constantsGroup["keyFa"] ;
     var keyGroup        = constantsGroup["keyGroup"] ;
+    var groupName       = constantsGroup["groupName"] ;
     var familyIndex     = constantsGroup["indexFa"] ;
     var familiesLength  = constantsGroup["familiesLen"] ;
     var groupIndex      = constantsGroup["indexGroup"] ;
@@ -252,23 +261,34 @@ function createShaderMaterial ( constantsGroup,
     var roty_angleFa    = constantsGroup["roty_angleFa"] ;
     var rotx_angleGroup = constantsGroup["rotx_angleGroup"] ;
     
-
-
     var transp_ = 1. ; 
     
+    if ( groupName == null ) {
+        groupName = "None" ;
+    }
+
+    // colors points
     if ( is_wire == false ) {
-        var colorG = new THREE.Color ( notices_groups_[ keyFa ]["color"] ) ;  
-    } else {
+        // var colorG = new THREE.Color ( notices_groups_[ keyFa ]["color"] ) ;  
+        var colorG = new THREE.Color ( notices_groups_[ keyFa ]["List"][ groupName ]["color"] ) ;  
+    } 
+    // colors lines
+    else {
         if ( is_from_user === true  ) {
             var colorG  = new THREE.Color( defaultLineColorUser ) ;
-            console.log( "colorG / is_from_user : ", colorG ) ; 
+            // console.log( "colorG / is_from_user : ", colorG ) ; 
         } else {
             var transp_ = defaultLineTransp ; 
             var colorG  = new THREE.Color( defaultLineColor ) ;            
-            console.log( "colorG / !is_from_user : ", colorG ) ; 
+            // console.log( "colorG / !is_from_user : ", colorG ) ; 
         }
     };
     
+
+    // if ( colorG === new THREE.Color( "#ffffff" ) ) {
+    //     console.log( " !!! DEBUG WEIRD COLOR HERE !!!", constantsGroup ) ; 
+    // }
+
     // var randColor = Math.random() ;
     // var famColor = familyIndex / familiesLength ;
     // // var randHSl = "hsl(" + randColor + ", 100%, 80%)" ;
@@ -432,9 +452,9 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
         
         // prestore if is in edges : vertices3UserList from realUserBooksLists
         if ( vertices3UserList.indexOf( id_o ) > -1  ) {
-            console.log( "------- id_o is in vertices3UserList  : ", id_o ) ; 
-            console.log( "------- vertex3 : ", vertex3 ) ; 
-            console.log( "------- constantsGroup : ", constantsGroup ) ; 
+            // console.log( "------- id_o is in vertices3UserList  : ", id_o ) ; 
+            // console.log( "------- vertex3 : ", vertex3 ) ; 
+            // console.log( "------- constantsGroup : ", constantsGroup ) ; 
             vertices3Dict[ id_o.toString() ] = { "vertex" : vertex3, "constantsGroup" : constantsGroup } ;
             // console.log( "------- vertices3Dict : ", vertices3Dict ) ; 
         };
@@ -693,35 +713,58 @@ preload_notices( function(json) {
     // check also : https://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
     function initGUI( ) {
 
-        gui = new dat.GUI();
+        console.log( "effectController : ", effectController) ; 
 
-        var f1 = gui.addFolder("objects") ;
+        gui = new dat.GUI( { autoPlace: false } );
+
+        var customContainer = document.getElementById('guiSettings');
+        customContainer.appendChild(gui.domElement);
+
+        var f4 = gui.addFolder(" > animation");
+            // f4.add( effectController, "minDistance"   ,  10, 300 , 1       );
+            f4.add( effectController, "velocityFactor",  0.,  2.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "velFactor") ) ;
+            f4.add( effectController, "scaleFactor",    -1.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;
+            f4.add( effectController, "breathing"  ,     0.,  5.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
+            f4.add( effectController, "waveFreq"   ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
+            f4.add( effectController, "waveAmp"    ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
+            f4.open() ;
+
+        var f1 = gui.addFolder(" > formes") ;
             // f1.add( effectController, "showGroup"  ).onChange( function( value ) {  group.visible   = value; } );
             // f1.add( effectController, "showHelper" ).onChange(    function( value ) {  groupH.visible        = value; } ).listen();
             f1.add( effectController, "showParticles" ).onChange( function( value ) {  groupFa3D_.visible    = value; } ).listen();
             f1.add( effectController, "showEdges" ).onChange(     function( value ) {  groupEdges3D_.visible = value; } ).listen();
 
-        var f2 = gui.addFolder("colors");
+        var f2 = gui.addFolder(" > couleurs des lignes");
             f2.add(      effectController, "transpLines",  0.,  1., 0.01 ).listen();
-            f2.addColor( effectController, "colorLines"    ).listen();
-            f2.addColor( effectController, "colorLineUser" ).listen();
-            f2.open() ;
+            f2.addColor( effectController, "colorLines"    );
+            f2.addColor( effectController, "colorLineUser" );
+            // f2.open() ;
 
-        var f3 = gui.addFolder("rendering");
-            // f3.add( effectController, "minDistance"   ,  10, 300 , 1       );
-            f3.add( effectController, "velocityFactor",  0.,  2.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "velFactor") ) ;
-            f3.add( effectController, "scaleFactor",    -1.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;
-            f3.add( effectController, "breathing"  ,     0.,  5.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
-            f3.add( effectController, "waveFreq"   ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
-            f3.add( effectController, "waveAmp"    ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
-            f3.open() ;
+        var f3 = gui.addFolder(" > couleurs des points");
+            // $.each( notices_groups_ , function( key , family ) { 
+            //     f3.addColor( effectController, key    ).listen(); 
+            // });           
+            $.each( notices_groups_ , function( keyF , family ) { 
+                var g3 = f3.addFolder( keyF ); 
+                $.each( family["List"] , function ( keyG, group )  {
+                    g3.addColor( effectController, keyG  ); 
+                });
+            })
+            f3.open()
+
+
 
        
-        gui.closed = true ;
+        gui.closed = false ;
+        gui.__ul.style.width = "320px" ;
         // gui.TEXT_CLOSED = "fermer les réglages" ;
         // gui.TEXT_OPEN   = "ouvrir les réglages" ;
         
         // console.log("--- initGUI / gui :", gui);
+        
+        // hide controls at the beginning
+        // $(".dg.ac").hide(); 
 
     };
 
@@ -803,6 +846,9 @@ preload_notices( function(json) {
                     // --- FOR EACH GROUP
                     var groupObj  = faGroups[keyGroup] ;
                     var groupName = groupObj["NAME"]  ;
+                    if ( groupName === null ) {
+                        groupName = "None" ;
+                    };
                     var groupLen  = groupObj["STATS"] ;
                     var groupCod  = groupObj["CODE"] ;
                     var groupNot  = groupObj["NOTICES"] ;
@@ -850,6 +896,7 @@ preload_notices( function(json) {
                     var constantsGroup = {
                         "keyFa"        : keyFa , 
                         "keyGroup"     : keyGroup , 
+                        "groupName"    : groupName ,
                         "indexFa"      : indexFa , 
                         "familiesLen"  : familiesLen , 
                         "indexGroup"   : indexGroup , 
@@ -861,13 +908,13 @@ preload_notices( function(json) {
 
                     // var geomTri_buffer_p = addPointsCloud( groupNot, maxCluster, angleFa,  angleGroup, maxCircleRad*.8, distGroup*0.7, "points") ; // distGroup or Rbasis
                     // addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily, angleGroup, radiusGroup, radiusCluster, wireORpoints )
-                    var geomTri_buffer_p = addPointsCloud(          groupNot, constantsGroup,
-                                                                    groupLen, 
-                                                                    angleFa,  
-                                                                    angleGroup, 
-                                                                    maxCircleRad * groupLen/10000., // radiusGroup
-                                                                    distGroup * groupRandom,        // radiusCluster
-                                                                    "points"
+                    var geomTri_buffer_p = addPointsCloud(  groupNot, constantsGroup,
+                                                            groupLen, 
+                                                            angleFa,  
+                                                            angleGroup, 
+                                                            maxCircleRad * groupLen/10000., // radiusGroup
+                                                            distGroup * groupRandom,        // radiusCluster
+                                                            "points"
                                                         ) ; // distGroup or Rbasis
                     
                     var material_points  = createShaderMaterial (   constantsGroup,
@@ -875,9 +922,14 @@ preload_notices( function(json) {
                                                                     is_texture = true
                                                                 ) ;
                     
-                    console.log( "geomTri_buffer_p : ", geomTri_buffer_p )
+                    // console.log( "geomTri_buffer_p : ", geomTri_buffer_p )
                     
+
                     var geoMesh = new THREE.Points( geomTri_buffer_p, material_points ) ;
+                    
+                    // store family and group keys
+                    geoMesh.family_key = keyFa ; 
+                    geoMesh.group_name = groupName ; 
                     
 
                     // meshesList.push(linesMesh) ;
@@ -1172,7 +1224,7 @@ preload_notices( function(json) {
     function animate() {
 
         // change main GUI button text
-        $('.close-button').html("<span class='glyphicon glyphicon-tasks' aria-hidden='true'></span> réglages");
+        // $('.close-button').html("<span class='glyphicon glyphicon-tasks' aria-hidden='true'></span> réglages");
 
         // scene.traverse( function( node ) {
         //
@@ -1225,9 +1277,11 @@ preload_notices( function(json) {
 
             scene.traverse( function( node ) {
 
+                // UPDATE VALUES FROM CONTROLS
+
+                // update animation
                 if ( node instanceof THREE.LineSegments | node instanceof THREE.Points  | node instanceof THREE.Line ) {
 
-                    // UPDATE VALUES FROM CONTROLS
                     if ( node.name != "helper" ) {
                         // console.log("--- traverse / node : ", node );
                         node.material.uniforms.time.value       = time_shader ; // replace time_shader by 1. for debugging 
@@ -1236,19 +1290,44 @@ preload_notices( function(json) {
                         node.material.uniforms.breathing.value  = effectController.breathing ;
                         node.material.uniforms.waveFreq.value   = effectController.waveFreq ;
                         node.material.uniforms.waveAmp.value    = effectController.waveAmp ;
+                        
+                        // update colors families
+                        if ( node instanceof THREE.Points  ) {
+                            var name_group = node.group_name ;
+                            var newColorGroup = new THREE.Color(  effectController[ name_group ] ) ;
+                            
+                            // if ( node.material.uniforms.color.value === new THREE.Color( "#ffffff" ) ) {
+                            //     console.log(" !!! weird color here !!! ", name_group ) 
+                            // };
+
+                            node.material.uniforms.color.value  = newColorGroup ;                                            
+                        };
+
+                        // update color transparency lines
+                        if ( node instanceof THREE.Line && node.is_from_user === true ) {
+                            var newColorLineU = new THREE.Color( effectController.colorLineUser  )  ;
+                            node.material.uniforms.color.value = newColorLineU ;
+                        } else if ( node instanceof THREE.Line && node.is_from_user === false  ) {
+                            var newColorLines = new THREE.Color( effectController.colorLines  )  ;   
+                            node.material.uniforms.color.value  = newColorLines ;                        
+                            node.material.uniforms.transp.value = effectController.transpLines ;
+                        }
                     }
                 };
 
-                if ( node instanceof THREE.Line && node.name != "helper" ) {
-                    if ( node.is_from_user === true ) {
-                        var newColorLineU = new THREE.Color( effectController.colorLineUser  )  ;
-                        node.material.uniforms.color.value = newColorLineU ;
-                    } else {
-                        var newColorLines = new THREE.Color( effectController.colorLines  )  ;   
-                        node.material.uniforms.color.value  = newColorLines ;                        
-                        node.material.uniforms.transp.value = effectController.transpLines ;
-                    }
-                }
+
+                    
+                // update color transparency lines
+                // if ( node instanceof THREE.Line && node.name != "helper" ) {
+                //     if ( node.is_from_user === true ) {
+                //         var newColorLineU = new THREE.Color( effectController.colorLineUser  )  ;
+                //         node.material.uniforms.color.value = newColorLineU ;
+                //     } else {
+                //         var newColorLines = new THREE.Color( effectController.colorLines  )  ;   
+                //         node.material.uniforms.color.value  = newColorLines ;                        
+                //         node.material.uniforms.transp.value = effectController.transpLines ;
+                //     }
+                // }
 
             });
 
