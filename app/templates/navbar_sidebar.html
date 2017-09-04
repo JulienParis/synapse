@@ -178,17 +178,46 @@
 
     <ul class="nav navbar-nav navbar-right">
 
+      {% if isAdmin %}
+
       <!-- TEST LOADER CLOSE_N_LOAD -->
-      <!-- <li>
+      <li>
         <button type="button"
-                class="btn btn-default btn-sm navbar-btn bstooltip no-higlight close_n_load"
+                class="btn btn-warning btn-sm navbar-btn bstooltip no-higlight close_n_load"
                 id="test_close_loader"
+
+                data-trigger='manual'
+                data-tooltip="tooltip"
+                data-placement="bottom"
+                title="RESERVÉ ADMIN : test loader"
+                data-container="body"
                 >
             <span class="glyphicon glyphicon-time" 
                   aria-hidden="true">
             </span>
         </button>
-      </li> -->
+      </li> 
+
+      <!-- RESET DB -->
+      <li>
+        <button type="button"
+                class="btn btn-danger btn-sm navbar-btn bstooltip no-higlight"
+                
+                data-toggle="modal"
+                data-target="#modal_admin"
+
+                data-trigger='manual'
+                data-tooltip="tooltip"
+                data-placement="bottom"
+                title="RESERVÉ ADMIN : RESET DB"
+                data-container="body"
+                >
+            <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
+        </button>
+      </li>
+
+      {% endif %}
+
 
       <li>
           <button type="button"

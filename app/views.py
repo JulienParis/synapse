@@ -307,7 +307,8 @@ def update_coll( update_reset="update", secret_key_update=None ):
             if secret_key_update == None :
                 flash(u'les collections sont remises à jour - reset', "success")
 
-        elif update_reset == "reset" or update_reset == "reset" or update_reset == "rewrite_JSON" :
+        # elif update_reset == "reset" or update_reset == "reset" or update_reset == "rewrite_JSON" :
+        elif update_reset == "rewrite_JSON" :
             ### update / rewrite json local static file
             mongodb_read('notices', get_ligth=True ).write_notices_json_file( nested=True , debug=True )
             if secret_key_update == None :

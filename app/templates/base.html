@@ -121,6 +121,9 @@
       {% include 'modal_update_aloes.html'%}
       {% include 'modal_update_user.html'%}
       {% include 'modal_update_user_account.html'%}
+      {% if isAdmin %}
+        {% include 'modal_admin.html'%}
+      {% endif %}
     {% else %}
       {% include "modal_intro.html" %}
       {% include 'modal_login.html'%}

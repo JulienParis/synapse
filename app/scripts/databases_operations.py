@@ -89,7 +89,7 @@ def get_df_from_MySQL(coll) :
 
     print '>>> get_df_from_MySQL --- %s --- df_sql' %(coll), '--'*50
     df_sql = pd.read_sql( query_string , con=mysql_catalogue.connection)
-    print df_sql.shape
+    print ">>> get_df_from_MySQL --- df_sql.shape : ", df_sql.shape
     print df_sql.head(3)
 
 
@@ -102,7 +102,7 @@ def get_df_from_MySQL(coll) :
 
     # reduce information / columns
     df_sql_light = df_sql[ indices_mysql[ coll ]['ind'] ].copy()
-    print df_sql_light.shape
+    print ">>> get_df_from_MySQL --- df_sql_light.shape : ", df_sql_light.shape
     print df_sql_light.head(3)
 
 
@@ -116,7 +116,7 @@ def get_df_from_MySQL(coll) :
 
     # rename id_origine
     df_sql_light = df_sql_light.rename(columns = { indices_mysql[coll ]['key'] : key_synapse})
-    print df_sql_light.shape
+    print ">>> get_df_from_MySQL --- df_sql_light.shape : ", df_sql_light.shape
     print df_sql_light.head(3)
 
     # mysql_catalogue.close()
@@ -205,12 +205,14 @@ class mongodb_updates :
         ### drop duplicated records
         # print "df_mysql_light.shape : ", df_mysql_light.shape
         df_records_light = df_mysql_light.copy().drop_duplicates(key_)
-
+        print ">>> mongodb_updates --- reset_coll / df_records_light.shape : ", df_records_light.shape
+        
         ### to JSON
         records_json = json.loads(df_records_light.T.to_json()).values()
 
         ### insert JSON exemplaires_new_records to mongoDB
         coll_mongo.insert_many(records_json)
+        print ">>> mongodb_updates --- reset_coll / coll_mongo.find({}).count() : ", coll_mongo.find({}).count()
 
         print ">>> mongodb_updates.reset_coll / RESET FINISHED / for coll : ", coll_name
         print
