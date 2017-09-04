@@ -38,23 +38,23 @@ var notices_groups_ = {
     ,
     "SPECTACLE" :
         {   "CODE"  : "S",
-            "color" : "#3366ff", 
+            "color" : "#5376e0", 
             "icon"  : "{{ url_for('static', filename='textures/sprites/disc.png') }}" ,
             
             "List"  : {
-                "DANSE"             : {"color" : "#3366ff", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "THEATRE"           : {"color" : "#3366ff", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "DANSE"             : {"color" : "#5376e0", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "THEATRE"           : {"color" : "#5376e0", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
                 }
         }
     ,
     "MUSIQUE" :
         {   "CODE"  : "M",
-            "color" : "#ff3366",
+            "color" : "#49b705",
             "icon"  : "{{ url_for('static', filename='textures/sprites/disc.png') }}" ,
             
             "List"  : {
-                "MUSIQUE ADULTES"   : {"color" : "#ff3366", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
-                "MUSIQUE JEUNESSE"  : {"color" : "#ff3366", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "MUSIQUE ADULTES"   : {"color" : "#49b705", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
+                "MUSIQUE JEUNESSE"  : {"color" : "#49b705", "icon" : "{{ url_for('static', filename='textures/sprites/la_bibliotheque/fiction.png') }}" },
             }
         }
     ,
