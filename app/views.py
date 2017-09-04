@@ -761,7 +761,7 @@ def index():
             card_number   = session[key_n_carte]
 
             ### flash and redirect if no valid card
-            if len(card_number)!= 6 :
+            if len(card_number) < 4 :
                 flash( u"vous n'avez pas de carte valide à " + app_bib_infos["biblio"], "warning")
                 session["is_userdata"] = False
                 flash( u"seules vos lectures et vos envies ont été mises à jour ", "warning")
@@ -774,7 +774,7 @@ def index():
                     print "---- INDEX / POST / update_history ---- form valid : request WS_user_hist() "
                     card_password = request.form['cardPassword']
 
-                    WS_user_hist(card_number=card_number, password=card_password)
+                    WS_user_hist( card_number=card_number, password=card_password )
                     session["is_userdata"] = False
                     return redirect( url_for('index') )
 

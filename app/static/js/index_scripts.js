@@ -11,41 +11,40 @@ socket.on('connect', function() {
 });
 
 
-function close_n_load ( ) {
-  
-  $.when(   console.log("close_n_load : hide modals ") , 
-            $('.modal').modal("hide") , 
-        )
-    .then(  console.log("close_n_load : show loader 1 ") , 
-            // setTimeout( function () { $('#mod_loader').modal("show") }, 2000 ), 
-            $('#mod_loader').modal("show"),
-            console.log("close_n_load : show loader 2 ") 
-         );
-  // callback();
-};
 
-
-function loader_then_submit ( form ) {
-  $('.modal').modal("hide") ;
-  $.when(   
-      close_n_load () ,
-  )
-   .then( 
-      console.log("loader_then_submit : submit form ") , 
-      // setTimeout( function () { form.submit()  }, 2000 ), 
-      $('#mod_loader').modal("show", function() {
-        form.submit() 
-      })
-      
-   )
-  
-};
 
 
 $(document).ready( function(){
 
-  // hide loader
-  // $('#mod_loader').modal('hide');
+  function close_n_load ( ) {
+    
+    $.when(   console.log("close_n_load : hide modals ") , 
+              $('.modal').modal("hide") , 
+          )
+      .then(  console.log("close_n_load : show loader 1 ") , 
+              // setTimeout( function () { $('#mod_loader').modal("show") }, 2000 ), 
+              $('#mod_loader').modal("show"),
+              console.log("close_n_load : show loader 2 ") 
+           );
+    // callback();
+  };
+  
+  
+  function loader_then_submit ( form ) {
+    $('.modal').modal("hide") ;
+    $.when(   
+        close_n_load () ,
+    )
+     .then( 
+        console.log("loader_then_submit : submit form ") , 
+        // setTimeout( function () { form.submit()  }, 2000 ), 
+        $('#mod_loader').modal("show", function() {
+          form.submit() 
+        })
+        
+     )
+    
+  };
 
   $(".close_n_load").on("click", function () {
     close_n_load() ;

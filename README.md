@@ -363,4 +363,4 @@ This application proposes several features :
   $ gunicorn --bind=0.0.0.0:5000 —-timeout=120 --workers=1 —-worker-class=eventlet wsgi:app &
   ```
 
-  - ( if needed / stop unicorn server ) : `$ pkill gunicorn`
+  - ( if needed / stop gunicorn server ) : `$ pkill gunicorn`
