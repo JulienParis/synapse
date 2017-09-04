@@ -203,6 +203,7 @@ class mongodb_updates :
 
     def reset_coll(self, coll_name, coll_mongo, df_mysql_light, key_ ) :
 
+        print
         print ">>> mongodb_updates.reset_coll / for coll : ", coll_name
         ### remove all documents
         coll_mongo.drop()
@@ -219,7 +220,7 @@ class mongodb_updates :
         coll_mongo.insert_many(records_json)
         print ">>> mongodb_updates --- reset_coll / coll_mongo.find({}).count() : ", coll_mongo.find({}).count()
 
-        print ">>> mongodb_updates.reset_coll / RESET FINISHED / for coll : ", coll_name
+        print ">>> mongodb_updates.reset_coll / RESET FINISHED / for coll : ", coll_name, '--'*50
         print
         # print "... coll_mongo.count() : ", coll_mongo.count()
 
@@ -260,20 +261,29 @@ class mongodb_updates :
 
     def reset_all_coll(self) :
         
+        print 
+        print  ">>> mongodb_updates.reset_all_coll - start - "
+        
         self.reset_coll("exemplaires", exemplaires_mongo, self.df_exemplaires_light, key_barcode )
         ### trying to empty memory for better performance
         del self.df_exemplaires_light
         gc.collect()
-        print  ">>> mongodb_updates.update_all_coll - exemplaires / EMPTYING MEMORY : "
+        print  ">>> mongodb_updates.reset_all_coll - exemplaires / EMPTYING MEMORY : "
 
         self.reset_coll("notices",     notices_mongo,     self.df_notices_light, key_synapse)
         ### trying to empty memory for better performance
         del self.df_notices_light
         gc.collect()
-        print  ">>> mongodb_updates.update_all_coll - notices / EMPTYING MEMORY : "
+        print  ">>> mongodb_updates.reset_all_coll - notices / EMPTYING MEMORY : "
+
+        print ">>> mongodb_updates.reset_all_coll - end - ", '--'*50
 
 
     def update_all_coll(self) :
+
+        print
+        print ">>> mongodb_updates.update_all_coll - start - ", '--'*50
+
         new_exemplaires = self.check_write_new_records("exemplaires", exemplaires_mongo, self.df_exemplaires_light, key_barcode )
         print  ">>> mongodb_updates.update_all_coll / new_exemplaires : ", new_exemplaires
 
@@ -290,6 +300,7 @@ class mongodb_updates :
         gc.collect()
         print  ">>> mongodb_updates.update_all_coll / EMPTYING MEMORY : "
 
+        print ">>> mongodb_updates.update_all_coll - end - ", '--'*50
 
 
 class mongodb_read :
