@@ -41,9 +41,9 @@
     var maxCircleRad ;
 
     var defaultPointSize     = 10. ; // max size for icon
-    var defaultLineTransp    = .85 ;
+    var defaultLineTransp    = .35 ;
     var defaultLineColor     = "#ffffff" ;
-    var defaultLineColorUser = "#ff0000" ;
+    var defaultLineColorUser = "#00a89e" ;
     
     // var velocityFactor = 1. ;
     // var scaleFactor    = 1. ;
