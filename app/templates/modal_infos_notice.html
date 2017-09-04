@@ -1,40 +1,60 @@
-<div    class="modal fade  "
+<div    class="modal fade modal_notice "
         id="mod_info_notice"
         tabindex="-1"
         role="dialog"
         aria-labelledby="mod_info_notice"
         >
 
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog modal-md" role="document">
 
-    <div class="modal-content">
+        <div class="modal-content">
 
-    <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h3 class="modal-title text-center" id="ModalInfoNotice">
-        référence 
-        <span id="not3D_id_o"> </span>
-    </h3>
-    </div>
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title text-center" id="ModalInfoNotice">
+                    vous avez cliqué sur... 
+                    <span id="not3D_id_o"> </span>
+                </h3>
+            </div>
 
-    <div class="modal-body">
+            <div class="modal-body">
 
+                <dl class="dl-horizontal"> 
 
+                    <dt>Titre</dt> 
+                    <dd id="not3D_title">...</dd> 
+                    
+                    <dt>Auteur</dt> 
+                    <dd id="not3D_author">...</dd> 
+                    
+                    <dt>Résumé</dt> 
+                    <dd id="not3D_resume">...</dd> 
+                    
+                    <hr>
 
+                    <dt>Famille</dt> 
+                    <dd id="not3D_family">...</dd> 
+                    
+                    <dt>Sous-famille</dt> 
+                    <dd id="not3D_group">...</dd> 
+                    
+                    <dt>Code barre</dt> 
+                    <dd id="not3D_cab">...</dd> 
 
+                </dl>
 
+            </div>
 
+            <div class="modal-footer">
+            <button type="button" class="btn btn-info btn-sm custom-btn" data-dismiss="modal">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                Fermer
+            </button>
+            </div>
 
-    </div>
-
-    <div class="modal-footer">
-    <button type="button" class="btn btn-info btn-sm custom-btn" data-dismiss="modal">
-        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-        Fermer
-    </button>
-    </div>
-
-    </div> <!-- end modal-content -->
+        </div> <!-- end modal-content -->
 
     </div>
 

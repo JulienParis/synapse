@@ -208,10 +208,13 @@ class mongodb_updates :
         ### remove all documents
         coll_mongo.drop()
 
+
         ### drop duplicated records
+        print ">>> mongodb_updates --- reset_coll / before drop_duplicates / df_mysql_light.shape : ", df_mysql_light.shape
         # print "df_mysql_light.shape : ", df_mysql_light.shape
         df_records_light = df_mysql_light.copy().drop_duplicates(key_)
-        print ">>> mongodb_updates --- reset_coll / df_records_light.shape : ", df_records_light.shape
+        # df_records_light = df_mysql_light
+        print ">>> mongodb_updates --- reset_coll / after drop_duplicates / df_records_light.shape : ", df_records_light.shape
         
         ### to JSON
         records_json = json.loads(df_records_light.T.to_json()).values()

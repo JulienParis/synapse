@@ -1093,6 +1093,45 @@ def return_oneref(request_client):
 
     emit( 'io_resp_oneref', { "author" : author , 'title' : title , 'resume' : resume } )
 
+@socketio.on('io_request_oneid_o')
+def return_oneref_from_id_o(request_client):
+
+    print "***** socket_io >>> return_oneref_from_id_o / request_client : ", request_client
+    id_o    = str(request_client["data"])
+    if len(id_o) < 7 :
+        x    = 7 - len(id_o)
+        id_o = "0"*x + id_o
+
+    ref     = notices_mongo.find_one( { key_synapse : id_o })
+    print "***** socket_io >>> return_oneref_from_id_o / ref : ", ref
+
+    if ref != None :
+        ex_ = exemplaires_mongo.find_one( { key_synapse : id_o })
+        cab = ex_[ key_barcode ]
+        family = dict_emplacements_[ ref[key_group_level_1] ][u"PARENT"]
+        group  = dict_reverse_C2[ ref[key_group_level_2] ]
+        result = {
+            "author"  : ref[key_author], 
+            "title"   : ref[key_title],
+            "resume"  : ref[key_resume],
+            "family"  : family,
+            "group"   : group,
+            "cab"     : cab
+        }
+    else:
+        result = {
+            "author" : unknown_author,
+            "title"  : unknown_title,
+            "resume" : unknown_resume,
+            "family" : unknown_cab,
+            "group"  : unknown_cab,
+            "cab"    : unknown_cab
+        }
+
+    print "***** socket_io >>> return_oneref_from_id_o / result ",  result
+    print
+
+    emit( 'io_resp_oneref_from_id_o', result )
 
 @socketio.on('io_delete_from_parcours')
 def delete_items_list(request_client):

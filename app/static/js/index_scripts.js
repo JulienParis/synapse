@@ -16,6 +16,8 @@ socket.on('connect', function() {
 
 $(document).ready( function(){
 
+
+  // 
   function close_n_load ( ) {
     
     $.when(   console.log("close_n_load : hide modals ") , 
@@ -28,7 +30,6 @@ $(document).ready( function(){
            );
     // callback();
   };
-  
   
   function loader_then_submit ( form ) {
     $('.modal').modal("hide") ;
@@ -68,8 +69,27 @@ $(document).ready( function(){
   });
 
 
+  // toggle click mode
+  $("#btn_click_mode").on("click", function() {
 
+    $("#span_click_mode").toggleClass("fa-toggle-off");
+    $("#span_click_mode").toggleClass("fa-toggle-on");
 
+    var isActivated = $("#span_click_mode").hasClass("fa-toggle-on") ;
+    // console.log("isActivated", isActivated);
+    
+    if ( isActivated ) {
+      $(".modal").modal("hide") ;
+    //   console.log("activated btn click mode");
+    //   $("#btn_click_mode").attr( "title", " clic sur les points : activé " ) ;
+    } else {
+    //   console.log("deactivated btn click mode");
+    //   $("#btn_click_mode").attr( "title", " clic sur les points : désactivé " ) ;     
+    }
+
+  });    
+
+  // show howto or user_form at launch
   var isUser_data = $("#meta_isUser").attr("data") ;
   console.log("--- check if isUser / isUser_data : ", isUser_data);
   if ( isUser_data === "None" ){
@@ -106,6 +126,7 @@ $(document).ready( function(){
     $.when( $(".modal").modal("hide") )
      .then( $("#login_form").modal("show") ) 
   }) ;
+
 
   // open register modal from login modal or modal howto
   $(".register_trigger").click( function() {

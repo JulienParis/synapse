@@ -912,7 +912,7 @@ preload_notices( function(json) {
                                                             groupLen, 
                                                             angleFa,  
                                                             angleGroup, 
-                                                            maxCircleRad * groupLen/10000., // radiusGroup
+                                                            maxCircleRad * groupLen/5000., // radiusGroup
                                                             distGroup * groupRandom,        // radiusCluster
                                                             "points"
                                                         ) ; // distGroup or Rbasis
@@ -928,6 +928,7 @@ preload_notices( function(json) {
                     var geoMesh = new THREE.Points( geomTri_buffer_p, material_points ) ;
                     
                     // store family and group keys
+                    geoMesh.name       = groupName + "_" ; 
                     geoMesh.family_key = keyFa ; 
                     geoMesh.group_name = groupName ; 
                     
@@ -1125,54 +1126,89 @@ preload_notices( function(json) {
     // CLICKABLE SPRITES
     function onDocumentClick ( event ) {
         
-        var rect = renderer.domElement.getBoundingClientRect();
-        mouse.x =   ( ( event.clientX - rect.left ) / ( rect.width  - rect.left ) ) * 2 - 1;
-        mouse.y = - ( ( event.clientY - rect.top  ) / ( rect.bottom - rect.top) )   * 2 + 1;
-          
-        raycaster.setFromCamera( mouse, camera );
-    
-        intersects = raycaster.intersectObjects( clickableObjects );
-        
+        var isActivated = $("#span_click_mode").hasClass("fa-toggle-on") ;
+        console.log("isActivated", isActivated);
+
         // check if modal infos notice already shown or not
-        var isModalInfoOpen = $("#mod_info_notice").hasClass("in") ;             
+        var isModalInfoOpen = $("#mod_info_notice").hasClass("in") ;  
         
-        if ( intersects.length > 0 && isModalInfoOpen==false ) {
+        
+        if ( isActivated && isModalInfoOpen == false ) {
+
+            var rect = renderer.domElement.getBoundingClientRect();
+            mouse.x =   ( ( event.clientX - rect.left ) / ( rect.width  - rect.left ) ) * 2 - 1;
+            mouse.y = - ( ( event.clientY - rect.top  ) / ( rect.bottom - rect.top) )   * 2 + 1;
             
-            var INTERSECTED = intersects[0] ;
-
-            // get back id_o from point
-            console.log( " INTERSECTED ", INTERSECTED )  ;
-
-            var INTERSECTED_index    = INTERSECTED.index ;
-            // console.log( " INTERSECTED_index ", INTERSECTED_index )  ;
+            raycaster.setFromCamera( mouse, camera );
+        
+            intersects = raycaster.intersectObjects( clickableObjects );      
+        
+            var isAnyModalOpen  ;
+            $(".modal").each( function () {
+                var isModNotice = $(this).hasClass("modal_notice")  ;
+                if ( isModNotice==false ) {
+                    // console.log( $(this) ) ;
+                    isAnyModalOpen = $(this).hasClass("in") ;
+                    if ( isAnyModalOpen ) { return false } ;
+                }
+            });      
             
-            var INTERSECTED_ido_list = INTERSECTED.object.geometry.attributes.id_o.array ;
-            // console.log( " INTERSECTED_ido_list ", INTERSECTED_ido_list )  ;
-            
-            var INTERSECTED_id_o  = INTERSECTED_ido_list [ INTERSECTED_index ] ;
-            console.log( " INTERSECTED_id_o ", INTERSECTED_id_o )  ;
-            
-            // get back info with id_o from server : socket_io
-            ///////////////////////////////
+            // console.log( "INTERSECTED / isAnyModalOpen" , isAnyModalOpen ) ;
+            // console.log( "INTERSECTED / intersects" , intersects ) ;
 
-            
-            // include info in div 
-            info.innerHTML = 'INTERSECTED_id_o : ' + INTERSECTED_id_o ;  
-            $("#not3D_id_o").html(INTERSECTED_id_o) ; 
+            if ( intersects.length > 0 && isAnyModalOpen==false  ) {
+            // if ( intersects.length > 0 && isModalInfoOpen==false ) {
+                    
+                var INTERSECTED = intersects[0] ;
 
-            // show modal notice
-            // $("#mod_info_notice").collapse('show') ; 
-            // $('[data-dismiss="modal"]').on('click', function(){
-            //     $('.modal').collapse("hide");
-            //     $('.modal-backdrop').collapse("hide");
-            // });
+                // get back id_o from point
+                console.log( " INTERSECTED ", INTERSECTED )  ;
 
-            console.log(" ");
+                var INTERSECTED_index    = INTERSECTED.index ;
+                // console.log( " INTERSECTED_index ", INTERSECTED_index )  ;
+                
+                var INTERSECTED_ido_list = INTERSECTED.object.geometry.attributes.id_o.array ;
+                // console.log( " INTERSECTED_ido_list ", INTERSECTED_ido_list )  ;
+                
+                var INTERSECTED_id_o  = INTERSECTED_ido_list [ INTERSECTED_index ] ;
+                console.log( " INTERSECTED_id_o ", INTERSECTED_id_o )  ;
+                            
+                // include info in div 
+                // info.innerHTML = 'INTERSECTED_id_o : ' + INTERSECTED_id_o ;  
 
-        }                
+                // get back info with id_o from server : socket_io
+                socket.emit( "io_request_oneid_o", { data : INTERSECTED_id_o } ) ; 
 
+                console.log(" ");
 
+            }                
+        }
     }
+
+    function display_infos_notice (data) {
+
+        // insert infos 
+        $("#not3D_title" ).html(data["title"]) ; 
+        $("#not3D_author").html(data["author"]) ; 
+        $("#not3D_resume").html(data["resume"]) ; 
+
+        $("#not3D_family").html(data["family"]) ; 
+        $("#not3D_group" ).html(data["group"]) ; 
+        $("#not3D_cab"   ).html(data["cab"]) ; 
+        
+        // show modal notice
+        $("#mod_info_notice").collapse('show') ; 
+        $('[data-dismiss="modal"]').on('click', function(){
+            $('.modal').collapse("hide");
+            $('.modal-backdrop').collapse("hide");
+        });
+    };
+
+    socket.on('io_resp_oneref_from_id_o', function(data_notice) {
+        $(".modal").modal("hide") ;
+        display_infos_notice( data_notice ) ;
+    });
+
 
     // function onWindowResize() {
         // 	renderer.setSize( WIDTH, HEIGHT );
@@ -1190,32 +1226,32 @@ preload_notices( function(json) {
     };
 
 
-    // --- TRAVERSE SCENE FUNCTIONS --- //
-    function onChangeControl ( factorName ) {
+    // // --- TRAVERSE SCENE FUNCTIONS --- //
+    // function onChangeControl ( factorName ) {
 
-        scene.traverse( function( node ) {
+    //     scene.traverse( function( node ) {
 
-            if ( node instanceof THREE.LineSegments | node instanceof THREE.Points ) {
+    //         if ( node instanceof THREE.LineSegments | node instanceof THREE.Points ) {
 
-                if (node.name != "helper") {
-                    // console.log("--- traverse / node : ", node );
+    //             if (node.name != "helper") {
+    //                 // console.log("--- traverse / node : ", node );
 
-                    if ( factorName == "velFactor" ) {
-                        node.material.uniforms.velFactor.value  = effectController.velocityFactor ;
-                    }
-                    if ( factorName == "scaFactor" ) {
-                        node.material.uniforms.scaFactor.value  = effectController.scaleFactor ;
-                    }
-                    if ( factorName == "breathing" ) {
-                        node.material.uniforms.breathing.value  = effectController.breathing ;
-                    }
+    //                 if ( factorName == "velFactor" ) {
+    //                     node.material.uniforms.velFactor.value  = effectController.velocityFactor ;
+    //                 }
+    //                 if ( factorName == "scaFactor" ) {
+    //                     node.material.uniforms.scaFactor.value  = effectController.scaleFactor ;
+    //                 }
+    //                 if ( factorName == "breathing" ) {
+    //                     node.material.uniforms.breathing.value  = effectController.breathing ;
+    //                 }
 
-                }
-            }
+    //             }
+    //         }
 
-        });
+    //     });
 
-    };
+    // };
 
 
 
@@ -1257,8 +1293,6 @@ preload_notices( function(json) {
     function render() {
 
             
-        raycaster.setFromCamera( mouse, camera );
-
         // UPDATE TIME VALUE IN UNIFORMS
             // var time  = Date.now() * 0.01;
 
