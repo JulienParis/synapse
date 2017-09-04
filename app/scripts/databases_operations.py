@@ -407,8 +407,6 @@ class mongodb_read :
                         # append child_dict to children_list
                         children_list.append(child_dict)
 
-
-
                         #print
 
                 # print "-"*25
@@ -436,8 +434,6 @@ class mongodb_read :
                     print
 
                 print ">>> mongodb_read --- write_notices_json_file / nested : recap end / count_total : ", count_total
-
-
 
 
         elif nested == False :
