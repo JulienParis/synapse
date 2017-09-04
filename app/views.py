@@ -139,7 +139,7 @@ def WS_user_hist(card_number=None, password=None):
     print u'~ '*70
 
     # check user status
-    isUser, isAdmin  = Is_Admin()
+    isUser, isCard, isAdmin  = Is_Admin()
     print '~ ~ ~ WS_user_hist --- isUser  : ', isUser
     # print '--- WS_user_hist --- session : ', session
     # print '~ ~ ~ WS_user_hist --- session["username"] : ', session[key_username]
@@ -279,7 +279,7 @@ def WS_user_hist(card_number=None, password=None):
 @app.route('/<update_reset>' )
 def update_coll( update_reset="update", secret_key_update=None ):
 
-    isUser, isAdmin  = Is_Admin()
+    isUser, isCard, isAdmin  = Is_Admin()
 
     #if coll in authorized_collections :
     print "/// update_coll / update_reset : ", update_reset
@@ -336,7 +336,7 @@ def get_users():
     print
     print "/// test access mongoDB / users "
 
-    isUser, isAdmin  = Is_Admin()
+    isUser, isCard, isAdmin  = Is_Admin()
 
     if isAdmin :
 
@@ -357,7 +357,7 @@ def get_users():
 @app.route('/<coll>/', methods=['GET'] )
 def get_coll(coll):
 
-    isUser, isAdmin  = Is_Admin()
+    isUser, isCard, isAdmin  = Is_Admin()
 
     if isAdmin and coll in authorized_collections :
 
@@ -452,8 +452,9 @@ def index():
     print "---- INDEX ---- edges_mongocursor_  : %s " % ( edges_mongocursor_ )
 
     listEdges_mongo = list( edges_mongocursor_ )
-    print "---- INDEX ---- listEdges_ (raw) : %s " % ( listEdges_mongo )
-    print 
+    print "---- INDEX ---- listEdges_ (raw) "
+    # print "---- INDEX ---- listEdges_ (raw) : %s " % ( listEdges_mongo )
+    # print 
 
     for user_ in listEdges_mongo :
         
@@ -472,8 +473,9 @@ def index():
 
         listEdges.append( user_dict )
 
-    print "---- INDEX ---- listEdges if id_o : %s " % ( listEdges )
-    print 
+    print "---- INDEX ---- listEdges if id_o "
+    # print "---- INDEX ---- listEdges if id_o : %s " % ( listEdges )
+    # print 
 
 
 
@@ -624,7 +626,6 @@ def index():
 
         req_type = request.form['req_type'] ### always add as hidden input in forms
         print "---- INDEX / POST ---- request.form : ", request.form
-
 
         if req_type == "update_user" and isUser :
 

@@ -62,9 +62,9 @@
         // particleCount   : particleCount,
         velocityFactor  : .1 ,
         scaleFactor     : -.6 ,
-        breathing       : 2. ,
-        waveFreq        : .9 ,
-        waveAmp         : .6 ,
+        breathing       : 1.5 ,
+        waveFreq        : .1 ,
+        waveAmp         : .65 ,
         // rotationGroup   : 1. ,
     };
 
