@@ -102,19 +102,21 @@ def get_df_from_MySQL(coll) :
 
     # reduce information / columns
     df_sql_light = df_sql[ indices_mysql[ coll ]['ind'] ].copy()
-    print df_sql.shape
+    print df_sql_light.shape
     print df_sql_light.head(3)
+
 
     ### trying to empty memory for better performance
     del df_sql
     gc.collect()
     print '>>> get_df_from_MySQL --- EMPTYING MEMORY', '--'*50
 
+
     print '>>> get_df_from_MySQL --- %s --- df_sql_light renamed' %(coll), '--'*50
 
     # rename id_origine
     df_sql_light = df_sql_light.rename(columns = { indices_mysql[coll ]['key'] : key_synapse})
-    print df_sql.shape
+    print df_sql_light.shape
     print df_sql_light.head(3)
 
     # mysql_catalogue.close()
