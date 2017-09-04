@@ -89,6 +89,7 @@ def get_df_from_MySQL(coll) :
 
     print '>>> get_df_from_MySQL --- %s --- df_sql' %(coll), '--'*50
     df_sql = pd.read_sql( query_string , con=mysql_catalogue.connection)
+    print df_sql.shape
     print df_sql.head(3)
 
 
@@ -101,6 +102,7 @@ def get_df_from_MySQL(coll) :
 
     # reduce information / columns
     df_sql_light = df_sql[ indices_mysql[ coll ]['ind'] ].copy()
+    print df_sql.shape
     print df_sql_light.head(3)
 
     ### trying to empty memory for better performance
@@ -112,6 +114,7 @@ def get_df_from_MySQL(coll) :
 
     # rename id_origine
     df_sql_light = df_sql_light.rename(columns = { indices_mysql[coll ]['key'] : key_synapse})
+    print df_sql.shape
     print df_sql_light.head(3)
 
     # mysql_catalogue.close()
@@ -124,43 +127,42 @@ def get_df_from_MySQL(coll) :
 
 
 
-
     # def get_df_exemplaires(self) :
-    #
-    #     print ">>> get_df_from_MySQL.get_df_exemplaires --- MySQL connected"
-    #
-    #     # connect to MYSQL
-    #     #df_exemplaires = pd.read_sql('SELECT * FROM exemplaires', con=mysql_catalogue)
-    #
-    #     # reduce information / columns
-    #     df_exemplaires_light = df_exemplaires[indices_exemplaires].copy()
-    #
-    #     # rename id_origine
-    #     df_exemplaires_light = df_exemplaires_light.rename(columns = {key_exemplaires:key_synapse})
-    #
-    #     mysql_catalogue.close()
-    #     print ">>> get_df_from_MySQL.get_df_exemplaires --- MySQL closed"
-    #
-    #     return df_exemplaires_light
-    #
-    #
+    
+        # print ">>> get_df_from_MySQL.get_df_exemplaires --- MySQL connected"
+    
+        # # connect to MYSQL
+        # #df_exemplaires = pd.read_sql('SELECT * FROM exemplaires', con=mysql_catalogue)
+    
+        # # reduce information / columns
+        # df_exemplaires_light = df_exemplaires[indices_exemplaires].copy()
+    
+        # # rename id_origine
+        # df_exemplaires_light = df_exemplaires_light.rename(columns = {key_exemplaires:key_synapse})
+    
+        # mysql_catalogue.close()
+        # print ">>> get_df_from_MySQL.get_df_exemplaires --- MySQL closed"
+    
+        # return df_exemplaires_light
+    
+    
     # def get_df_notices(self) :
-    #
-    #     print ">>> get_df_from_MySQL.get_df_notices --- MySQL connected"
-    #
-    #     # connect to MYSQL
-    #     df_notices = pd.read_sql('SELECT * FROM notices', con=mysql_catalogue)
-    #
-    #     # reduce information / columns
-    #     df_notices_light = df_notices[indices_notices].copy()
-    #
-    #     # rename id_origine
-    #     df_notices_light = df_notices_light.rename(columns = {key_notices:key_synapse})
-    #
-    #     mysql_catalogue.close()
-    #     print ">>> get_df_from_MySQL.get_df_notices --- MySQL closed"
-    #
-    #     return df_exemplaires_light
+    
+        # print ">>> get_df_from_MySQL.get_df_notices --- MySQL connected"
+    
+        # # connect to MYSQL
+        # df_notices = pd.read_sql('SELECT * FROM notices', con=mysql_catalogue)
+    
+        # # reduce information / columns
+        # df_notices_light = df_notices[indices_notices].copy()
+    
+        # # rename id_origine
+        # df_notices_light = df_notices_light.rename(columns = {key_notices:key_synapse})
+    
+        # mysql_catalogue.close()
+        # print ">>> get_df_from_MySQL.get_df_notices --- MySQL closed"
+    
+        # return df_exemplaires_light
 
 
 class mongodb_updates :
