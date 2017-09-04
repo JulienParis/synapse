@@ -1,40 +1,79 @@
+// loader
+$('#mod_loader').modal('show') ;
+
 
 // INITIATE SOCKET IO CONNECTION
 // var socket = io.connect('http://' + document.domain + ':' + location.port);
 var socket = io.connect('http://' + document.domain + ':' + location.port, { transports: ["websocket"] });
 socket.on('connect', function() {
   socket.emit( 'connect_' );
+  $('#mod_loader').modal('hide') ;
 });
 
-// loader
-$('#mod_loader').modal('show') ;
+
+function close_n_load ( ) {
+  
+  $.when(   console.log("close_n_load : hide modals ") , 
+            $('.modal').modal("hide") , 
+        )
+    .then(  console.log("close_n_load : show loader 1 ") , 
+            // setTimeout( function () { $('#mod_loader').modal("show") }, 2000 ), 
+            $('#mod_loader').modal("show"),
+            console.log("close_n_load : show loader 2 ") 
+         );
+  // callback();
+};
+
+
+function loader_then_submit ( form ) {
+  $('.modal').modal("hide") ;
+  $.when(   
+      close_n_load () ,
+  )
+   .then( 
+      console.log("loader_then_submit : submit form ") , 
+      // setTimeout( function () { form.submit()  }, 2000 ), 
+      $('#mod_loader').modal("show", function() {
+        form.submit() 
+      })
+      
+   )
+  
+};
 
 
 $(document).ready( function(){
 
+  // hide loader
+  // $('#mod_loader').modal('hide');
 
-  // please wait at login script
-  $(".login_button").on("click", function() {
+  $(".close_n_load").on("click", function () {
+    close_n_load() ;
+  })
+
+  // please wait at submit script
+  $(".submit_button").on("click", function() {
 
     $(this).button('loading') ;
-    console.log("--- login button : ", $(this));
+    console.log("--- submit_button : ", $(this));
 
-    var parent_form = $(this).closest('.form_login') ;
-    console.log("--- login form : ", parent_form);
+    // var parent_form = $(this).closest('.form_login') ;
+    var parent_form = $(this).closest('form') ;
+    console.log("--- submit_button : ", parent_form);
 
-    setTimeout(function(){
-      //$("#form_login").submit() ;
-      parent_form.submit();
-    }, 100) ;
+    loader_then_submit( parent_form ) ;
+    // setTimeout(function(){
+    //   parent_form.submit();
+    // }, 500) ;
+
   });
 
-  // activate bootstrap dropdown / carousel
-  $('#mod_loader').modal('hide');
+
 
 
   var isUser_data = $("#meta_isUser").attr("data") ;
   console.log("--- check if isUser / isUser_data : ", isUser_data);
-  if (isUser_data == "None"){
+  if ( isUser_data === "None" ){
     // $('#mod_intro').modal('show');
     $('#mod_howto').modal('show');
   } else {
@@ -48,17 +87,20 @@ $(document).ready( function(){
   );
 
   // close all modals and show loader on click on button .close_n_load
-  function close_n_load(){
-    // console.log("--- close_n_load ---");
-    setTimeout(function(){
-      $(".modal").modal("hide");
-    }, 100);
-    $('#mod_loader').modal('show');
-  };
+  // function close_n_load(){
+  //   // console.log("--- close_n_load ---");
+  //   setTimeout(function(){
+  //     $(".modal").modal("hide");
+  //   }, 100);
+  //   $('#mod_loader').modal('show');
+  // };
 
-  $(".close_n_load").click(function(){
-    close_n_load();
-  });
+  // $(".close_n_load").click(function(){
+  //   close_n_load();
+  // });
+
+
+
 
   // open login modal from intro
   $(".log_from_howto").click( function() {
@@ -184,8 +226,6 @@ $(document).ready( function(){
     $(this).remove();
       });
   }, 4000);
-
-
 
 
 

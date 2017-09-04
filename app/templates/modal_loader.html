@@ -1,6 +1,6 @@
 
 
-<div  class="modal in centered "
+<div  class="modal centered "
       id="mod_loader"
       tabindex="-1"
       role="dialog"
@@ -12,8 +12,16 @@
 
       <div class="modal-body text-center">
 
-        <div class="loader col-sm-offset-5"></div>
+        <!-- <div class="loader"></div>
+        <br> -->
+
+        <div>
+          <img  src="{{ url_for('static', filename='images/logo_index.png') }}" 
+          style="max-height : 85px ;" >
+        </div>
+        
         <br>
+        
         <div style="color: white">
           merci de patienter quelques instants...
         </div>

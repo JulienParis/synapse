@@ -16,7 +16,7 @@
     <meta name="keywords"    content="{{ app_metas.metas }}">
     <meta name="author"      content="{{ app_metas.authors }}">
     <meta name="description" content="{{ app_metas.description }}">
-    <meta id="meta_isUser"   data={{ isUser }} >
+    <meta id="meta_isUser"   data="{{ isUser }}" >
 
     <!-- JQUERY  -->
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -56,12 +56,6 @@
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/i18n/defaults-*.min.js"></script> -->
 
 
-    <!-- LOCAL SYNAPSE SCRIPTS -->
-    <!-- bootstrap callings -->
-    <script type="text/javascript" src="{{ url_for('static', filename='js/index_scripts.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/datatables_scripts.js') }}"></script>
-
-
 
   	<style>
 
@@ -79,7 +73,7 @@
   </head>
 
     <!-- MODAL LOADER -->
-    {% include "modal_loader.html" %}
+    <!-- { % include "modal_loader.html" % } -->
 
     
   <header>
@@ -92,7 +86,9 @@
 
   <body id="body" >
 
+    {% include "modal_loader.html" %}
 
+    
   	<!-- CONTENTS -->
   	<div class="container-fluid" id="three-container">
 
@@ -115,7 +111,8 @@
 
 
   	<!-- MODALS --------------------------------------------------------------------- -->
-
+    
+    
     {% include "modal_howto.html" %}
     {% include "modal_about.html" %}
     {% include "modal_infos_notice.html" %}
@@ -132,7 +129,7 @@
 
     {% include 'modal_add_item.html' %}
     
-
+    
     <!-- {% with messages = get_flashed_messages(with_categories = true) %}
       {% if messages %}
 
@@ -158,6 +155,12 @@
 
 
   </body>
+
+
+    <!-- LOCAL SYNAPSE SCRIPTS -->
+    <!-- bootstrap callings -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/index_scripts.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/datatables_scripts.js') }}"></script>
 
 
 

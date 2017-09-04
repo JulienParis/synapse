@@ -1159,7 +1159,6 @@ preload_notices( function(json) {
             // include info in div 
             info.innerHTML = 'INTERSECTED_id_o : ' + INTERSECTED_id_o ;  
             $("#not3D_id_o").html(INTERSECTED_id_o) ; 
-            
 
             // show modal notice
             // $("#mod_info_notice").collapse('show') ; 
