@@ -175,6 +175,8 @@ class mongodb_updates :
 
         self.df_exemplaires_light = get_df_from_MySQL('exemplaires')
         self.df_notices_light_    = get_df_from_MySQL('notices')
+        print ">>> mongodb_updates --- self.df_exemplaires_light.shape : ", self.df_exemplaires_light.shape
+        print ">>> mongodb_updates --- self.df_notices_light_.shape    : ", self.df_notices_light_.shape
 
         ### add emplacements codes in df_exemplaires_light
         self.df_exemplaires_light[key_group_level_1] = self.df_exemplaires_light['emplacement'].map(dict_emplacements_C1)
@@ -186,8 +188,11 @@ class mongodb_updates :
 
         print '>>> mongodb_updates --- df_exemplaires_mini ', '--'*50
         print self.df_exemplaires_mini.sample(3)
-        print '>>> mongodb_updates --- df_notices_light_ ', '--'*50
-        print self.df_notices_light_.sample(3)
+        print '>>> mongodb_updates --- df_notices_light ', '--'*50
+        print self.df_notices_light.sample(3)
+
+        print ">>> mongodb_updates --- self.df_exemplaires_mini.shape : ", self.df_exemplaires_mini.shape
+        print ">>> mongodb_updates --- self.df_notices_light.shape    : ", self.df_notices_light.shape
 
         ### empty memory from cache dataframes for performance issues
         print '>>> mongodb_updates --- EMPTYING MEMORY', '--'*50
@@ -254,17 +259,18 @@ class mongodb_updates :
 
 
     def reset_all_coll(self) :
+        
         self.reset_coll("exemplaires", exemplaires_mongo, self.df_exemplaires_light, key_barcode )
         ### trying to empty memory for better performance
         del self.df_exemplaires_light
         gc.collect()
-        print  ">>> mongodb_updates.update_all_coll / EMPTYING MEMORY : "
+        print  ">>> mongodb_updates.update_all_coll - exemplaires / EMPTYING MEMORY : "
 
         self.reset_coll("notices",     notices_mongo,     self.df_notices_light, key_synapse)
         ### trying to empty memory for better performance
         del self.df_notices_light
         gc.collect()
-        print  ">>> mongodb_updates.update_all_coll / EMPTYING MEMORY : "
+        print  ">>> mongodb_updates.update_all_coll - notices / EMPTYING MEMORY : "
 
 
     def update_all_coll(self) :
@@ -340,7 +346,7 @@ class mongodb_read :
 
     def write_notices_json_file(self, nested=True, debug=False):
 
-        print ">>> mongodb_read --- write_notices_json_file / start / nested = %s " %(nested)
+        print ">>> mongodb_read --- write_notices_json_file / start / nested = %s / count notices_mongo = %s " %( nested, notices_mongo.find({}).count() )
         print
 
         static_filename = json_filename
@@ -401,6 +407,7 @@ class mongodb_read :
             gc.collect()
 
             ### print in console for debugging purposes
+            count_total = 0
             if debug == True :
                 print
                 print ">>> mongodb_read --- write_notices_json_file / nested : recap  "
@@ -408,6 +415,7 @@ class mongodb_read :
 
                 for k, v in nodes_JSON.iteritems() :
                     print "code parent : %s / name parent : %s / stats : %s " %( v["CODE"], k, v["STATS"])
+                    count_total += v["STATS"]
                     print
 
                     for e in v["CHILDREN"] :
@@ -415,6 +423,8 @@ class mongodb_read :
 
                     print "-"*50
                     print
+
+                print ">>> mongodb_read --- write_notices_json_file / nested : recap end / count_total : ", count_total
 
 
 
