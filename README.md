@@ -1,14 +1,14 @@
 
 
 
-## **synapse** is a web application based on [Flask](http://flask.pocoo.org/) Python microframework, mongoDB database, and Three.js
-## **synapse** is not available online for now : **[synapse.fr]()**.
+## **synapse** is a web application based on [Flask](http://flask.pocoo.org/) Python microframework, mongoDB database, Zeep, mySQL, and Three.js
+## **synapse** is available online for now at : **[synapse.la-bibliotheque.com]http://synapse.la-bibliotheque.com()**.
 
 
 ----------------------------------------------------
 ## Licence & copyrights :
 
-- **Licence** : [???]()
+- **Licence** : [???] ()
 
 - **Project by** : [Julien Paris](http://jpylab.com/)
 
@@ -20,7 +20,6 @@
 >
 Copyright (C) 2017  Julien PARIS
 >
-Also add information on how to contact you by electronic and paper mail.
 
 
 -----------------------------------------------------
@@ -270,6 +269,7 @@ This application proposes several features :
   ```
   $ sudo apt-get install python-pip python-dev
   $ sudo apt-get install libmysqlclient-dev
+  $ sudo apt-get install libssl-dev ---> for cryptography
   $ sudo apt-get install python-mysqldb
   $ pip install -r requirements.txt
   $ pip install gunicorn
@@ -357,10 +357,13 @@ This application proposes several features :
   ```
 
   - run application : go to same level than `wsgi.py` and start app with Gunicorn
+  - cf : https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-14-04
+  - cf : http://docs.gunicorn.org/en/stable/settings.html#raw-env 
   >
   ```
   $ cd apps/synapse
-  $ gunicorn --bind=0.0.0.0:5000 —-timeout=120 --workers=1 —-worker-class=eventlet wsgi:app &
+  // deprecated // $ gunicorn --bind=0.0.0.0:5000 —-timeout=120 --workers=1 —-worker-class=eventlet wsgi:app &
+  $ gunicorn -b 0.0.0.0:5000 -k eventlet -t 120 -w 1  wsgi:app
   ```
 
   - ( if needed / stop gunicorn server ) : `$ pkill gunicorn`
