@@ -64,7 +64,7 @@ aria-labelledby="mod_about">
             </li>
             <br>
             <li> 
-                Le premier défi de ce projet était à la fois de rendre graphique une somme considérable de données de manière interactive, 
+                Le premier défi de ce projet était de rendre <strong>graphique</strong> une somme considérable de données de manière interactive, 
                 et de visualiser des données à jour : en effet l'ensemble du catalogue est mis à jour chaque nuit, et les utilisateurs peuvent 
                 faire de nouveaux emprunts à tout moment.
                 Le second enjeu du projet était également de poser les bases d'un outil permettant 
@@ -73,15 +73,27 @@ aria-labelledby="mod_about">
             </li>
 
         </ul>
-        <br>
     </h3>
 
 
 
-    <br><br>
+    <a class="text-center " href="#about_next">
+        <h2 style="margin-top: 40px; margin-bottom: 50px; color:white">
+                <strong><span class="glyphicon glyphicon-menu-down" area-hidden="false"></span></strong>
+        </h2>
+    </a>
+
+    <!-- <a class="text-center" href="#about_next2">
+        <h2 style="margin-top: 50px; margin-bottom: 50px; color:white">
+            <strong><span class="glyphicon glyphicon-menu-down" area-hidden="false"></span></strong>
+        </h2>
+    </a> -->
+
     <hr>
-    
-    {% include "_realisation.html" %}
+
+        <div id="about_next">
+            {% include "_realisation.html" %}
+        </div>
 
     <hr>
 
@@ -90,7 +102,10 @@ aria-labelledby="mod_about">
     </h3>
     <br>
 
+    {% include "_partners.html" %}
+    
     <hr>
+
 
     <h3 class="" style="color:white">
             <strong> remerciements </strong>
@@ -122,9 +137,18 @@ aria-labelledby="mod_about">
     
     </h4>
 
+
+    <hr>
+    
+    <a class="text-center" href="#about_next2">
+        <h2 style="margin-top: 50px; margin-bottom: 50px; color:white">
+            <strong><span class="glyphicon glyphicon-menu-down" area-hidden="false"></span></strong>
+        </h2>
+    </a>
+
     <hr>
 
-    <h3 class="" style="color:white">
+    <h3 class="" style="color:white" id="about_next2">
             <strong>technologies utilisées </strong>
     </h3>
 
@@ -133,16 +157,16 @@ aria-labelledby="mod_about">
         <ul class="list-unstyled">
             
             <li> 
-                <em>Python</em> : Flask, Pandas, Zeep, Flask-MySQLdb, Pymongo, APScheduler, Gunicorn, Eventlet
+                <em>Python</em> : Flask, Pandas, Zeep, Flask-MySQLdb, Pymongo, APScheduler, flask-socketIO, Gunicorn, Eventlet
                 <span class="fa fa-circle fa-sm" area-hidden="false"></span>
                 
-                <em>Javascript</em> : Three.js, Datatables.js, Jquery
+                <em>Javascript</em> : Three.js, Datatables.js, Jquery, Socket-IO
                 <span class="fa fa-circle fa-sm" area-hidden="false"></span>
 
-                <em>Base de données de l'application</em> : MongoDB
+                <em>Données</em> : MongoDB (application), MySQL (catalogue), Web service Aloes (emprunts utilisateurs)
                 <span class="fa fa-circle fa-sm" area-hidden="false"></span>
 
-                <em>Serveur</em> : Ubuntu
+                <em>Serveur</em> : Ubuntu 16.04
                 <span class="fa fa-circle fa-sm" area-hidden="false"></span>
 
                 <em>Autres</em> : Bootstrap, Bootstrap-select, Font-Awesome, Nginx, Git
@@ -154,9 +178,64 @@ aria-labelledby="mod_about">
     
     </h4>
 
-    {% include "_partners.html" %}
-    
+    <hr>
 
+    <h3 class="" style="color:white">
+            <strong>données</strong>
+    </h3>
+
+    <h4 class="text-justify" style="color:white ; margin-left: 80px  ; margin-right: 80px ">
+            
+        <ul class="list-unstyled">
+            
+            <li> 
+                Pour des raisons de sécurité synapse dépose dans des cookies de session provisoires 
+                des données sur vos emprunts, 
+                ainsi que votre numéro de carte de bibliothèque et votre email.
+                <span class="fa fa-circle fa-sm" area-hidden="false"></span>                
+                L'application synapse chiffre votre mot de passe 
+                et interdit à quiconque autre que vous-même de consulter votre historique
+                ou de le mettre à jour.
+                <span class="fa fa-circle fa-sm" area-hidden="false"></span>                
+                Tous les parcours d'emprunts sont anonymisés, 
+                et les parcours affichés le sont à titre purement déclaratif.
+            </li>
+            <br>
+
+        </ul>
+        <br>
+    
+    </h4>
+
+
+    <hr>
+    
+    <h3 class="" style="color:white">
+            <strong>contacts</strong>
+    </h3>
+
+    <h4 class="text-justify" style="color:white ; margin-left: 80px  ; margin-right: 80px ; margin-bottom:300px">
+            
+        <ul class="list-unstyled">
+
+            <li> 
+                <em>responsable du site</em> : Julien Paris (Jpy)
+                <span class="fa fa-circle fa-sm" area-hidden="false"></span>
+
+                <em>responsable du serveur</em> : Maxime Lemonnier (Ville de St-Herblain)
+                <span class="fa fa-circle fa-sm" area-hidden="false"></span>
+
+                <em>responsable du projet</em> : Magalie Badion (Médiatthèque Hermeland) 
+                <span class="fa fa-circle fa-sm" area-hidden="false"></span>
+                
+            </li>
+        </ul>
+        <br>
+    </h4>
+
+
+    
+    
 </div>
 
 

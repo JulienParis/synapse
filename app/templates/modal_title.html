@@ -13,7 +13,7 @@
 
                 <div>
                     <img  src="{{ url_for('static', filename='images/logo_index.png') }}" 
-                          style="max-height : 150px ;" >
+                          style="max-height : 200px ;" >
                 </div>
                 
                 <br><br>
@@ -25,15 +25,15 @@
                 <div class="row" style="margin-top:15px">
                 
                     <a href="http://www.la-bibliotheque.com" target="_blank">   
-                        <img  src="{{ url_for('static', filename='images/logo_hermeland.gif') }}" style="max-height:65px ; margin:15px">
+                        <img  src="{{ url_for('static', filename='images/logo_hermeland.gif') }}" style="max-height:70px ; margin:15px">
                     </a>
                 
                     <a href="https://www.saint-herblain.fr" target="_blank">            
-                        <img  src="{{ url_for('static', filename='images/logo_st_herblain.png') }}" style="max-height:65px ; margin:15px">
+                        <img  src="{{ url_for('static', filename='images/logo_st_herblain.png') }}" style="max-height:70px ; margin:15px">
                     </a>
                     
                     <a href="https://www.lecolededesign.com" target="_blank">
-                        <img  src="{{ url_for('static', filename='images/logo_ecole_design.png') }}" style="max-height:65px ; margin:15px">
+                        <img  src="{{ url_for('static', filename='images/logo_ecole_design.png') }}" style="max-height:70px ; margin:15px">
                     </a>
                 
                     <a href="http://www.stereolux.org" target="_blank">            
@@ -44,10 +44,18 @@
 
                 <!-- <h3 style="color:white"> <span class="fa fa-code fa-sm" aria-hidden="true"></span> </h3> -->
                 <!-- <h3 style="color:white"> & </h3> -->
-                <h3 style="color:white"> <span class="fa fa-plus fa-lg" aria-hidden="true"></span> </h3>
-                
+                <!-- <h3 style="color:white"> <span class="fa fa-plus fa-lg" aria-hidden="true"></span> </h3> -->
+                <br><br><hr> <br>
+
                 <div class="text-center">
-                    <a href="http://www.jpylab.com" target="_blank">            
+                    <a  href="http://www.jpylab.com" target="_blank"
+                        class="bstooltip"
+                        data-trigger='manual'
+                        data-tooltip="tooltip"
+                        data-placement="right"
+                        title="réalisation : Julien Paris"
+                        data-container="body"
+                        >            
                         <img  src="{{ url_for('static', filename='images/logo_jpy.png') }}" style="max-height:55px ; margin:30px" >
                     </a>
                 </div>

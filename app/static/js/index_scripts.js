@@ -233,6 +233,43 @@ $(document).ready( function(){
   });
 
 
+  // smooth scrolldown
+  $('body').scrollspy({target: ".modal", offset: 0});
+  $('a[href*="#"]')
+  // Remove links that don't actually link to anything
+  .not('[href="#"]')
+  .not('[href="#0"]')
+  .on('click', function(event) {
+    
+      // Make sure this.hash has a value before overriding default behavior
+      if (this.hash !== "") {
+        
+        // Prevent default anchor click behavior
+        event.preventDefault();
+    
+        // Store hash
+        var hash = this.hash ;
+        var parentModal  = $(this).closest('.modal') ;
+        var parentHeight = parentModal.height(); 
+
+        // console.log(hash);
+        // console.log(parentModal);
+        
+        // Using jQuery's animate() method to add smooth page scroll
+        // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
+        // parentModal.animate({ scrollTop: $(hash).offset().top }, 800 );
+        // console.log( $(hash).offset() ) ;
+        // console.log( $(hash).position() ) ;
+        // parentModal.animate({ scrollTop: $(hash).offset().top }, 'slow');
+        parentModal.animate({ scrollTop: $(hash).position().top + 20 }, 'slow');
+        
+      } // End if
+    
+    });
+
+
+
+
   // refresh view
   function refreshPage (href){
       //console.log(href);
