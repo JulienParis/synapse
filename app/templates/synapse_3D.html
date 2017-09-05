@@ -14,8 +14,9 @@
 		
 		/* background-color : #f6761c  /*{{ app_colors.three_background }} ;*/ 
 		background-size: cover;
-		background-image: url(http://www.la-bibliotheque.com/wp-content/themes/la_bibliotheque_orange/images/datavision_fond.jpg);
-
+		/* background-image: url(http://www.la-bibliotheque.com/wp-content/themes/la_bibliotheque_orange/images/datavision_fond.jpg); */
+		background-image: url( {{ url_for('static', filename='images/datavision_fond.jpg') }} ) ;
+		
 		text-align: center;
 		opacity: 1;
 		}
