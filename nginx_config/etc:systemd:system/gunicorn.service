@@ -1,0 +1,18 @@
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+PIDFile=/run/gunicorn/pid
+User=julien
+Group=julien
+RuntimeDirectory=gunicorn
+WorkingDirectory=/home/julien/apps/synapse
+ExecStart=/home/julien/.local/bin/gunicorn --bind=0.0.0.0:5000 —-timeout=120 --workers=1 —-worker-class=eventlet wsgi:app --error-logfile=/home/julien/apps/synapse/logs/synapse.error.log
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
