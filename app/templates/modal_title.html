@@ -4,11 +4,11 @@
         role="dialog"
         aria-labelledby="mod_title">
 
-    <div class="modal-dialog " role="document">
+    <div class="modal-dialog" role="document" style="width:55%"> <!-- style="width:80%" -->
 
-        <div class="loader_modal_div noshadow">
+        <div class=" noshadow"> <!-- loader_modal_div -->
 
-            <div class="modal-body text-center" >
+            <div class="modal-body text-center" style="margin-top:45%" >
 
 
                 <div>
@@ -16,13 +16,13 @@
                           style="max-height : 200px ;" >
                 </div>
                 
-                <br><br>
+                <br>
 
                 <hr>
 
                 <br>
                 
-                <div class="row" style="margin-top:15px">
+                <div class="row" style="margin-top:0px">
                 
                     <a href="http://www.la-bibliotheque.com" target="_blank">   
                         <img  src="{{ url_for('static', filename='images/logo_hermeland.gif') }}" style="max-height:70px ; margin:15px">
@@ -45,7 +45,7 @@
                 <!-- <h3 style="color:white"> <span class="fa fa-code fa-sm" aria-hidden="true"></span> </h3> -->
                 <!-- <h3 style="color:white"> & </h3> -->
                 <!-- <h3 style="color:white"> <span class="fa fa-plus fa-lg" aria-hidden="true"></span> </h3> -->
-                <br><br><hr> <br>
+                <br><hr> <br>
 
                 <div class="text-center">
                     <a  href="http://www.jpylab.com" target="_blank"
@@ -56,9 +56,28 @@
                         title="réalisation : Julien Paris"
                         data-container="body"
                         >            
-                        <img  src="{{ url_for('static', filename='images/logo_jpy.png') }}" style="max-height:55px ; margin:30px" >
+                        <img  src="{{ url_for('static', filename='images/logo_jpy.png') }}" style="max-height:55px ; margin-top:30px ; margin-bottom: 10px" >
                     </a>
                 </div>
+
+
+                <a class="text-center" href="#title_next">
+                    <h2 style="margin-top: 20px; margin-bottom: 50px; color:white">
+                        <strong><span class="glyphicon glyphicon-menu-down" area-hidden="false"></span></strong>
+                    </h2>
+                </a>
+
+                <div style="margin-bottom:100px">
+
+                    <h3 class="" style="color:white" >
+                        comment utiliser {{ app_metas.title }}
+                    </h3>
+                    <hr >
+                    <h3 class="lead text-left" style="color:white ; margin-left: 40px" id="title_next">                              
+                    {% include "_howto.html" %}
+                
+                </div>
+
 
             </div>
 

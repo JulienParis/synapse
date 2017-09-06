@@ -241,7 +241,7 @@
 
       <li>
           <button type="button"
-                  class="btn btn-default btn-sm navbar-btn bstooltip no-higlight"
+                  class="btn btn-{% if isUser != None %}warning{% else %}default{% endif %} btn-sm navbar-btn bstooltip no-higlight"
                   data-toggle="modal"
                   data-target="#update_aloes_form"
 
@@ -261,17 +261,17 @@
       
       <li>
           <button type="button"
-                  class="btn btn-default btn-sm navbar-btn bstooltip no-higlight"
+                  class="btn btn-{% if isUser != None %}warning{% else %}default{% endif %} btn-sm navbar-btn bstooltip no-higlight"
                   data-toggle="modal"
                   data-target="#modal_add_item"
 
                   data-trigger='manual'
                   data-tooltip="tooltip"
                   data-placement="bottom"
-                  title="{% if isUser != None %}ajouter manuellement des titres à votre parcours {% else %} rechercher un ouvrage {% endif %}"
+                  title="{% if isUser != None %} rechercher et ajouter manuellement des titres à votre parcours {% else %} rechercher un ouvrage {% endif %}"
                   data-container="body"
                   >
-              <span class="glyphicon glyphicon-{% if isUser != None %}plus{% else %}search{% endif %}" aria-hidden="true"></span>
+              <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                
           </button>
       </li>
@@ -281,7 +281,7 @@
 
       <li>
           <button type="button"
-                  class="btn btn-default btn-sm navbar-btn bstooltip no-higlight"
+                  class="btn btn-{% if isUser != None %}warning{% else %}default{% endif %} btn-sm navbar-btn bstooltip no-higlight"
                   data-toggle="modal"
                   data-target="#update_user_form"
 

@@ -1,49 +1,100 @@
+  
+  <ul class="list-unstyled">
 
-<br>
-<div class="alert alert-info text-center bstooltip" role="alert"
-     data-toggle="tooltip" data-placement="top"
-     title="survoler les liens" >
-  <strong class="lead">HYDROVIZ possède trois fonctionnalités principales </strong>
-</div>
+    <li><span class="label label-default"><span class="glyphicon glyphicon-record" aria-hidden="true"></span></span>
+      chaque point de couleur est une des <strong>{{ basic_stats["count_notices"] }} notices</strong> du catalogue</li>
+    <li><span class="label label-default"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></span>
+      chaque couleur représente <strong>une famille</strong> d'ouvrages</li>
+    <li><span class="label label-default"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></span>
+      les traits blancs représentent les <strong>emprunts</strong> des utilisateurs de {{ app_metas.title }} </li>
 
-<ol>
+    <br>
+      
+    <li>
+      <span class="label label-default"><span class="glyphicon glyphicon-move" aria-hidden="true"></span></span>                  
+      <span class="label label-default"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span></span>                  
+      vous pouvez <strong>bouger</strong> autour de synapse ou <strong>zoomer</strong> avec la souris </li>
+    
+    <li><span class="label label-default"><span class="fa fa-toggle-on fa-md" aria-hidden="true"></span></span>                  
+      pour <strong> activer ou désactiver</strong> le clic pour voir la <strong>fiche</strong> d'un ouvrage (expérimental) </li>
+      
+    <li>
+      <span class="label label-default"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></span>                  
+      <span class="label label-default"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></span>                  
+      vous pouvez <strong>mettre en pause</strong> ou <strong> reprendre </strong> l'animation </li>
+    
 
-  <li class="bstooltip tooltip_img" data-toggle="tooltip" data-placement="left"
-      title="<img src='{{ url_for('static', filename='images/tooltip_slider.jpg') }}' >" >
-    <strong class="a_">un "SLIDER" interactif</strong> permettant de faire défiler les années.
-    Le slider se trouve en haut en violet dans la barre de navigation, ainsi que dans la fenêtre "répartition des pesticides"
-  </li>
-  <hr>
-  <li>
-    <div class="bstooltip tooltip_img" data-toggle="tooltip" data-placement="left"
-        title="<img src='{{ url_for('static', filename='images/tooltip_map.jpg') }}' >" >
-      <strong class="a_">une CARTOGRAPHIE interactive et zoomable</strong> des données sur la France entière.
-      Cette cartographie possède plusieurs calques, dont un pour afficher les nappes phréatiques, et un autre pour afficher les départements.
-      Les niveaux de couleurs représentent soit des concentrations moyennes totales de pesticides, soit du nombre de pesticides détectés dans une catégorie donnée.
-    </div>
-    <ul>
-      <li class="bstooltip tooltip_img" data-toggle="tooltip" data-placement="left"
-          title="<img src='{{ url_for('static', filename='images/tooltip_filters.jpg') }}' >" >
-        <strong class="a_">Des filtres sur la gauche</strong>
-        de l'écran afin de choisir parmi les différentes catégories.</li>
-      <li class="bstooltip tooltip_img" data-toggle="tooltip" data-placement="left"
-          title="<img src='{{ url_for('static', filename='images/tooltip_infomap.jpg') }}' >" >
-        <strong class="a_">Une fenêtre informative sur la droite</strong>
-        de l'écran permet de lire les informations spécifiques à la nappe phréatique (masse d'eau) sélectionnée.</li>
-    </ul>
-  </li>
-  <hr>
-  <li class="bstooltip tooltip_img" data-toggle="tooltip" data-placement="left"
-      title="<img src='{{ url_for('static', filename='images/tooltip_treemap.png') }}' >" >
-    <strong class="a_">une REPRESENTATION HIERARCHIQUE ("treemap") interactive</strong> des pesticides permettant d'avoir des informations plus spécifiques sur les produits détectés :
-    les pesticides sont alors regroupés par fonctions, familles, ou dangerosité.
-  </li>
+    <!-- <li><span class="label label-default"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></span>                   -->
+    <li><span class="label label-default"><span class="fa fa-sliders fa-lg" aria-hidden="true"></span></span>                  
+      vous pouvez modifier les <strong>réglages de l'animation</strong> (couleurs, effets... ) </li>
 
-</ol>
+    <br>
+    
+    
+    {% if not isUser %}
+
+    <li>
+      <span class="label label-default"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span></span>                  
+      <span class="label label-default"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></span>                  
+      vous pouvez vous
+      <a class="log_from_howto"><strong> connecter </strong>  </a>
+      ou vous 
+      <a class="register_trigger"><strong> créer un compte </strong>  </a>
+    </li>
+
+    <li><span class="label label-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>                  
+      vous pouvez <strong>rechercher</strong> un ouvrage</li>
+
+    {% else %}
+
+
+    <li><span class="label label-default"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></span>                  
+      les traits en bleu représentent <strong>votre propre parcours</strong> d'emprunts </li>
+    <li><span class="label label-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></span>                  
+      vous pouvez <strong>mettre à jour automatiquement</strong> votre propre parcours d'emprunts</li>
+    <li><span class="label label-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>                  
+      vous pouvez <strong>ajouter des envies</strong> à votre parcours d'emprunts</li>
+    <li><span class="label label-default"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span></span>                  
+      vous pouvez <strong>consulter</strong> l'ensemble de votre historique d'emprunts</li>
+
+    <br>
+
+    <li><span class="label label-default"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>                  
+      vous pouvez modifier <strong> vos informations personnelles</strong> 
+    </li>
+    <li><span class="label label-default"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span></span>                  
+      vous pouvez vous <a href="{{ url_for('logout') }}"><strong> déconnecter</strong> </a>
+      <!-- <a href="{{ url_for('logout') }}"><strong> déconnecter </strong>  </a> -->
+    </li>
+    
+    {% endif %}
+
+    
+    <!-- <li><span class="label label-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></span>                  
+      vous pouvez <strong>mettre à jour automatiquement</strong> votre propre parcours d'emprunts</li>
+    <li><span class="label label-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>                  
+      vous pouvez <strong>ajouter des envies</strong> à votre parcours d'emprunts</li> -->
+
+  </ul>
+
+</h3>
 
 <hr>
 
-{% include "_advice.html"%}
 
+<h3 class="text-center" style="margin-top:30px">
+    <a data-dismiss="modal">× commencer à explorer {{ app_metas.title }} ×</a>
+</h3>
+
+{% if not isUser %}
+
+<h3 class="text-center" style="margin-top:10px">
+    <a class="log_from_howto">× se connecter pour voir votre propre parcours ×</a>
+</h3>
+<h3 class="text-center" style="margin-top:10px">
+    <a class="register_trigger">× se créer un compte ×</a>
+</h3>
+
+{% endif %}
 
 <br>
