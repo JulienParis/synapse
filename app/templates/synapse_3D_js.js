@@ -1110,6 +1110,7 @@ preload_notices( function(json) {
                 
 
         // EXPORT SCREENSHOT AS PNG
+        // cf : https://jsfiddle.net/2pha/art388yv/
         $("#screenshot").click( function() {
             
             // // open in new window like this
