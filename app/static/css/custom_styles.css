@@ -95,7 +95,8 @@ alert {
 
 /* SCROLLBAR */
 .scrollable {
-    max-height: 410px;
+    max-height: 600px;
+    overflow-x: hidden;
     overflow-y: scroll;
 }
 
@@ -105,12 +106,12 @@ alert {
     background-color: null;
 }
 ::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
     background-color: null;
 }
 ::-webkit-scrollbar-thumb {
     background-color: orange;
-    border: 6px solid rgba(0, 0, 0, 0);
+    border: 8px solid rgba(0, 0, 0, 0);
 }
 
 
