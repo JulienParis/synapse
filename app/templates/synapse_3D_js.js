@@ -1080,7 +1080,7 @@ preload_notices( function(json) {
 
         // --- RENDERING --- //
         // RENDERER
-            renderer = new THREE.WebGLRenderer( { antialias: true, alpha : true } ); // alpha true for css background-color
+            renderer = new THREE.WebGLRenderer( { antialias: true, alpha : true , preserveDrawingBuffer: true } ); // alpha true for css background-color
             renderer.setPixelRatio( window.devicePixelRatio );
             renderer.setSize( WIDTH, HEIGHT );
             renderer.gammaInput  = true;
@@ -1108,6 +1108,30 @@ preload_notices( function(json) {
             document.addEventListener( 'mousemove', onDocumentMouseMove, false );
             document.addEventListener( 'mousedown', onDocumentClick,     false );
                 
+
+        // EXPORT SCREENSHOT AS PNG
+        $("#screenshot").click( function() {
+            
+            // // open in new window like this
+            // var w = window.open('', '');
+            // w.document.title = "Screenshot";
+            // //w.document.body.style.backgroundColor = "red";
+            // var img = new Image();
+            // // Without 'preserveDrawingBuffer' set to true, we must render now
+            // renderer.render(scene, camera);
+            // img.src = renderer.domElement.toDataURL();
+            // w.document.body.appendChild(img);
+            
+            // download file like this.
+            var a = document.createElement('a');
+            // Without 'preserveDrawingBuffer' set to true, we must render now
+            renderer.render(scene, camera);
+            a.href = renderer.domElement.toDataURL().replace("image/png", "image/octet-stream");
+            a.download = 'votre synapse.png'
+            a.click();
+                
+        });
+
 
 
     } // --> end init 
