@@ -92,23 +92,27 @@
                 <a data-dismiss="modal">× commencer à explorer {{ app_metas.title }} ×</a>
             </h3> -->
         
+
             {% if not isUser %}
-        
-            <h3 class="text-center" style="margin-top:10px">
-                <a class="log_from_howto">× je voudrais voir mon propre parcours de lectures ×</a>
-            </h3>
-            <!-- <h3 class="text-center" style="margin-top:10px">
-                <a class="register_trigger">× se créer un compte ×</a>
-            </h3> -->
-        
-            {% else %}
-
-
-            {% endif %}
             
+            <h3 class="text-center" style="margin-top:10px">
+                <a class="log_from_howto">× je voudrais voir mon propre parcours ×</a>
+            </h3>
             <h3 class="text-center" style="margin-top:10px">
                 <a data-dismiss="modal">× je veux juste découvrir {{ app_metas.title }} ×</a>
             </h3>
+
+            <!-- <h3 class="text-center" style="margin-top:10px">
+                <a class="register_trigger">× se créer un compte ×</a>
+            </h3> -->
+
+            {% else %}
+
+            <h3 class="text-center" style="margin-top:10px">
+                <a data-dismiss="modal">× je retourne à {{ app_metas.title }} ×</a>
+            </h3>
+
+            {% endif %}
             
             <br>
 

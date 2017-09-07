@@ -85,6 +85,31 @@ $(document).ready( function(){
     .then( $("#mod_intro").modal("show") )
   });
 
+  // open login modal from intro
+  $(".log_from_howto").click( function() {
+    $.when( $(".modal").modal("hide") )
+     .then( $("#login_form").modal("show") ) 
+  }) ;
+
+  // open register modal from login modal or modal howto
+  $(".register_trigger").click( function() {
+    $.when( $(".modal").modal("hide") )
+     .then( $("#register_form").modal("show") ) 
+  }) ;
+
+
+  // open aloes modal
+  $(".open_aloes").click( function() {
+    $.when( $(".modal").modal("hide") )
+      .then( $("#update_aloes_form").modal("show") ) 
+  }) ;
+
+  // open add_item modal
+  $(".open_add_item").click( function() {
+    $.when( $(".modal").modal("hide") )
+      .then( $("#modal_add_item").modal("show") ) 
+  }) ;
+
 
   // settings state
   $("#btn_settings").on("click", function () {
@@ -149,20 +174,6 @@ $(document).ready( function(){
   // });
 
 
-
-
-  // open login modal from intro
-  $(".log_from_howto").click( function() {
-    $.when( $(".modal").modal("hide") )
-     .then( $("#login_form").modal("show") ) 
-  }) ;
-
-
-  // open register modal from login modal or modal howto
-  $(".register_trigger").click( function() {
-    $.when( $(".modal").modal("hide") )
-     .then( $("#register_form").modal("show") ) 
-  }) ;
 
   // // fades alerts
   window.setTimeout(function() {

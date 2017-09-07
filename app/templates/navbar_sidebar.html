@@ -204,7 +204,7 @@
                   data-trigger='manual'
                   data-tooltip="tooltip"
                   data-placement="bottom"
-                  title="activer / désactiver le clic sur les points"
+                  title="activer / désactiver le clic sur les points (expérimental)"
                   data-container="body"
                   >
             <span class="fa fa-toggle-off fa-xl" 
@@ -241,7 +241,7 @@
                   data-trigger='manual'
                   data-tooltip="tooltip"
                   data-placement="bottom"
-                  title="cliquer pour modifier l'animation"
+                  title="cliquer pour modifier les réglages de l'animation (couleurs, effets, ...)"
                   data-container="body"
                   >
               <!-- <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> -->
@@ -269,7 +269,6 @@
                   data-container="body"
                   >
               <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-
           </button>
       </li>
 
@@ -305,7 +304,7 @@
                   data-trigger='manual'
                   data-tooltip="tooltip"
                   data-placement="bottom"
-                  title="votre parcours"
+                  title="votre parcours de lectures"
                   data-container="body"
                   >
               <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
@@ -416,8 +415,9 @@
 
       <!-- SCREENSHOT -->
       <li>
-          <a  role="button"
-              class="bstooltip no-higlight"
+          <button  
+              role="button"
+              class="btn btn-sm navbar-btn btn-link bstooltip no-higlight"
               id="screenshot" 
               data-trigger='manual'
               data-tooltip="tooltip"
@@ -425,8 +425,8 @@
               title="télécharger une capture d'écran de Synapse"
               data-container="body"
               >
-            <span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
-        </a>
+            <i class="fa fa-camera fa-lg" aria-hidden="true"></i>
+      </button>
       </li>
       
 
@@ -438,13 +438,6 @@
         </a>
       </li> -->
 
-      <li>
-        <a  href="https://twitter.com/jparis_py" target="_blank"
-            class="bstooltip" data-toggle="tooltip" data-placement="bottom"
-            title="n'hésitez à nous écrire sur Twitter #{{ app_metas.title }} ">
-          <i class="fa fa-twitter fa-lg" area-hidden="true"></i>
-        </a>
-      </li>
 
       <!-- <li class="divider-vertical"></li> -->
 
@@ -457,8 +450,8 @@
       </li> -->
 
       <li>
-          <a  role="button"
-              class="bstooltip no-higlight open_about"
+        <button  role="button"
+              class="btn btn-sm navbar-btn btn-link bstooltip no-higlight open_about"
 
               data-trigger='manual'
               data-tooltip="tooltip"
@@ -467,7 +460,7 @@
               data-container="body"
               >
             <i class="fa fa-question-circle fa-lg" area-hidden="true"></i>
-        </a>
+        </button>
       </li>
 
 
@@ -488,7 +481,18 @@
           </button>
         </li>
 
-
+        <li>
+            <a  
+                id="btn_twitter"
+                href="https://twitter.com/jparis_py" 
+                target="_blank"
+                class="bstooltip no-higlight" 
+                data-toggle="tooltip" 
+                data-placement="bottom"
+                title="n'hésitez à nous écrire sur Twitter #{{ app_metas.title }} ">
+              <i class="fa fa-twitter fa-lg" area-hidden="true"></i>
+            </a>
+          </li>
 
       
       <li> 

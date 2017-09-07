@@ -671,6 +671,7 @@ var json_fake = {
             // reanimateAnimation();
         };
         $(this).find("span").toggleClass("glyphicon-pause").toggleClass("glyphicon-play");
+        $("#animation_pause_start").toggleClass("btn-warning").toggleClass("btn-default");
         
     });
 

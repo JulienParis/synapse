@@ -38,7 +38,7 @@
     </div>
 
 
-    <div class="form-group">
+    <div class="form-group" style="display:none">
       <label for="categ" class="col-sm-3 control-label">catégorie</label>
       <div class="col-sm-8">
         {{ requestCabForm.categ }}
@@ -49,12 +49,14 @@
 
 
 
-
+    <br>
     <div class="form-group">
 
       <div class="col-sm-8 col-sm-offset-3"> <!-- ADD ITEM BUTTON  -->
         <button type="button"
                 class="btn btn-warning btn-block close_n_load submit_button">
+
+          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>      
           ajouter l'ouvrage à mon parcours
         </button>
       </div>

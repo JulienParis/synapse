@@ -60,7 +60,7 @@ parcours_status = {
 parcours_status_ = [ key_parc_emprunts, key_parc_envies, key_parc_lus ]
 
 # indexes to create datatable
-parcours_indexes = [ key_author, key_title, key_group_name_1, key_group_name_2, key_rendu_date, key_keep ]
+parcours_indexes = [ key_author, key_title, key_group_name_1, key_group_name_2, key_rendu_date ] # key_keep
 
 
 # index(s) to keep
