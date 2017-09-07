@@ -27,49 +27,82 @@
           </h1>  -->
 
           <img  src="{{ url_for('static', filename='images/logo_index.png') }}" 
-          style="margin-top:-5px ; max-height : 85px ;" >
+          style="margin-top:20px ; margin-bottom: 20px ;  max-height : 85px ;" >
 
+          <hr>
+          <br>
           <h3 class="" style="color:white">
-              visualisez en 3D vos emprunts <br> dans l'ensemble du catalogue de la bibliothèque de St-Herblain
-              <!-- <br>
-              en 3D interactive -->
+              Que trouve-t-on dans {{app_metas.title}} ?
+              <button     type="button"
+                        class="btn btn-link bstooltip no-higlight open_intro"
+                        style="color:white" 
+
+                        data-trigger='manual'
+                        data-tooltip="tooltip"
+                        data-placement="right"
+                        title="retour à l'accueil "
+                        data-container="body"
+                        >
+                <i class="fa fa-asterisk fa-lg" area-hidden="true"></i>
+            </button>
           </h3>
 
           <br>
 
           <hr>
 
-          <h3 class="lead text-left" style="color:white ; margin-left: 60px">    
-          {% include "_howto.html" %}
+          <div style="margin-top:40px ; margin-bottom:40px " id="howto_next" >
+            
+            <h3 class="lead text-left" style="color:white ; margin-left: 60px">    
+            {% include "_howto.html" %}
 
+          </div>
+        
           <hr>
 
-          <a class="text-center " href="#howto_next">
+          <div style="margin-top: 20px">
+
+            {% if not isUser %}
+            <h3 class="text-center" style="margin-top:10px">
+                <a class="log_from_howto">× je voudrais ajouter mon propre parcours ×</a>
+            </h3>
+            {% endif %}
+
+            <h3 class="text-center" style="margin-top:10px">
+                <a data-dismiss="modal">× je veux juste découvrir {{ app_metas.title }} ×</a>
+            </h3>
+
+          </div>
+
+
+          <!-- 
+
+          <a class="text-center " href="#howto_next2">
               <h2 style="margin-top: 30px; margin-bottom: 30px; color:white">
                   <strong><span class="glyphicon glyphicon-menu-down" area-hidden="false"></span></strong>
               </h2>
           </a>
 
-
           <hr>
           
+          <div style="margin-top:0px" id="howto_next2" >
 
-
-          <div style="margin-top:0px" id="howto_next" >
-
-            {% include "_realisation.html" %}
+            { % include "_realisation.html" % }
 
           </div>
           
-          {% include "_partners.html" %}
+          { % include "_partners.html" % } -->
 
 
-          <!-- <hr> 
+          <!-- 
+          <hr> 
           
           <h3 class="text-center" style="margin-top:30px">
               <a href="http://www.la-bibliotheque.com" target="_blank">× retourner à la bibliothèque ×</a>
           </h3>
-          <br> -->
+          <br> 
+          
+          -->
 
       </div>
 

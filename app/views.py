@@ -478,6 +478,7 @@ def index():
     # print "---- INDEX ---- listEdges if id_o : %s " % ( listEdges )
     # print 
 
+    is_userdata = False 
 
 
     ### RETRIEVE COMPLETE DATA PARCOURS AND STORE IT IF USER ### <-- PERHAPS BETTER WITH SOCKETIO
@@ -507,7 +508,6 @@ def index():
             print "---- INDEX ---- is_userdata : FALSE  "
 
             session["is_userdata"]   = True
-            print "---- INDEX ---- is_userdata : FALSE ---- session['is_userdata'] : ", session["is_userdata"]
 
             ### retrieve complete information from CAB listed in user parcours
             print "---- INDEX ---- is_userdata : FALSE  ---- please wait while getting parcours data ... "
@@ -899,6 +899,8 @@ def index():
 
     print "---- INDEX END ---- session : %s " % ( session )
 
+    is_user_meta = str(isUser)
+
     return render_template('index.html',
                             app_metas           = app_metas,
                             app_colors          = app_colors,
@@ -915,8 +917,10 @@ def index():
 
                             parcours_indexes    = parcours_indexes,
                             isUser              = isUser,
+                            is_user_meta        = is_user_meta,
                             isCard              = isCard, 
                             isAdmin             = isAdmin,
+                            is_userdata         = is_userdata, 
                             sessionError        = sessionError,
 
                             loginForm           = loginForm,

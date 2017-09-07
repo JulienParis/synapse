@@ -27,19 +27,32 @@ aria-labelledby="mod_about">
 
     <br><br>
 
+    
     <hr>
 
     <h3 class="" style="color:white">
         <strong> histoire du projet </strong>
+        <button     type="button"
+                    class="btn btn-link bstooltip no-higlight open_intro"
+                    style="color:white" 
+
+                    data-trigger='manual'
+                    data-tooltip="tooltip"
+                    data-placement="right"
+                    title="retour à l'accueil "
+                    data-container="body"
+                    >
+            <i class="fa fa-asterisk fa-lg" area-hidden="true"></i>
+        </button>
     </h3>
 
     <h3 class="lead text-justify" style="color:white ; margin-left: 80px ; margin-right: 80px">
       
         <ul class="list-unstyled">
 
-            <li> {{ app_metas.title | title }} est un projet expérimental initié par la 
+            <li> {{ app_metas.title | title }} est un projet expérimental initié par 
                 <a href="http://www.la-bibliotheque.com" target="_blank">
-                    <strong> bibliothèque de Saint Herblain </strong>
+                    <strong>La Bibliothèque de Saint-Herblain </strong>
                 </a>
                 dans le cadre du cycle "Le livre dans 5 ans".
             </li>
@@ -48,7 +61,7 @@ aria-labelledby="mod_about">
             <li> 
                 {{ app_metas.title | title }} est le fruit d’une idée née de l’observation des pratiques de lecture. L’opportunité du cycle
                 <strong><a href="https://www.stereolux.org/cycle-livre-lecture" target="_blank">
-                    Le livre et la lecture dans 5 ans" 
+                    "Le livre et la lecture dans 5 ans" 
                 </a></strong>
                 initié par Mobilis en octobre 2016 a permis à La Bibliothèque de
                 confier cette idée à la curiosité d’usagers et d’étudiants qui l’ont d'abord explorée, questionnée et détournée
@@ -60,16 +73,17 @@ aria-labelledby="mod_about">
             <br>
             <li> 
                 Ainsi {{ app_metas.title }} est aujourd'hui une application de <strong>data visualisation</strong> de l'ensemble du catalogue 
-                de la bibliothèque de Saint Herblain ainsi que des parcours d'emprunts des utilisateurs.
+                de La Bibliothèque de Saint-Herblain ainsi que des parcours d'emprunts des utilisateurs.
             </li>
             <br>
             <li> 
                 Le premier défi de ce projet était de rendre <strong>graphique</strong> une somme considérable de données de manière interactive, 
                 et de visualiser des données à jour : en effet l'ensemble du catalogue est mis à jour chaque nuit, et les utilisateurs peuvent 
-                faire de nouveaux emprunts à tout moment.
-                Le second enjeu du projet était également de poser les bases d'un outil permettant 
-                l'<strong>exploration</strong> et l'<strong>analyse</strong> des parcours d'emprunts 
-                ainsi que la gestion d'un catalogue pour les professionnels des bibliothèques. 
+                faire de nouveaux emprunts à tout moment qui doivent pouvoir être importables dans {{ app_metas.title }} à la demande.
+                <br>
+                Le second enjeu du projet était également de poser les bases d'un outil permettant à terme 
+                l'<strong>exploration</strong> et l'<strong>analyse</strong> des parcours d'emprunts des utilisateurs,
+                ainsi que la gestion d'un catalogue de manière visuelle pour les professionnels des bibliothèques. 
             </li>
 
         </ul>
@@ -95,12 +109,12 @@ aria-labelledby="mod_about">
             {% include "_realisation.html" %}
         </div>
 
-    <hr>
+    <!-- <hr>
 
     <h3 class="text-center" style="margin-top:30px">
         <a data-dismiss="modal">× revenir à {{ app_metas.title }} ×</a>
     </h3>
-    <br>
+    <br> -->
 
     {% include "_partners.html" %}
     
@@ -137,11 +151,10 @@ aria-labelledby="mod_about">
     
     </h4>
 
-
-    <hr>
+    
     
     <a class="text-center" href="#about_next2">
-        <h2 style="margin-top: 20px; margin-bottom: 20px; color:white">
+        <h2 style="margin-top: 0px; margin-bottom: 30px; color:white">
             <strong><span class="glyphicon glyphicon-menu-down" area-hidden="false"></span></strong>
         </h2>
     </a>

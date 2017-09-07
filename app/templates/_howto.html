@@ -2,7 +2,7 @@
   <ul class="list-unstyled">
 
     <li><span class="label label-default"><span class="glyphicon glyphicon-record" aria-hidden="true"></span></span>
-      chaque point de couleur est une des <strong>{{ basic_stats["count_notices"] }} notices</strong> du catalogue</li>
+      chaque point de couleur 3D est un des <strong>{{ basic_stats["count_notices"] }} ouvrages</strong> du catalogue</li>
     <li><span class="label label-default"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></span>
       chaque couleur représente <strong>une famille</strong> d'ouvrages</li>
     <li><span class="label label-default"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></span>
@@ -82,22 +82,15 @@
 
 </h3>
 
-<hr>
+<!-- 
+  <hr>
 
+  <a class="text-center " href="#_howto_next">
+      <h2 style="margin-top: 30px; margin-bottom: 30px; color:white">
+          <strong><span class="glyphicon glyphicon-menu-down" area-hidden="false"></span></strong>
+      </h2>
+  </a>
+-->
 
-<h3 class="text-center" style="margin-top:30px">
-    <a data-dismiss="modal">× commencer à explorer {{ app_metas.title }} ×</a>
-</h3>
+  
 
-{% if not isUser %}
-
-<h3 class="text-center" style="margin-top:10px">
-    <a class="log_from_howto">× se connecter pour voir votre propre parcours ×</a>
-</h3>
-<h3 class="text-center" style="margin-top:10px">
-    <a class="register_trigger">× se créer un compte ×</a>
-</h3>
-
-{% endif %}
-
-<br>

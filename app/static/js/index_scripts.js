@@ -11,8 +11,8 @@ socket.on('connect', function() {
 });
 
 
-
-
+var isSettingsOpen = false ; 
+var isActivated    = false ; 
 
 $(document).ready( function(){
 
@@ -69,34 +69,64 @@ $(document).ready( function(){
   });
 
 
+  //
+  $(".open_howto").on("click", function(){
+    $.when( $(".modal").modal("hide") )
+    .then( $("#mod_howto").modal("show") )
+  });
+
+  $(".open_about").on("click", function(){
+    $.when( $(".modal").modal("hide") )
+    .then( $("#mod_about").modal("show") )
+  });
+
+  $(".open_intro").on("click", function(){
+    $.when( $(".modal").modal("hide") )
+    .then( $("#mod_intro").modal("show") )
+  });
+
+
+  // settings state
+  $("#btn_settings").on("click", function () {
+    $("#collapseSettings").collapse("toggle") 
+  });
+
+
   // toggle click mode
   $("#btn_click_mode").on("click", function() {
 
     $("#span_click_mode").toggleClass("fa-toggle-off");
     $("#span_click_mode").toggleClass("fa-toggle-on");
 
-    var isActivated = $("#span_click_mode").hasClass("fa-toggle-on") ;
+    isActivated = $("#span_click_mode").hasClass("fa-toggle-on") ;
     // console.log("isActivated", isActivated);
     
     if ( isActivated ) {
       $(".modal").modal("hide") ;
+      $("#collapseSettings").collapse("hide") ;
     //   console.log("activated btn click mode");
     //   $("#btn_click_mode").attr( "title", " clic sur les points : activé " ) ;
     } else {
-    //   console.log("deactivated btn click mode");
+      //   console.log("deactivated btn click mode");
     //   $("#btn_click_mode").attr( "title", " clic sur les points : désactivé " ) ;     
     }
 
   });    
 
   // show howto or user_form at launch
-  var isUser_data = $("#meta_isUser").attr("data") ;
+  var isUser      = $("#meta_isUser").attr("data") ;
+  var isUser_data = $("#meta_isData").attr("data") ;
+
   console.log("--- check if isUser / isUser_data : ", isUser_data);
-  if ( isUser_data === "None" ){
+  if ( isUser === "None" ){
     // $('#mod_intro').modal('show');
-    $('#mod_howto').modal('show');
+    $('#mod_intro').modal('show');
   } else {
-    $('#update_user_form').modal('show');
+    if ( isUser_data == "False" ) {
+      // $('#update_user_form').modal('show');
+      // $('#mod_intro').modal('show');    
+      $('#update_aloes_form').modal('show');    
+    }
   };
 
 

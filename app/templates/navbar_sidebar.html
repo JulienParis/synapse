@@ -109,14 +109,12 @@
 
       <li>
           <button  type="button"
-              class="btn btn-sm navbar-btn btn-link bstooltip no-higlight"
-              data-toggle="modal"
-              data-target="#mod_howto"
+              class="btn btn-sm navbar-btn btn-link bstooltip no-higlight open_intro"
 
               data-trigger='manual'
               data-tooltip="tooltip"
               data-placement="bottom"
-              title="Comment utiliser {{ app_metas.title }} ?"
+              title="introduction "
               data-container="body"
               >
             <i class="fa fa-asterisk fa-lg" area-hidden="true"></i>
@@ -178,6 +176,26 @@
 
     <ul class="nav navbar-nav navbar-right">
 
+
+
+        <li>
+          <button  type="button"
+              class="btn btn-sm navbar-btn btn-link bstooltip no-higlight"
+              data-toggle="modal"
+              data-target="#mod_howto"
+
+              data-trigger='manual'
+              data-tooltip="tooltip"
+              data-placement="bottom"
+              title="Que trouve-t-on dans {{ app_metas.title }} ?"
+              data-container="body"
+              >
+            <i class="fa fa-info-circle fa-lg" area-hidden="true"></i>
+            <!-- <span class="glyphicon glyphicon-info-sign" aria-hidden="true"> -->
+          </button>
+        </li>
+
+
         <li>
           <button type="button"
                   class="btn btn-link btn-sm navbar-btn bstooltip no-higlight"
@@ -217,9 +235,8 @@
       <li>
           <button type="button"
                   class="btn btn-default btn-sm navbar-btn bstooltip no-higlight"
-                  
-                  data-toggle="collapse"
-                  data-target="#collapseSettings"
+                  id="btn_settings"
+
 
                   data-trigger='manual'
                   data-tooltip="tooltip"
@@ -412,21 +429,6 @@
         </a>
       </li>
       
-      <li>
-          <a  role="button"
-              class="bstooltip no-higlight"
-              data-toggle="modal"
-              data-target="#mod_about"
-
-              data-trigger='manual'
-              data-tooltip="tooltip"
-              data-placement="bottom"
-              title="à propos de {{ app_metas.title }}"
-              data-container="body"
-              >
-            <i class="fa fa-copyright fa-lg" area-hidden="true"></i>
-        </a>
-      </li>
 
       <!-- <li>
         <a  href="https://gitlab.com/Julien_P/{{ app_metas.title }}" target="_blank"
@@ -456,18 +458,34 @@
 
       <li>
           <a  role="button"
-              class="bstooltip no-higlight"
-              data-toggle="modal"
-              data-target="#mod_title"
-  
+              class="bstooltip no-higlight open_about"
+
               data-trigger='manual'
               data-tooltip="tooltip"
               data-placement="bottom"
-              title="page de garde de {{ app_metas.title }}"
+              title="à propos de {{ app_metas.title }}"
               data-container="body"
               >
+            <i class="fa fa-question-circle fa-lg" area-hidden="true"></i>
+        </a>
+      </li>
+
+
+      <li>
+          <button role="button"
+                  class="btn btn-sm navbar-btn btn-link bstooltip no-higlight"
+
+                  data-toggle="modal"
+                  data-target="#mod_title"
+      
+                  data-trigger='manual'
+                  data-tooltip="tooltip"
+                  data-placement="bottom"
+                  title="page de garde de {{ app_metas.title }}"
+                  data-container="body"
+              >
             <i class="fa fa-asterisk fa-lg" area-hidden="true"></i>
-          </a>
+          </button>
         </li>
 
 

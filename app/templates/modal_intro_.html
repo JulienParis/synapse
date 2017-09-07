@@ -1,0 +1,157 @@
+<div    class="modal centered "
+        id="mod_intro"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="mod_title">
+
+<div class="modal-dialog" role="document" style="width:55%"> <!-- style="width:80%" -->
+
+<div class=" noshadow"> <!-- loader_modal_div -->
+
+    <div class="modal-body text-center" style="margin-top:10%" >
+
+
+        <div>
+            <img  src="{{ url_for('static', filename='images/logo_index.png') }}" 
+                  style="max-height : 200px ;" >
+        </div>
+        
+        <br>
+
+        <hr>
+
+        <h3 class="" style="color:white ; margin-bottom : 0px">
+            le catalogue de La Bibliothèque de St-Herblain ... <strong> en 3D </strong>
+        </h3>
+        <h3 class="lead" style="color:white ; margin-bottom : 20px">
+            <!-- <br> <i class="fa fa-minus fa-sm" area-hidden="true"></i> -->
+            un projet artistique et expérimental
+            <br>
+            pour naviguer au sein d'une mémoire collective qu'est une bibliothèque, 
+            <br>
+            ici parmi {{ basic_stats["count_notices"] }} ouvrages et {{ basic_stats["count_users"] }} parcours de lectures
+        </h3>
+        <hr> 
+
+        <h3 >
+            <button  
+                type="button" style="color:white ; margin-bottom: 10px"  
+                class="btn btn-lg btn-link bstooltip no-higlight open_howto"
+    
+                data-trigger='manual'
+                data-tooltip="tooltip"
+                data-placement="left"
+                title="Que trouve-t-on dans {{ app_metas.title }} ?"
+                data-container="body"
+                >
+                <i class="fa fa-info-circle fa-lg" area-hidden="false"></i>
+            </button>
+            <button  
+                type="button" style="color:white ; margin-bottom: 10px"  
+                class="btn btn-lg btn-link bstooltip no-higlight open_about"
+
+                data-trigger='manual'
+                data-tooltip="tooltip"
+                data-placement="right"
+                title="à propos de {{ app_metas.title }}"
+                data-container="body"
+                >
+            <i class="fa fa-question-circle fa-lg" area-hidden="false"></i>
+        </button>
+        </h3>
+
+        <hr>
+
+        <br>
+
+        <!-- <div class="row">
+
+            <div class="col-sm-4 col-sm-offset-2">
+                <button class="btn btn-block btn-default"
+                        data-toggle="modal"
+                        data-target="#login_form"
+                        >
+                    ajoutez votre parcours
+                </button>
+            </div>
+
+            <div class="col-sm-4 col-sm-offset-1">
+                <button class="btn btn-block btn-default"
+                        data-toggle="modal"
+                        data-target="#login_form"
+                        >
+                    ajoutez votre parcours
+                </button>
+            </div>
+
+        </div> -->
+
+        <div style="margin-top:0px" id="_howto_next" >
+                
+            <!-- <h3 class="text-center" style="margin-top:30px">
+                <a data-dismiss="modal">× commencer à explorer {{ app_metas.title }} ×</a>
+            </h3> -->
+        
+            {% if not isUser %}
+        
+            <h3 class="text-center" style="margin-top:10px">
+                <a class="log_from_howto">× je voudrais voir mon propre parcours de lectures ×</a>
+            </h3>
+            <!-- <h3 class="text-center" style="margin-top:10px">
+                <a class="register_trigger">× se créer un compte ×</a>
+            </h3> -->
+        
+            {% else %}
+
+
+            {% endif %}
+            
+            <h3 class="text-center" style="margin-top:10px">
+                <a data-dismiss="modal">× je veux juste découvrir {{ app_metas.title }} ×</a>
+            </h3>
+            
+            <br>
+
+        </div>
+
+        <hr>
+        
+            <br>
+            
+            <div class="row" style="margin-top:0px">
+            
+                <a  href="http://www.jpylab.com" target="_blank"
+                class="bstooltip"
+                data-trigger='manual'
+                data-tooltip="tooltip"
+                data-placement="left"
+                title="réalisation : Julien Paris"
+                data-container="body"
+                >            
+                    <img  src="{{ url_for('static', filename='images/logo_jpy.png') }}" style="max-height:55px ; margin: 15px" >
+                </a>
+
+                <a href="http://www.la-bibliotheque.com" target="_blank">   
+                    <img  src="{{ url_for('static', filename='images/logo_hermeland.gif') }}" style="max-height:70px ; margin:15px">
+                </a>
+            
+                <a href="https://www.saint-herblain.fr" target="_blank">            
+                    <img  src="{{ url_for('static', filename='images/logo_st_herblain.png') }}" style="max-height:70px ; margin:15px">
+                </a>
+                
+                <a href="https://www.lecolededesign.com" target="_blank">
+                    <img  src="{{ url_for('static', filename='images/logo_ecole_design.png') }}" style="max-height:70px ; margin:15px">
+                </a>
+            
+                <a href="http://www.stereolux.org" target="_blank">            
+                    <img  src="{{ url_for('static', filename='images/logo_stereolux.png') }}" style="max-height:55px ; margin:15px">
+                </a>
+                
+            </div>
+
+    </div>
+
+</div>
+</div>
+</div><!-- END MODAL LOADER -->
+<!-- END MODAL TITLE -->

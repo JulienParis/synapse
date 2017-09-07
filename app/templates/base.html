@@ -16,8 +16,9 @@
     <meta name="keywords"    content="{{ app_metas.metas }}">
     <meta name="author"      content="{{ app_metas.authors }}">
     <meta name="description" content="{{ app_metas.description }}">
-    <meta id="meta_isUser"   data="{{ isUser }}" >
-
+    <meta id="meta_isUser"   data="{{ is_user_meta }}" >
+    <meta id="meta_isData"   data="{{ is_userdata }}" >
+    
     <!-- JQUERY  -->
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <!-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script> -->
@@ -118,6 +119,7 @@
   	<!-- MODALS --------------------------------------------------------------------- -->
     
     
+    {% include "modal_intro_.html" %}
     {% include "modal_title.html" %}
     {% include "modal_howto.html" %}
     {% include "modal_about.html" %}
@@ -131,7 +133,7 @@
         {% include 'modal_admin.html'%}
       {% endif %}
     {% else %}
-      {% include "modal_intro.html" %}
+      <!-- { % include "modal_intro.html" % } -->
       {% include 'modal_login.html'%}
       {% include 'modal_register.html'%}
     {% endif %}

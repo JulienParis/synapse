@@ -1151,14 +1151,14 @@ preload_notices( function(json) {
     // CLICKABLE SPRITES
     function onDocumentClick ( event ) {
         
-        var isActivated = $("#span_click_mode").hasClass("fa-toggle-on") ;
+        // var isActivated = $("#span_click_mode").hasClass("fa-toggle-on") ;
         console.log("isActivated", isActivated);
 
         // check if modal infos notice already shown or not
         var isModalInfoOpen = $("#mod_info_notice").hasClass("in") ;  
+        var isSettingsOpen = $("#collapseSettings").hasClass('in') ; 
         
-        
-        if ( isActivated && isModalInfoOpen == false ) {
+        if ( isActivated && isModalInfoOpen == false && isSettingsOpen == false) {
 
             var rect = renderer.domElement.getBoundingClientRect();
             mouse.x =   ( ( event.clientX - rect.left ) / ( rect.width  - rect.left ) ) * 2 - 1;
@@ -1317,7 +1317,8 @@ preload_notices( function(json) {
     // RENDER FUNCTION
     function render() {
 
-            
+        $(".close-button").hide() ; 
+
         // UPDATE TIME VALUE IN UNIFORMS
             // var time  = Date.now() * 0.01;
 
