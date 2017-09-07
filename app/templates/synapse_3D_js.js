@@ -45,42 +45,42 @@
     var defaultLineColor     = "#ffffff" ;
     var defaultLineColorUser = "#00a89e" ;
     
-    // var velocityFactor = 1. ;
-    // var scaleFactor    = 1. ;
+    // var vitesse_rotations = 1. ;
+    // var taille_points    = 1. ;
 
     var effectController_animate = {
         // showGroup        : true,
         showHelper       : false,
-        showParticles    : true,
-        showEdges        : true,
-        colorLines       : defaultLineColor , 
-        colorLineUser    : defaultLineColorUser , 
-        transpLines      : defaultLineTransp ,
+        montrer_points    : true,
+        montrer_lignes        : true,
+        couleur_lignes       : defaultLineColor , 
+        votre_parcours    : defaultLineColorUser , 
+        transparence_lignes      : defaultLineTransp ,
         // minDistance     : 120,
         // limitConnections: true,
         // maxConnections  : 10,
         // particleCount   : particleCount,
-        velocityFactor  : .1 ,
-        scaleFactor     : -.6 ,
-        breathing       : 1.5 ,
-        waveFreq        : .1 ,
-        waveAmp         : .65 ,
+        vitesse_rotations  : .1 ,
+        taille_points     : -.6 ,
+        respiration       : 1.5 ,
+        onde_frequence        : .1 ,
+        onde_amplitude         : .65 ,
         // rotationGroup   : 1. ,
     };
 
     var effectController_pause = {
         showHelper       : false,
-        showParticles    : true,
-        showEdges        : true,
-        colorLines       : defaultLineColor , 
-        colorLineUser    : defaultLineColorUser , 
-        transpLines      : defaultLineTransp ,
+        montrer_points    : true,
+        montrer_lignes        : true,
+        couleur_lignes       : defaultLineColor , 
+        votre_parcours    : defaultLineColorUser , 
+        transparence_lignes      : defaultLineTransp ,
         
-        velocityFactor  : .0 ,
-        scaleFactor     : -.6 ,
-        breathing       : .0 ,
-        waveFreq        : .0 ,
-        waveAmp         : .0 ,
+        vitesse_rotations  : .0 ,
+        taille_points     : -.6 ,
+        respiration       : .0 ,
+        onde_frequence        : .0 ,
+        onde_amplitude         : .0 ,
     };
 
     var effectController = effectController_animate ;
@@ -303,11 +303,12 @@ function createShaderMaterial ( constantsGroup,
     var uniforms = {
         time        : { type  : "f"  , value: 0. }, // 1.
         resolution  : { type  : "v2" , value: new THREE.Vector2() },
-        velFactor   : { value : effectController.velocityFactor },
-        scaFactor   : { value : effectController.scaleFactor },
-        breathing   : { value : effectController.breathing },
-        waveFreq    : { value : effectController.waveFreq },
-        waveAmp     : { value : effectController.waveAmp },
+        
+        velFactor   : { value : effectController.vitesse_rotations },
+        scaFactor   : { value : effectController.taille_points },
+        breathing   : { value : effectController.respiration },
+        waveFreq    : { value : effectController.onde_frequence },
+        waveAmp     : { value : effectController.onde_amplitude },
         color       : { value : colorG },
         transp      : { value : transp_ },
 
@@ -723,23 +724,23 @@ preload_notices( function(json) {
 
         var f4 = gui.addFolder(" > animation");
             // f4.add( effectController, "minDistance"   ,  10, 300 , 1       );
-            f4.add( effectController, "velocityFactor",  0.,  2.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "velFactor") ) ;
-            f4.add( effectController, "scaleFactor",    -1.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;
-            f4.add( effectController, "breathing"  ,     0.,  5.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
-            f4.add( effectController, "waveFreq"   ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
-            f4.add( effectController, "waveAmp"    ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "breathing") ) ;
+            f4.add( effectController, "vitesse_rotations",  0.,  2.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "velFactor") ) ;
+            f4.add( effectController, "taille_points",    -1.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;
+            f4.add( effectController, "respiration"  ,     0.,  5.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "respiration") ) ;
+            f4.add( effectController, "onde_frequence"   ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "respiration") ) ;
+            f4.add( effectController, "onde_amplitude"    ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "respiration") ) ;
             f4.open() ;
 
         var f1 = gui.addFolder(" > formes") ;
             // f1.add( effectController, "showGroup"  ).onChange( function( value ) {  group.visible   = value; } );
             // f1.add( effectController, "showHelper" ).onChange(    function( value ) {  groupH.visible        = value; } ).listen();
-            f1.add( effectController, "showParticles" ).onChange( function( value ) {  groupFa3D_.visible    = value; } ).listen();
-            f1.add( effectController, "showEdges" ).onChange(     function( value ) {  groupEdges3D_.visible = value; } ).listen();
+            f1.add( effectController, "montrer_points" ).onChange( function( value ) {  groupFa3D_.visible    = value; } ).listen();
+            f1.add( effectController, "montrer_lignes" ).onChange( function( value ) {  groupEdges3D_.visible = value; } ).listen();
 
         var f2 = gui.addFolder(" > couleurs des lignes");
-            f2.add(      effectController, "transpLines",  0.,  1., 0.01 ).listen();
-            f2.addColor( effectController, "colorLines"    );
-            f2.addColor( effectController, "colorLineUser" );
+            f2.add(      effectController, "transparence_lignes",  0.,  1., 0.01 ).listen();
+            f2.addColor( effectController, "couleur_lignes"    );
+            f2.addColor( effectController, "votre_parcours" );
             // f2.open() ;
 
         var f3 = gui.addFolder(" > couleurs des points");
@@ -1263,13 +1264,13 @@ preload_notices( function(json) {
     //                 // console.log("--- traverse / node : ", node );
 
     //                 if ( factorName == "velFactor" ) {
-    //                     node.material.uniforms.velFactor.value  = effectController.velocityFactor ;
+    //                     node.material.uniforms.velFactor.value  = effectController.vitesse_rotations ;
     //                 }
     //                 if ( factorName == "scaFactor" ) {
-    //                     node.material.uniforms.scaFactor.value  = effectController.scaleFactor ;
+    //                     node.material.uniforms.scaFactor.value  = effectController.taille_points ;
     //                 }
-    //                 if ( factorName == "breathing" ) {
-    //                     node.material.uniforms.breathing.value  = effectController.breathing ;
+    //                 if ( factorName == "respiration" ) {
+    //                     node.material.uniforms.respiration.value  = effectController.respiration ;
     //                 }
 
     //             }
@@ -1345,11 +1346,11 @@ preload_notices( function(json) {
                     if ( node.name != "helper" ) {
                         // console.log("--- traverse / node : ", node );
                         node.material.uniforms.time.value       = time_shader ; // replace time_shader by 1. for debugging 
-                        node.material.uniforms.velFactor.value  = .01 + effectController.velocityFactor ;
-                        node.material.uniforms.scaFactor.value  = effectController.scaleFactor ;
-                        node.material.uniforms.breathing.value  = effectController.breathing ;
-                        node.material.uniforms.waveFreq.value   = effectController.waveFreq ;
-                        node.material.uniforms.waveAmp.value    = effectController.waveAmp ;
+                        node.material.uniforms.velFactor.value  = .01 + effectController.vitesse_rotations ;
+                        node.material.uniforms.scaFactor.value  = effectController.taille_points ;
+                        node.material.uniforms.breathing.value  = effectController.respiration ;
+                        node.material.uniforms.waveFreq.value   = effectController.onde_frequence ;
+                        node.material.uniforms.waveAmp.value    = effectController.onde_amplitude ;
                         
                         // update colors families
                         if ( node instanceof THREE.Points  ) {
@@ -1365,12 +1366,12 @@ preload_notices( function(json) {
 
                         // update color transparency lines
                         if ( node instanceof THREE.Line && node.is_from_user === true ) {
-                            var newColorLineU = new THREE.Color( effectController.colorLineUser  )  ;
+                            var newColorLineU = new THREE.Color( effectController.votre_parcours  )  ;
                             node.material.uniforms.color.value = newColorLineU ;
                         } else if ( node instanceof THREE.Line && node.is_from_user === false  ) {
-                            var newColorLines = new THREE.Color( effectController.colorLines  )  ;   
+                            var newColorLines = new THREE.Color( effectController.couleur_lignes  )  ;   
                             node.material.uniforms.color.value  = newColorLines ;                        
-                            node.material.uniforms.transp.value = effectController.transpLines ;
+                            node.material.uniforms.transp.value = effectController.transparence_lignes ;
                         }
                     }
                 };
@@ -1380,12 +1381,12 @@ preload_notices( function(json) {
                 // update color transparency lines
                 // if ( node instanceof THREE.Line && node.name != "helper" ) {
                 //     if ( node.is_from_user === true ) {
-                //         var newColorLineU = new THREE.Color( effectController.colorLineUser  )  ;
+                //         var newColorLineU = new THREE.Color( effectController.votre_parcours  )  ;
                 //         node.material.uniforms.color.value = newColorLineU ;
                 //     } else {
-                //         var newColorLines = new THREE.Color( effectController.colorLines  )  ;   
+                //         var newColorLines = new THREE.Color( effectController.couleur_lignes  )  ;   
                 //         node.material.uniforms.color.value  = newColorLines ;                        
-                //         node.material.uniforms.transp.value = effectController.transpLines ;
+                //         node.material.uniforms.transp.value = effectController.transparence_lignes ;
                 //     }
                 // }
 

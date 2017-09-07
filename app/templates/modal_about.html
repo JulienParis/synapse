@@ -54,34 +54,40 @@ aria-labelledby="mod_about">
                 <a href="http://www.la-bibliotheque.com" target="_blank">
                     <strong>La Bibliothèque de Saint-Herblain </strong>
                 </a>
-                dans le cadre du cycle "Le livre dans 5 ans".
+                dans le cadre du cycle "Le livre et la lecture dans 5 ans". 
             </li>
             
-            <br>            
+            <br>    
+
             <li> 
-                {{ app_metas.title | title }} est le fruit d’une idée née de l’observation des pratiques de lecture. L’opportunité du cycle
+                {{ app_metas.title | title }}
+                est le fruit d’une question née de l’observation des pratiques de lecture : 
+                parmi les centaines de milliers d'ouvrages contenus dans une bibliothèque, comment représenter les emprunts de chacun ? 
+                L’opportunité du cycle
                 <strong><a href="https://www.stereolux.org/cycle-livre-lecture" target="_blank">
                     "Le livre et la lecture dans 5 ans" 
                 </a></strong>
                 initié par Mobilis en octobre 2016 a permis à La Bibliothèque de
-                confier cette idée à la curiosité d’usagers et d’étudiants qui l’ont d'abord explorée, questionnée et détournée
+                confier cette question à la curiosité d’usagers et d’étudiants qui l’ont d'abord explorée, questionnée et détournée
                 pour faire de ce bourgeon d’intuition la maquette d’un prototype. 
-                Cette première maquette a ensuite été interprétée par le développeur, 
-                qui a réalisé ce prototype d'un <strong>espace 3D interactif</strong>, mouvant, semi-géométrique, semi-organique.
+                <br>
+                Cette première maquette a ensuite été interprétée et enrichie par le développeur, Julien Paris, 
+                qui a réalisé ce prototype d'un <strong>espace 3D interactif</strong>, mouvant ou liquide, semi-géométrique, semi-organique.
             </li>    
             
-            <br>
-            <li> 
-                Ainsi {{ app_metas.title }} est aujourd'hui une application de <strong>data visualisation</strong> de l'ensemble du catalogue 
-                de La Bibliothèque de Saint-Herblain ainsi que des parcours d'emprunts des utilisateurs.
+            <li>
+                <a class="text-center" href="#about_next">
+                    <h2 style="margin-top: 20px; margin-bottom: 20px; color:white">
+                        <strong><span class="glyphicon glyphicon-menu-down" area-hidden="false"></span></strong>
+                    </h2>
+                </a>
             </li>
-            <br>
-            <li> 
-                <strong>Le premier défi</strong> de ce projet était artistique et technique : rendre <strong>graphique</strong> et <strong>vivant</strong> 
+            
+            <li id="about_next"> 
+                <strong>Le premier défi</strong> de ce projet était artistique et technique : rendre <strong>graphique</strong> et <strong>"vivante"</strong> 
                 une somme considérable de données de manière interactive, 
-                et de mettre continuellement ces données à jour : 
-                en effet l'ensemble du catalogue est mis à jour chaque nuit, et les utilisateurs peuvent 
-                faire de nouveaux emprunts à tout moment qui doivent pouvoir 
+                et de mettre continuellement ces données à jour.
+                En effet l'ensemble du catalogue est mis à jour chaque nuit, et les nouveaux emprunts des lecteurs doivent pouvoir 
                 être importés dans {{ app_metas.title }} à la demande.
                 <br>
                 <strong>Le second enjeu</strong> du projet était également de poser les bases d'un outil permettant à terme 
@@ -89,12 +95,21 @@ aria-labelledby="mod_about">
                 ainsi que la gestion d'un catalogue de manière visuelle pour les professionnels des bibliothèques. 
             </li>
 
+            <br>
+            
+            <li> 
+                {{ app_metas.title | title }} est dans sa version actuelle (<em>{{ app_metas.version }}</em>) une application de <strong>data visualisation</strong> de l'ensemble du catalogue 
+                de La Bibliothèque de Saint-Herblain ({{ basic_stats["count_notices"] }} ouvrages à ce jour) 
+                ainsi que des parcours d'emprunts des utilisateurs ({{ basic_stats["count_users"] }} parcours à ce jour).
+            </li>
+
+
         </ul>
     </h3>
 
 
 
-    <a class="text-center " href="#about_next">
+    <a class="text-center " href="#about_next1">
         <h2 style="margin-top: 40px; margin-bottom: 50px; color:white">
                 <strong><span class="glyphicon glyphicon-menu-down" area-hidden="false"></span></strong>
         </h2>
@@ -108,7 +123,7 @@ aria-labelledby="mod_about">
 
     <hr>
 
-        <div id="about_next">
+        <div id="about_next1">
             {% include "_realisation.html" %}
         </div>
 
@@ -121,10 +136,16 @@ aria-labelledby="mod_about">
 
     {% include "_partners.html" %}
     
+
+    <a class="text-center" href="#about_next2">
+        <h2 style="margin-top: 0px; margin-bottom: 30px; color:white">
+            <strong><span class="glyphicon glyphicon-menu-down" area-hidden="false"></span></strong>
+        </h2>
+    </a>
+
     <hr>
-
-
-    <h3 class="" style="color:white">
+    
+    <h3 class="" style="color:white" id="about_next2">
             <strong> remerciements </strong>
     </h3>
     
@@ -154,18 +175,11 @@ aria-labelledby="mod_about">
     
     </h4>
 
-    
-    
-    <a class="text-center" href="#about_next2">
-        <h2 style="margin-top: 0px; margin-bottom: 30px; color:white">
-            <strong><span class="glyphicon glyphicon-menu-down" area-hidden="false"></span></strong>
-        </h2>
-    </a>
 
     <hr>
 
-    <h3 class="" style="color:white" id="about_next2">
-            <strong>technologies utilisées </strong>
+    <h3 class="" style="color:white" >
+            <strong>technologies utilisées</strong>
     </h3>
 
     <h4 class="text-justify" style="color:white ; margin-left: 80px  ; margin-right: 80px ">
@@ -173,7 +187,7 @@ aria-labelledby="mod_about">
         <ul class="list-unstyled">
             
             <li> 
-                <em>Python</em> : Flask, Pandas, Zeep, Flask-MySQLdb, Pymongo, APScheduler, flask-socketIO, Gunicorn, Eventlet
+                <em>Python</em> : Flask, Pandas, Zeep, Flask-MySQLdb, Pymongo, APScheduler, Flask-socketIO, Gunicorn, Eventlet
                 <span class="fa fa-circle fa-sm" area-hidden="false"></span>
                 
                 <em>Javascript</em> : Three.js, Datatables.js, Jquery, Socket-IO
@@ -205,13 +219,14 @@ aria-labelledby="mod_about">
         <ul class="list-unstyled">
             
             <li> 
-                Pour des raisons de sécurité synapse dépose dans des cookies de session provisoires 
+                Pour améliorer votre navigation et pour des raisons de sécurité
+                synapse dépose dans des cookies de session provisoires chiffrés 
                 des données sur vos emprunts, 
                 ainsi que votre numéro de carte de bibliothèque et votre email.
                 <span class="fa fa-circle fa-sm" area-hidden="false"></span>                
                 L'application synapse chiffre votre mot de passe 
                 et interdit à quiconque autre que vous-même de consulter votre historique
-                ou de le mettre à jour.
+                ou de le mettre à jour s'il ne possède pas vos mots de passe.
                 <span class="fa fa-circle fa-sm" area-hidden="false"></span>                
                 Tous les parcours d'emprunts sont anonymisés, 
                 et les parcours affichés le sont à titre purement déclaratif.
@@ -248,7 +263,9 @@ aria-labelledby="mod_about">
             <li class="text-center">
                 <span class="fa fa-circle fa-sm" area-hidden="false"></span>
                 <br><br>    
-                <em>développement & déploiement de l'application <br> environ 26 jours</em>
+                <em>développement & déploiement de l'application : environ 28 jours</em>
+                <br>
+                <em>conception & suivi de l'exécution : environ 5 jours</em>
             </li>
         </ul>
         <br>
