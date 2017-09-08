@@ -60,21 +60,23 @@
         
           <hr>
 
-          {% if isTeasingOff %}
 
             <div style="margin-top: 20px">
 
               {% if not isUser %}
 
+              {% if isTeasingOff %}
+                <h3 class="text-center" style="margin-top:10px">
+                    <a class="log_from_howto">× je voudrais voir mon propre parcours ×</a>
+                </h3>
+              {% endif %}
               <h3 class="text-center" style="margin-top:10px">
-                  <a class="log_from_howto">× je voudrais voir mon propre parcours ×</a>
-              </h3>
-              <h3 class="text-center" style="margin-top:10px">
-                  <a data-dismiss="modal">× je veux juste découvrir {{ app_metas.title }} ×</a>
+                  <a data-dismiss="modal">× je retourne à {{ app_metas.title }} ×</a>
               </h3>
 
               {% else %}
 
+              
               <h3 class="text-center" style="margin-top:10px">
                   <a data-dismiss="modal">× je retourne à {{ app_metas.title }} ×</a>
               </h3>
@@ -83,8 +85,7 @@
 
 
             </div>
-            
-          {% endif %}
+
 
           <!-- 
 
