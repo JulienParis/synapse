@@ -36,14 +36,16 @@
     
     {% if not isUser %}
 
-    <li>
-      <span class="label label-default"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span></span>                  
-      <span class="label label-default"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></span>                  
-      vous pouvez vous
-      <a class="log_from_howto"><strong> connecter </strong>  </a>
-      ou vous 
-      <a class="register_trigger"><strong> créer un compte </strong>  </a>
-    </li>
+    {% if isTeasingOff %}
+      <li>
+        <span class="label label-default"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span></span>                  
+        <span class="label label-default"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></span>                  
+        vous pouvez vous
+        <a class="log_from_howto"><strong> connecter </strong>  </a>
+        ou vous 
+        <a class="register_trigger"><strong> créer un compte </strong>  </a>
+      </li>
+    {% endif %}
 
     <li><span class="label label-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>                  
       vous pouvez <strong>rechercher</strong> un ouvrage</li>

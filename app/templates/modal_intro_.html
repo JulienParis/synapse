@@ -33,48 +33,8 @@
         </h3>
         <hr> 
 
-        <h3 >
-            <button  
-                type="button" style="color:white ; margin-bottom: 10px"  
-                class="btn btn-lg btn-link bstooltip no-higlight open_howto"
-    
-                data-trigger='manual'
-                data-tooltip="tooltip"
-                data-placement="left"
-                title="Que trouve-t-on dans {{ app_metas.title }} ?"
-                data-container="body"
-                >
-                <i class="fa fa-info-circle fa-lg" area-hidden="false"></i>
-            </button>
-
-            <button  
-                type="button" style="color:white ; margin-bottom: 10px"  
-                class="btn btn-lg btn-link bstooltip no-higlight open_intro"
-
-                data-trigger='manual'
-                data-tooltip="tooltip"
-                data-placement="top"
-                title="pour une meilleure plongée dans {{ app_metas.title }} mettez votre navigateur en mode plein écran"
-                data-container="body"
-                >
-                <i class="fa fa-asterisk fa-lg" area-hidden="false"></i>
-            </button>
-
-            <button  
-                type="button" style="color:white ; margin-bottom: 10px"  
-                class="btn btn-lg btn-link bstooltip no-higlight open_about"
-
-                data-trigger='manual'
-                data-tooltip="tooltip"
-                data-placement="right"
-                title="à propos de {{ app_metas.title }}"
-                data-container="body"
-                >
-                <i class="fa fa-question-circle fa-lg" area-hidden="false"></i>
-            </button>
-        </h3>
-
-        <hr>
+        
+        <!-- <hr> -->
 
         <br>
 
@@ -109,11 +69,24 @@
 
             {% if not isUser %}
             
+                {% if isTeasingOff %}
+                <h3 class="text-center" style="margin-top:10px">
+                    <!-- <a class="log_from_howto">× je voudrais voir mon propre parcours ×</a> -->
+                    <span class="label label-default">                            
+                        <a class="log_from_howto">× PARTICIPEZ ×</a>
+                    </span>
+                </h3>
+                {% endif %}
+
             <h3 class="text-center" style="margin-top:10px">
-                <a class="log_from_howto">× je voudrais voir mon propre parcours ×</a>
-            </h3>
-            <h3 class="text-center" style="margin-top:10px">
-                <a data-dismiss="modal">× je veux juste découvrir {{ app_metas.title }} ×</a>
+
+                {% if isTeasingOff %}
+                    <a data-dismiss="modal">× je découvre {{ app_metas.title }} ×</a>
+                {% else %}
+                    <span class="label label-default">
+                        <a data-dismiss="modal">× je découvre {{ app_metas.title }} ×</a>
+                    </span>
+                {% endif %}
             </h3>
 
             <!-- <h3 class="text-center" style="margin-top:10px">
@@ -128,9 +101,52 @@
 
             {% endif %}
             
-            <br>
+            <!-- <br> -->
 
         </div>
+
+        <h3 >
+            <button  
+                type="button" style="color:white ; margin-bottom: 10px"  
+                class="btn btn-lg btn-link bstooltip no-higlight open_howto"
+    
+                data-trigger='manual'
+                data-tooltip="tooltip"
+                data-placement="left"
+                title="Que trouve-t-on dans {{ app_metas.title }} ?"
+                data-container="body"
+                >
+                <i class="fa fa-info-circle fa-lg" area-hidden="false"></i>
+            </button>
+
+            <button  
+                type="button" style="color:white ; margin-bottom: 10px"  
+                class="btn btn-lg btn-link bstooltip no-higlight open_intro"
+
+                data-trigger='manual'
+                data-tooltip="tooltip"
+                data-placement="bottom"
+                title="pour une meilleure plongée dans {{ app_metas.title }} mettez votre navigateur en mode plein écran"
+                data-container="body"
+                >
+                <i class="fa fa-asterisk fa-lg" area-hidden="false"></i>
+            </button>
+
+            <button  
+                type="button" style="color:white ; margin-bottom: 10px"  
+                class="btn btn-lg btn-link bstooltip no-higlight open_about"
+
+                data-trigger='manual'
+                data-tooltip="tooltip"
+                data-placement="right"
+                title="à propos de {{ app_metas.title }}"
+                data-container="body"
+                >
+                <i class="fa fa-question-circle fa-lg" area-hidden="false"></i>
+            </button>
+        </h3>
+    
+
 
         <hr>
         

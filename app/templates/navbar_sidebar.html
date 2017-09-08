@@ -249,6 +249,9 @@
             </button>
       </li>
       
+
+
+
       {% if isUser != None %}
       <!-- <li>
           <p class="navbar-text" id="navbar-text" >
@@ -274,6 +277,7 @@
 
       {% endif %}
 
+        
       
       <li>
           <button type="button"
@@ -293,6 +297,8 @@
       </li>
 
 
+      
+      
       {% if isUser != None %}
 
       <li>
@@ -332,84 +338,91 @@
 
       {% endif %}
 
-      {% if isUser == None %}
-      <li>
-          <button type="button"
-                  class="btn btn-default btn-sm navbar-btn bstooltip no-higlight"
-                  data-toggle="modal"
-                  data-target="#login_form"
-
-                  data-trigger='manual'
-                  data-tooltip="tooltip"
-                  data-placement="bottom"
-                  title="cliquer pour se connecter"
-                  data-container="body"
-                  >
-              <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
-               <!-- log in -->
-          </button>
-      </li>
-
-      <li>
-          <button type="button"
-                  class="btn btn-warning btn-sm navbar-btn bstooltip no-higlight"
-                  data-toggle="modal"
-                  data-target="#register_form"
-
-                  data-trigger='manual'
-                  data-tooltip="tooltip"
-                  data-placement="bottom"
-                  title="cliquer pour s'enregistrer"
-                  data-container="body"
-                  >
-              <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-               <!-- s'enregistrer -->
-          </button>
-      </li>
-      {% endif %}
 
 
-
-      {% if isAdmin %}
+      {% if isTeasingOff %}
       
-      <!-- TEST LOADER CLOSE_N_LOAD -->
-      <li>
-        <button type="button"
-                class="btn btn-warning btn-sm navbar-btn bstooltip no-higlight close_n_load"
-                id="test_close_loader"
+        {% if isUser == None %}
+        <li>
+            <button type="button"
+                    class="btn btn-default btn-sm navbar-btn bstooltip no-higlight"
+                    data-toggle="modal"
+                    data-target="#login_form"
 
-                data-trigger='manual'
-                data-tooltip="tooltip"
-                data-placement="bottom"
-                title="RESERVÉ ADMIN : test loader"
-                data-container="body"
-                >
-            <span class="glyphicon glyphicon-time" 
-                  aria-hidden="true">
-            </span>
-        </button>
-      </li> 
+                    data-trigger='manual'
+                    data-tooltip="tooltip"
+                    data-placement="bottom"
+                    title="cliquer pour se connecter"
+                    data-container="body"
+                    >
+                <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+                <!-- log in -->
+            </button>
+        </li>
 
-      <!-- RESET DB -->
-      <li>
-        <button type="button"
-                class="btn btn-danger btn-sm navbar-btn bstooltip no-higlight"
-                
-                data-toggle="modal"
-                data-target="#modal_admin"
+        <li>
+            <button type="button"
+                    class="btn btn-warning btn-sm navbar-btn bstooltip no-higlight"
+                    data-toggle="modal"
+                    data-target="#register_form"
 
-                data-trigger='manual'
-                data-tooltip="tooltip"
-                data-placement="bottom"
-                title="RESERVÉ ADMIN : RESET DB"
-                data-container="body"
-                >
-            <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
-        </button>
-      </li>
+                    data-trigger='manual'
+                    data-tooltip="tooltip"
+                    data-placement="bottom"
+                    title="cliquer pour s'enregistrer"
+                    data-container="body"
+                    >
+                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                <!-- s'enregistrer -->
+            </button>
+        </li>
+        {% endif %}
 
 
-      {% endif %}
+
+        {% if isAdmin %}
+        
+        <!-- TEST LOADER CLOSE_N_LOAD -->
+        <li>
+          <button type="button"
+                  class="btn btn-warning btn-sm navbar-btn bstooltip no-higlight close_n_load"
+                  id="test_close_loader"
+
+                  data-trigger='manual'
+                  data-tooltip="tooltip"
+                  data-placement="bottom"
+                  title="RESERVÉ ADMIN : test loader"
+                  data-container="body"
+                  >
+              <span class="glyphicon glyphicon-time" 
+                    aria-hidden="true">
+              </span>
+          </button>
+        </li> 
+
+        <!-- RESET DB -->
+        <li>
+          <button type="button"
+                  class="btn btn-danger btn-sm navbar-btn bstooltip no-higlight"
+                  
+                  data-toggle="modal"
+                  data-target="#modal_admin"
+
+                  data-trigger='manual'
+                  data-tooltip="tooltip"
+                  data-placement="bottom"
+                  title="RESERVÉ ADMIN : RESET DB"
+                  data-container="body"
+                  >
+              <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
+          </button>
+        </li>
+
+        {% endif %}
+      
+      {% endif %} <!-- end isTeasingOff -->
+
+
 
       <!-- <li class="divider-vertical"></li> -->
 

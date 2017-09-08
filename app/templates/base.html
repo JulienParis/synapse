@@ -145,8 +145,10 @@
       {% endif %}
     {% else %}
       <!-- { % include "modal_intro.html" % } -->
-      {% include 'modal_login.html'%}
-      {% include 'modal_register.html'%}
+      {% if isTeasingOff %}
+        {% include 'modal_login.html'%}
+        {% include 'modal_register.html'%}
+      {% endif %}
     {% endif %}
 
     {% include 'modal_add_item.html' %}

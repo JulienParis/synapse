@@ -396,13 +396,21 @@ def get_coll(coll):
 ########################################################################################
 ### ROUTING FUNCTIONS #######################
 
+@app.route('/test/<test_teasing>', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/')
-def index():
+def index(test_teasing=False):
 
     print
     print "I "*70
     print
+
+    ### isTeasing or not
+    isTeasingOff = False
+    if test_teasing == "test_teasing_before_ndw_2017" :
+        isTeasingOff = True
+
+    print "---- INDEX ---- isTeasingOff : %s " % ( isTeasingOff )
 
     print "---- INDEX ---- session : %s " % ( session )
 
@@ -902,12 +910,15 @@ def index():
     is_user_meta = str(isUser)
 
     return render_template('index.html',
+
                             app_metas           = app_metas,
                             app_colors          = app_colors,
                             app_bib_infos       = app_bib_infos,
                             dict_db_user        = dict_db_user,
                             bootstrap_vars      = bootstrap_vars,
                             session_u           = session,
+
+                            isTeasingOff        = isTeasingOff, 
 
                             basic_stats         = basic_stats, 
 
