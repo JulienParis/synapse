@@ -409,6 +409,7 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
         pPositions   = new Float32Array ( particlesLength * 3 );
         pId_o        = new Uint32Array  ( particlesLength     );
         pSelected    = new Float32Array ( particlesLength     );
+        pSearch      = new Float32Array ( particlesLength     );
         
         // pColors      = new Float32Array( particlesLength * 3 );
         // pSizes       = new Float32Array( particlesLength     );
@@ -456,7 +457,8 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
         // console.log(id_o_);
         pId_o[ i ] = id_o_ ;
         
-        // store boolean for isSelected
+        // store boolean for isSelected and isSearch
+        pSearch[ i ]   = 0. ; 
         pSelected[ i ] = 0. ; 
 
         // prestore if is in edges : vertices3UserList from realUserBooksLists
@@ -506,6 +508,7 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
     geomTri_buffer.addAttribute( 'position',   new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) ) ;
     geomTri_buffer.addAttribute( 'id_o',       new THREE.BufferAttribute( pId_o,        1 ) )                    ; //.setDynamic( true ) );
     geomTri_buffer.addAttribute( 'isSelected', new THREE.BufferAttribute( pSelected,    1 ).setDynamic( true ) ) ; //.setDynamic( true ) );
+    geomTri_buffer.addAttribute( 'isSearch',   new THREE.BufferAttribute( pSearch,      1 ).setDynamic( true ) ) ; //.setDynamic( true ) );
     
 
     if ( wireORpoints == "points" ) {
@@ -1202,7 +1205,10 @@ preload_notices( function(json) {
 
             if ( intersects.length > 0 && isAnyModalOpen==false  ) {
             // if ( intersects.length > 0 && isModalInfoOpen==false ) {
-                    
+
+                console.log( " intersects ", intersects )  ;
+                
+                ///////////////// here choose node with minimum size inside list intersect
                 var INTERSECTED = intersects[0] ;
 
                 // get back id_o from point

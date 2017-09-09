@@ -14,8 +14,10 @@ socket.on('connect', function() {
 var isSettingsOpen = false ; 
 var isActivated    = false ; 
 
-$(document).ready( function(){
+var search_Id_o ;
 
+
+$(document).ready( function(){
 
   // 
   function close_n_load ( ) {
@@ -111,7 +113,7 @@ $(document).ready( function(){
   }) ;
 
 
-  // settings state
+  // collapse settings state
   $("#btn_settings").on("click", function () {
     $("#collapseSettings").collapse("toggle") 
   });
@@ -318,7 +320,7 @@ $(document).ready( function(){
   };
 
 
-  // // fades alerts
+  // fades alerts
   window.setTimeout(function() {
       $(".alert_fade").fadeTo(500, 0).slideUp(500, function(){
     $(this).remove();
