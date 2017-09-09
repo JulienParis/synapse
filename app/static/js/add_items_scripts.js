@@ -253,11 +253,8 @@ $(document).ready(function(){
 
     $("#oneref_resume").css("display", "");
 
-    if (resume != "") {
-      $("#_resume").html(resume) ;
-    } else {
-      $("#_resume").html("pas de résumé") ;      
-    };
+    if (resume != "") { $("#_resume").html(resume) ;
+    } else {            $("#_resume").html("pas de résumé") ; };
 
   };
 

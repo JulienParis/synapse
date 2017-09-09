@@ -40,8 +40,9 @@
     var RbasisHalf 	   		= RmarginAngle / 2.;
     var maxCircleRad ;
 
-    var defaultPointSize     = 10. ; // max size for icon
-    var defaultLineTransp    = .35 ;
+    var defaultPointSize     = 3.3 ; // max size for icon
+    var defaultPointSelectedSize = 4.4 ; // max size for icon
+    var defaultLineTransp    = .5 ;
     var defaultLineColor     = "#ffffff" ;
     var defaultLineColorUser = "#00a89e" ;
     
@@ -50,37 +51,39 @@
 
     var effectController_animate = {
         // showGroup        : true,
-        showHelper       : false,
-        montrer_points    : true,
-        montrer_lignes        : true,
-        couleur_lignes       : defaultLineColor , 
-        votre_parcours    : defaultLineColorUser , 
-        transparence_lignes      : defaultLineTransp ,
+        showHelper          : false,
+        montrer_points      : true,
+        montrer_lignes      : true,
+        couleur_lignes      : defaultLineColor , 
+        votre_parcours      : defaultLineColorUser , 
+        transparence_lignes : defaultLineTransp ,
         // minDistance     : 120,
         // limitConnections: true,
         // maxConnections  : 10,
         // particleCount   : particleCount,
-        vitesse_rotations  : .1 ,
-        taille_points     : -.6 ,
-        respiration       : 1.5 ,
-        onde_frequence        : .1 ,
-        onde_amplitude         : .65 ,
+        vitesse_rotations   : .1 ,
+        taille_points       : defaultPointSize , //-.6 ,
+        taille_selectionnes : defaultPointSelectedSize ,
+        respiration         : 1.5 ,
+        onde_frequence      : .2 ,
+        onde_amplitude      : .65 ,
         // rotationGroup   : 1. ,
     };
 
     var effectController_pause = {
-        showHelper       : false,
-        montrer_points    : true,
-        montrer_lignes        : true,
-        couleur_lignes       : defaultLineColor , 
-        votre_parcours    : defaultLineColorUser , 
-        transparence_lignes      : defaultLineTransp ,
+        showHelper          : false,
+        montrer_points      : true,
+        montrer_lignes      : true,
+        couleur_lignes      : defaultLineColor , 
+        votre_parcours      : defaultLineColorUser , 
+        transparence_lignes : defaultLineTransp ,
         
-        vitesse_rotations  : .0 ,
-        taille_points     : -.6 ,
-        respiration       : .0 ,
-        onde_frequence        : .0 ,
-        onde_amplitude         : .0 ,
+        vitesse_rotations   : .0 ,
+        taille_points       : defaultPointSize ,  // -.6 ,
+        taille_selectionnes : defaultPointSelectedSize ,
+        respiration         : .0 ,
+        onde_frequence      : .0 ,
+        onde_amplitude      : .0 ,
     };
 
     var effectController = effectController_animate ;
@@ -301,16 +304,17 @@ function createShaderMaterial ( constantsGroup,
     // console.log( "/// createShaderMaterial / familyIndex" , familyIndex );
 
     var uniforms = {
-        time        : { type  : "f"  , value: 0. }, // 1.
-        resolution  : { type  : "v2" , value: new THREE.Vector2() },
+        time         : { type  : "f"  , value: 0. }, // 1.
+        resolution   : { type  : "v2" , value: new THREE.Vector2() },
         
-        velFactor   : { value : effectController.vitesse_rotations },
-        scaFactor   : { value : effectController.taille_points },
-        breathing   : { value : effectController.respiration },
-        waveFreq    : { value : effectController.onde_frequence },
-        waveAmp     : { value : effectController.onde_amplitude },
-        color       : { value : colorG },
-        transp      : { value : transp_ },
+        velFactor    : { value : effectController.vitesse_rotations },
+        // scaFactor    : { value : effectController.taille_points },
+        selectedSize : { value : effectController.taille_selected },
+        breathing    : { value : effectController.respiration },
+        waveFreq     : { value : effectController.onde_frequence },
+        waveAmp      : { value : effectController.onde_amplitude },
+        color        : { value : colorG },
+        transp       : { value : transp_ },
 
         // familyI     : { value : familyIndex },
         // familiesL   : { value : familiesLength },
@@ -323,7 +327,7 @@ function createShaderMaterial ( constantsGroup,
     } ;
 
     if ( is_wire == false ) {
-        uniforms.size = { value : defaultPointSize } ;
+        uniforms.size      = { value : defaultPointSize } ;
         uniforms.roty_byFa = { value : roty_angleFa } ;
         uniforms.rotx_byGr = { value : rotx_angleGroup } ;
     } ;
@@ -404,7 +408,8 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
     // empty arrays variables
         pPositions   = new Float32Array ( particlesLength * 3 );
         pId_o        = new Uint32Array  ( particlesLength     );
-
+        pSelected    = new Float32Array ( particlesLength     );
+        
         // pColors      = new Float32Array( particlesLength * 3 );
         // pSizes       = new Float32Array( particlesLength     );
         // pFamily      = new Float32Array( particlesLength     ); // those are uniforms --> set in ShaderMaterial
@@ -451,6 +456,9 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
         // console.log(id_o_);
         pId_o[ i ] = id_o_ ;
         
+        // store boolean for isSelected
+        pSelected[ i ] = 0. ; 
+
         // prestore if is in edges : vertices3UserList from realUserBooksLists
         if ( vertices3UserList.indexOf( id_o ) > -1  ) {
             // console.log( "------- id_o is in vertices3UserList  : ", id_o ) ; 
@@ -458,6 +466,8 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
             // console.log( "------- constantsGroup : ", constantsGroup ) ; 
             vertices3Dict[ id_o.toString() ] = { "vertex" : vertex3, "constantsGroup" : constantsGroup } ;
             // console.log( "------- vertices3Dict : ", vertices3Dict ) ; 
+
+            pSelected[ i ] = 3. ; 
         };
 
         vertex3.toArray( pPositions, i * 3 );
@@ -493,8 +503,9 @@ function addPointsCloud( groupNot, constantsGroup, particlesLength, angleFamily,
 
 
     var geomTri_buffer = new THREE.BufferGeometry();
-    geomTri_buffer.addAttribute( 'position',  new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) ) ;
-    geomTri_buffer.addAttribute( 'id_o',      new THREE.BufferAttribute( pId_o,        1 ) )                    ; //.setDynamic( true ) );
+    geomTri_buffer.addAttribute( 'position',   new THREE.BufferAttribute( pPositions,   3 ).setDynamic( true ) ) ;
+    geomTri_buffer.addAttribute( 'id_o',       new THREE.BufferAttribute( pId_o,        1 ) )                    ; //.setDynamic( true ) );
+    geomTri_buffer.addAttribute( 'isSelected', new THREE.BufferAttribute( pSelected,    1 ).setDynamic( true ) ) ; //.setDynamic( true ) );
     
 
     if ( wireORpoints == "points" ) {
@@ -722,28 +733,34 @@ preload_notices( function(json) {
         var customContainer = document.getElementById('guiSettings');
         customContainer.appendChild(gui.domElement);
 
-        var f4 = gui.addFolder(" > animation");
+        var f4 = gui.addFolder(" > animation (effets) ");
             // f4.add( effectController, "minDistance"   ,  10, 300 , 1       );
-            f4.add( effectController, "vitesse_rotations",  0.,  2.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "velFactor") ) ;
-            f4.add( effectController, "taille_points",    -1.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;
-            f4.add( effectController, "respiration"  ,     0.,  5.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "respiration") ) ;
-            f4.add( effectController, "onde_frequence"   ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "respiration") ) ;
-            f4.add( effectController, "onde_amplitude"    ,     0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "respiration") ) ;
+            f4.add( effectController, "vitesse_rotations",   0.,  2.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "velFactor") ) ;
+            // f4.add( effectController, "taille_points",      -1.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;
+            f4.add( effectController, "respiration",         0.,  5.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "respiration") ) ;
+            f4.add( effectController, "onde_frequence",      0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "respiration") ) ;
+            f4.add( effectController, "onde_amplitude",      0.,  1.  , 0.01  ).listen(); // .onChange( onChangeControl(scene, "respiration") ) ;
             f4.open() ;
 
-        var f1 = gui.addFolder(" > formes") ;
+        // var f1 = gui.addFolder(" > formes ") ;
             // f1.add( effectController, "showGroup"  ).onChange( function( value ) {  group.visible   = value; } );
             // f1.add( effectController, "showHelper" ).onChange(    function( value ) {  groupH.visible        = value; } ).listen();
-            f1.add( effectController, "montrer_points" ).onChange( function( value ) {  groupFa3D_.visible    = value; } ).listen();
-            f1.add( effectController, "montrer_lignes" ).onChange( function( value ) {  groupEdges3D_.visible = value; } ).listen();
+            // f1.add( effectController, "taille_selectionnes", 0.,  20.  , 1.  ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;
+            // f1.add( effectController, "montrer_points" ).onChange( function( value ) {  groupFa3D_.visible    = value; } ).listen();
+            // f1.add( effectController, "montrer_lignes" ).onChange( function( value ) {  groupEdges3D_.visible = value; } ).listen();
 
-        var f2 = gui.addFolder(" > couleurs des lignes");
+        var f2 = gui.addFolder(" > parcours de lectures (lignes) ");
+            f2.add( effectController, "montrer_lignes" ).onChange( function( value ) {  groupEdges3D_.visible = value; } ).listen();
             f2.add(      effectController, "transparence_lignes",  0.,  1., 0.01 ).listen();
             f2.addColor( effectController, "couleur_lignes"    );
             f2.addColor( effectController, "votre_parcours" );
             // f2.open() ;
 
-        var f3 = gui.addFolder(" > couleurs des points");
+        var f3 = gui.addFolder(" > ouvrages du catalogue (points) ");
+            f3.add( effectController, "montrer_points" ).onChange( function( value ) {  groupFa3D_.visible = value; } ).listen();
+            f3.add( effectController, "taille_points",       0.,  10.  , 0.1  ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;            
+            f3.add( effectController, "taille_selectionnes", 0.,  20.  , 0.1  ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;
+            
             // $.each( notices_groups_ , function( key , family ) { 
             //     f3.addColor( effectController, key    ).listen(); 
             // });           
@@ -1345,17 +1362,20 @@ preload_notices( function(json) {
 
                     if ( node.name != "helper" ) {
                         // console.log("--- traverse / node : ", node );
-                        node.material.uniforms.time.value       = time_shader ; // replace time_shader by 1. for debugging 
-                        node.material.uniforms.velFactor.value  = .01 + effectController.vitesse_rotations ;
-                        node.material.uniforms.scaFactor.value  = effectController.taille_points ;
-                        node.material.uniforms.breathing.value  = effectController.respiration ;
-                        node.material.uniforms.waveFreq.value   = effectController.onde_frequence ;
-                        node.material.uniforms.waveAmp.value    = effectController.onde_amplitude ;
+                        node.material.uniforms.time.value         = time_shader ; // replace time_shader by 1. for debugging 
+                        node.material.uniforms.velFactor.value    = .01 + effectController.vitesse_rotations ;
+                        // node.material.uniforms.scaFactor.value = effectController.taille_points ;
+                        // node.material.uniforms.size.value         = effectController.taille_points ;
+                        node.material.uniforms.selectedSize.value = effectController.taille_selectionnes ;
+                        node.material.uniforms.breathing.value    = effectController.respiration ;
+                        node.material.uniforms.waveFreq.value     = effectController.onde_frequence ;
+                        node.material.uniforms.waveAmp.value      = effectController.onde_amplitude ;
                         
                         // update colors families
                         if ( node instanceof THREE.Points  ) {
                             var name_group = node.group_name ;
                             var newColorGroup = new THREE.Color(  effectController[ name_group ] ) ;
+                            node.material.uniforms.size.value         = effectController.taille_points ;
                             
                             // if ( node.material.uniforms.color.value === new THREE.Color( "#ffffff" ) ) {
                             //     console.log(" !!! weird color here !!! ", name_group ) 

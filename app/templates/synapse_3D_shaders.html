@@ -200,7 +200,8 @@
     
         uniform   float time      ;
         uniform   float velFactor ;
-        uniform   float scaFactor ;
+        // uniform   float scaFactor ;
+        uniform   float selectedSize ;
         uniform   float breathing ;
         uniform   float waveFreq  ;
         uniform   float waveAmp   ;
@@ -218,7 +219,9 @@
         // attribute float customFrequency;
         // attribute vec3  customVelocity;
     
-    
+        attribute float isSelected ;
+        varying   float isSelectedColor ;
+        
         // varying   vec3  vColor;
         // varying   vec4  famillyC ;
     
@@ -340,10 +343,11 @@
             
             ///////////////////////////////////////
             // update size
-            gl_PointSize    = size  + ( size * waveAmp * .5 * sin( time * .01 * waveFreq * mvPosition.z ) ) ; // + ( size * sin( time * .1 * waveFreq * mvPosition.y  ) );
-            gl_PointSize    = gl_PointSize * ( 1. + scaFactor) ;
-    
-    
+            gl_PointSize    = size  + ( size * waveAmp * sin( time * .01 * waveFreq * mvPosition.z ) ) ; // + ( size * sin( time * .1 * waveFreq * mvPosition.y  ) );
+            // gl_PointSize    = gl_PointSize ; // * ( 1. + scaFactor) ;
+            gl_PointSize    = gl_PointSize + ( isSelected * selectedSize * ( 1. ) ) ;
+
+            isSelectedColor = isSelected ;
     
     
         }
@@ -367,7 +371,8 @@
         
         // uniform   vec4 color ;
         
-
+        varying float isSelectedColor ;
+        
     
         void main() {
 
@@ -376,9 +381,10 @@
             
             // vec3 color = vec3 ( 0.92, 0.47, 0.14 );
 
-            //vec3 color = vec3 ( 1., 1., 1. );
+            //vec3 color = vec3 ( 1.  , 1., 1. );
             
-            gl_FragColor = vec4( color, transp ) ;
+            gl_FragColor = vec4( color , transp ) ;
+            // gl_FragColor = vec4( color * isSelectedColor , transp ) ;
             // gl_FragColor = vec4( color , 1. ) ;
             
             gl_FragColor = gl_FragColor * texture2D( texture, gl_PointCoord ) ;
@@ -435,7 +441,7 @@
 
     uniform   float time      ;
     uniform   float velFactor ;
-    uniform   float scaFactor ;
+    // uniform   float scaFactor ;
     uniform   float breathing ;
     uniform   float waveFreq  ;
     uniform   float waveAmp   ;
