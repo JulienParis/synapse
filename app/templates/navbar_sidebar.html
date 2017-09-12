@@ -107,7 +107,7 @@
       <!-- <li class="divider-vertical"></li> -->
 
 
-      <li>
+      <!-- <li>
           <button  type="button"
               class="btn btn-sm navbar-btn btn-link bstooltip no-higlight open_intro"
 
@@ -119,7 +119,7 @@
               >
             <i class="fa fa-asterisk fa-lg" area-hidden="true"></i>
           </button>
-      </li>
+      </li> -->
 
 
       <!-- <li class="divider-vertical"></li> -->
@@ -187,7 +187,7 @@
               data-trigger='manual'
               data-tooltip="tooltip"
               data-placement="bottom"
-              title="Que trouve-t-on dans {{ app_metas.title }} ?"
+              title="comment utiliser {{ app_metas.title | title }} ?"
               data-container="body"
               >
             <i class="fa fa-info-circle fa-lg" area-hidden="true"></i>
@@ -204,7 +204,7 @@
                   data-trigger='manual'
                   data-tooltip="tooltip"
                   data-placement="bottom"
-                  title="activer / désactiver le clic sur les points (expérimental)"
+                  title="activez / désactivez le clic sur les points (expérimental)"
                   data-container="body"
                   >
             <span class="fa fa-toggle-off fa-xl" 
@@ -241,7 +241,7 @@
                   data-trigger='manual'
                   data-tooltip="tooltip"
                   data-placement="bottom"
-                  title="cliquer pour modifier les réglages de l'animation (couleurs, effets, ...)"
+                  title="modifiez les réglages de l'animation (couleurs, effets, ...)"
                   data-container="body"
                   >
               <!-- <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> -->
@@ -288,7 +288,7 @@
                   data-trigger='manual'
                   data-tooltip="tooltip"
                   data-placement="bottom"
-                  title="{% if isUser != None %} rechercher et ajouter manuellement des titres à votre parcours {% else %} rechercher un ouvrage {% endif %}"
+                  title="{% if isUser != None %} recherchez et ajoutez manuellement des documents à votre parcours {% else %} recherchez un document {% endif %}"
                   data-container="body"
                   >
               <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
@@ -327,7 +327,7 @@
                   data-trigger='manual'
                   data-tooltip="tooltip"
                   data-placement="bottom"
-                  title="cliquer ici pour vous déconnecter"
+                  title="cliquez ici pour vous déconnecter"
                   data-container="body"
                   >
 
@@ -352,7 +352,7 @@
                     data-trigger='manual'
                     data-tooltip="tooltip"
                     data-placement="bottom"
-                    title="cliquer pour se connecter"
+                    title="cliquez pour vous connecter"
                     data-container="body"
                     >
                 <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
@@ -369,7 +369,7 @@
                     data-trigger='manual'
                     data-tooltip="tooltip"
                     data-placement="bottom"
-                    title="cliquer pour s'enregistrer"
+                    title="cliquez pour vous enregistrer"
                     data-container="body"
                     >
                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
@@ -435,7 +435,7 @@
               data-trigger='manual'
               data-tooltip="tooltip"
               data-placement="bottom"
-              title="télécharger une capture d'écran de Synapse"
+              title="téléchargez une capture d'écran de synapse"
               data-container="body"
               >
             <i class="fa fa-camera fa-lg" aria-hidden="true"></i>

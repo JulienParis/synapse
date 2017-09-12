@@ -4,11 +4,11 @@
         role="dialog"
         aria-labelledby="mod_title">
 
-<div class="modal-dialog" role="document" style="width:55%"> <!-- style="width:80%" -->
+<div class="modal-dialog" role="document" style="width:65%"> <!-- style="width:80%" -->
 
 <div class=" noshadow"> <!-- loader_modal_div -->
 
-    <div class="modal-body text-center" style="margin-top:10%" >
+    <div class="modal-body text-center" style="margin-top:0%" >
 
 
         <div>
@@ -21,16 +21,38 @@
         <hr>
 
         <h3 class="" style="color:white ; margin-bottom : 0px">
-            La Bibliothèque de St-Herblain vous dévoile son catalogue ... <strong> en 3D </strong>
+            <!-- La Bibliothèque de St-Herblain vous dévoile son catalogue ... <strong> en 3D </strong> -->
+            Synapse – La collection en 3D –
         </h3>
-        <h3 class="lead" style="color:white ; margin-bottom : 20px">
+        <h3 class="lead" style="color:white ; margin-bottom : 20px ; font-size : 19px ">
             <!-- <br> <i class="fa fa-minus fa-sm" area-hidden="true"></i> -->
-            un projet artistique et expérimental
-            <br>
-            pour naviguer au sein de la mémoire collective qu'est votre bibliothèque, 
-            <br>
-            ici parmi {{ basic_stats["count_notices"] }} ouvrages et {{ basic_stats["count_users"] }} parcours de lectures
+            <!-- un projet artistique et expérimental <br>
+            pour naviguer au sein de la mémoire collective qu'est votre bibliothèque,<br>
+            ici parmi {{ basic_stats["count_notices"] }} ouvrages et {{ basic_stats["count_users"] }} parcours de lectures -->
+
+            Visualisez d’un seul regard l’ensemble des documents  de La Bibliothèque dans un univers en 3D. <br>
+            Chaque point représente un document, chaque couleur une famille documentaire ou une thématique. <br>
+            Synapse c’est autour de 145 000 références en mouvement, mises à jour quotidiennement. <br>
+            Parcourez cet espace en vous  approchant des formes, en vous en éloignant, en les contournant. <br>
+            Elles contiennent ce que vous avez lu, regardé ou écouté et tout ce qu’il vous reste à découvrir.
+
         </h3>
+
+        <h3 class="" style="color:white ; margin-bottom : 0px">
+            Synapse – PLUS que la collection en 3D –
+        </h3>
+        <h3 class="lead" style="color:white ; margin-bottom : 20px ; font-size : 19px ">
+            
+            Dans le cadre de la Nantes Digital Week, Synapse vous offrira davantage qu’une exploration <br>
+            en invitant chacun d’entre vous à enrichir cette visualisation.<br>
+            Mais pour cela, <br>
+            <strong>Samedi 16 septembre </strong><br>
+            Rendez-vous à la médiathèque Charles-Gautier-Hermeland <br>
+            de 10h à 12h et de 14h à 19h et en ligne sur <br>
+            <strong><a href="http://www.la-bibliotheque.com" target="_blank" class="">la-bibliotheque.com</a></strong>
+             
+        </h3>
+
         <hr> 
 
         
@@ -81,10 +103,10 @@
             <h3 class="text-center" style="margin-top:10px">
 
                 {% if isTeasingOff %}
-                    <a data-dismiss="modal">× je découvre {{ app_metas.title }} ×</a>
+                    <a data-dismiss="modal">× découvreZ {{ app_metas.title }} ×</a>
                 {% else %}
                     <span class="label label-default">
-                        <a data-dismiss="modal">× JE DECOUVRE {{ app_metas.title | upper }} ×</a>
+                        <a data-dismiss="modal">× DECOUVREZ {{ app_metas.title | upper }} ×</a>
                     </span>
                 {% endif %}
             </h3>
@@ -113,7 +135,7 @@
                 data-trigger='manual'
                 data-tooltip="tooltip"
                 data-placement="left"
-                title="Que trouve-t-on dans {{ app_metas.title }} ?"
+                title="comment utiliser {{ app_metas.title }} ?"
                 data-container="body"
                 >
                 <i class="fa fa-info-circle fa-lg" area-hidden="false"></i>
@@ -139,7 +161,7 @@
                 data-trigger='manual'
                 data-tooltip="tooltip"
                 data-placement="right"
-                title="à propos de {{ app_metas.title }}"
+                title="à propos du projet {{ app_metas.title }}"
                 data-container="body"
                 >
                 <i class="fa fa-question-circle fa-lg" area-hidden="false"></i>
@@ -182,7 +204,7 @@
                 </a>
                 
                 <a href="https://www.mobilis-paysdelaloire.fr" target="_blank">            
-                    <img  src="{{ url_for('static', filename='images/logo_mobilis.png') }}" style="max-height:55px ; margin:15px">
+                    <img  src="{{ url_for('static', filename='images/logo_mobilis_.png') }}" style="max-height:55px ; margin:15px">
                 </a>
 
             </div>

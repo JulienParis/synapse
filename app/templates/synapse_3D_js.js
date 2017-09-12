@@ -752,14 +752,14 @@ preload_notices( function(json) {
             // f1.add( effectController, "montrer_points" ).onChange( function( value ) {  groupFa3D_.visible    = value; } ).listen();
             // f1.add( effectController, "montrer_lignes" ).onChange( function( value ) {  groupEdges3D_.visible = value; } ).listen();
 
-        var f2 = gui.addFolder(" > parcours de lectures (lignes) ");
+        var f2 = gui.addFolder(" > parcours (lignes) ");
             f2.add( effectController, "montrer_lignes" ).onChange( function( value ) {  groupEdges3D_.visible = value; } ).listen();
             f2.add(      effectController, "transparence_lignes",  0.,  1., 0.01 ).listen();
             f2.addColor( effectController, "couleur_lignes"    );
             f2.addColor( effectController, "votre_parcours" );
             // f2.open() ;
 
-        var f3 = gui.addFolder(" > ouvrages du catalogue (points) ");
+        var f3 = gui.addFolder(" > documents de la collection (points) ");
             f3.add( effectController, "montrer_points" ).onChange( function( value ) {  groupFa3D_.visible = value; } ).listen();
             f3.add( effectController, "taille_points",       0.,  10.  , 0.1  ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;            
             f3.add( effectController, "taille_selectionnes", 0.,  20.  , 0.1  ).listen(); // .onChange( onChangeControl(scene, "scaFactor") ) ;

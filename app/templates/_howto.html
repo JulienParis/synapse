@@ -2,34 +2,36 @@
   <ul class="list-unstyled">
 
     <li><span class="label label-default"><span class="glyphicon glyphicon-record" aria-hidden="true"></span></span>
-      chaque point de couleur 3D est un des <strong>{{ basic_stats["count_notices"] }} ouvrages</strong> du catalogue</li>
+      chaque point de couleur représente un des <strong>{{ basic_stats["count_notices"] }} documents</strong> de la collection</li>
+    <li><span class="label label-default"><span class="glyphicon glyphicon-record" aria-hidden="true"></span></span>
+      les points plus grands appartiennent à un ou plusieurs des <strong>{{ basic_stats["count_users"] }} parcours</strong> </li>
     <li><span class="label label-default"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></span>
-      chaque couleur représente <strong>une famille</strong> d'ouvrages</li>
+      chaque couleur représente <strong>une famille</strong> documentaire ou une thématique</li>
     <li><span class="label label-default"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></span>
-      les traits blancs représentent les <strong>emprunts</strong> des utilisateurs de {{ app_metas.title }} </li>
+      les traits blancs représentent les <strong>parcours</strong> des usagers </li>
 
     <br>
       
     <li>
       <span class="label label-default"><span class="glyphicon glyphicon-move" aria-hidden="true"></span></span>                  
       <span class="label label-default"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span></span>                  
-      vous pouvez <strong>bouger</strong> autour de synapse ou <strong>zoomer</strong> avec la souris </li>
+      vous pouvez vous <strong>déplacer</strong> dans synapse et <strong>zoomer</strong> avec la souris </li>
     
     <li><span class="label label-default"><span class="fa fa-toggle-on fa-md" aria-hidden="true"></span></span>                  
-      pour <strong> activer ou désactiver</strong> le clic pour voir la <strong>fiche</strong> d'un ouvrage (expérimental) </li>
+      pour <strong>lire les références</strong> le clic pour voir la <strong>fiche</strong> d'un ouvrage (expérimental) </li>
       
     <li>
       <span class="label label-default"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></span>                  
       <span class="label label-default"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></span>                  
-      vous pouvez <strong>mettre en pause</strong> ou <strong> reprendre </strong> l'animation </li>
+      vous pouvez <strong>mettre en pause</strong> l'animation </li>
     
 
     <!-- <li><span class="label label-default"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span></span>                   -->
     <li><span class="label label-default"><span class="fa fa-sliders fa-lg" aria-hidden="true"></span></span>                  
-      vous pouvez modifier les <strong>réglages de l'animation</strong> (couleurs, effets... ) </li>
+      vous pouvez changer l'<strong>apparence de l'animation</strong> en modifiant les réglages</li>
 
     <li><span class="label label-default"><span class="glyphicon glyphicon-camera" aria-hidden="true"></span></span>                  
-      vous pouvez <strong>prendre en photo</strong> l'animation et <strong>télécharger</strong> l'image</li>
+      vous pouvez <strong>prendre en photo</strong> une vue de synapse et la <strong>télécharger</strong></li>
 
     <br>
     
@@ -48,7 +50,7 @@
       {% endif %}
 
       <li><span class="label label-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>                  
-        vous pouvez <strong>rechercher</strong> un ouvrage</li>
+        vous pouvez <strong>rechercher</strong> un document</li>
 
     {% else %}
 
