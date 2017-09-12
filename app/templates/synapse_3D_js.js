@@ -41,8 +41,8 @@
     var maxCircleRad ;
 
     var defaultPointSize     = 3.3 ; // max size for icon
-    var defaultPointSelectedSize = 4.4 ; // max size for icon
-    var defaultLineTransp    = .5 ;
+    var defaultPointSelectedSize = 2.6 ; // max size for icon
+    var defaultLineTransp    = .25 ;
     var defaultLineColor     = "#ffffff" ;
     var defaultLineColorUser = "#00a89e" ;
     
