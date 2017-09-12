@@ -8,7 +8,7 @@
 
 <div class=" noshadow"> <!-- loader_modal_div -->
 
-    <div class="modal-body text-center" style="margin-top:0%" >
+    <div class="modal-body text-center" style="margin-top:-3%" >
 
 
         <div>
@@ -38,6 +38,25 @@
 
         </h3>
 
+        {% if isTeasingOff %}
+        <h3 class="" style="color:white ; margin-bottom : 0px">
+            Synapse – Vous parmi ces collections –
+        </h3>
+        <h3 class="lead" style="color:white ; margin-bottom : 20px ; font-size : 19px ">
+            
+            Vous avez aimé ce livre, ce jeu, cette œuvre et l’un vous a conduit à l’autre. <br>
+            Explorez cet espace, connectez-vous et enrichissez cette data visualisation collaborative. <br>
+            Votre ligne se forme parmi les lignes d’autres usagers. <br>
+            Synapse est ouvert à tous. Pas besoin de carte d’abonné pour participer.  <br>
+            Recherchez un document et ajoutez-le à votre parcours. <br>
+            Si vous êtes inscrit à 
+            <strong><a href="http://www.la-bibliotheque.com" target="_blank" class="">La Bibliothèque</a></strong>, 
+            vous pouvez sélectionner dans votre historique d’emprunts les documents que vous avez le plus aimés.
+             
+        </h3>
+
+        {% else %}
+
         <h3 class="" style="color:white ; margin-bottom : 0px">
             Synapse – PLUS que la collection en 3D –
         </h3>
@@ -52,6 +71,8 @@
             <strong><a href="http://www.la-bibliotheque.com" target="_blank" class="">la-bibliotheque.com</a></strong>
              
         </h3>
+
+        {% endif %}
 
         <hr> 
 
