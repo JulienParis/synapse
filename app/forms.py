@@ -55,7 +55,7 @@ class UserRegisterForm(FlaskForm):
         ],
         render_kw={'class': HTMLclass_form_control, 'placeholder': u'votre ' + dict_db_user[key_password] + u' (min. 4 caractères)'  }
     )
-    confirmPassword = PasswordField ('repeat Password', render_kw={'class': HTMLclass_form_control, 'placeholder':u'répéter votre ' + dict_db_user[key_password] } )
+    confirmPassword = PasswordField ('repeat Password', render_kw={'class': HTMLclass_form_control, 'placeholder':u'répétez votre ' + dict_db_user[key_password] } )
     #remember_me     = BooleanField  ( 'remember_me', default=False )
 
 class UserUpdateForm(FlaskForm):
@@ -70,7 +70,7 @@ class UserUpdateForm(FlaskForm):
         ],
         render_kw={'class': HTMLclass_form_control, 'placeholder': u'votre nouveau ' + dict_db_user[key_password] + u" (optionnel)"}
     )
-    confirmPassword = PasswordField ('repeat Password', render_kw={'class': HTMLclass_form_control, 'placeholder':u'répéter votre nouveau ' + dict_db_user[key_password] } )
+    confirmPassword = PasswordField ('repeat Password', render_kw={'class': HTMLclass_form_control, 'placeholder':u'répétez votre nouveau ' + dict_db_user[key_password] } )
     #remember_me     = BooleanField  ( 'remember_me', default=False )
 
 class UserHistoryAloesForm(FlaskForm):

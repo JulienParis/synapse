@@ -68,9 +68,9 @@
         <h3 class="modal-title text-center"
             id="update_aloes_form">
             {% if isUser != None %}
-              ajouter un ouvrage à votre liste personnelle
+              ajoutez un ouvrage à votre liste personnelle
             {% else %}
-              rechercher un ouvrage
+              recherchez un ouvrage
             {% endif %}
         </h3>
 
@@ -102,9 +102,10 @@
                 <button role="button"
                         class="btn btn-block btn-default btn-sm"
                         id="ckeck_author_refs"
-                        data-loading-text="recherche..."
+                        data-loading-text="recherche en cours..."
                         >
-                  rechercher les ouvrages de cet auteur
+                  recherchez 
+                  <!-- les ouvrages de cet auteur -->
                 </button>
               </div>
             </div>
@@ -171,9 +172,10 @@
             <button role="button"
                     class="btn btn-block btn-default btn-sm"
                     id="ckeck_title"
-                    data-loading-text="recherche..."
+                    data-loading-text="recherche en cours..."
                     >
-              rechercher le code barre et l'auteur
+              recherchez 
+              <!-- le code barre et l'auteur -->
             </button>
           </div>
         </div>
@@ -189,6 +191,7 @@
 
         {% else %}
 
+        
         <div class="row">
           <label for="input_title" class="col-sm-3 control-label text-right">par code barre</label>
 
@@ -205,9 +208,10 @@
                 class="btn btn-block btn-default btn-sm"
                 id="ckeck_oneref"
                 onclick="Check_OneRef()"
-                data-loading-text="recherche..."
+                data-loading-text="recherche en cours..."
                 >
-              rechercher le titre et l'auteur de cet ouvrage
+              recherchez
+              <!-- le titre et l'auteur de cet ouvrage -->
             </button>
           </div>
     

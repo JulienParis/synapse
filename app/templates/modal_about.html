@@ -17,16 +17,10 @@ aria-labelledby="mod_about">
       <span aria-hidden="true">x</span>
     </button>
 
-
     <img  src="{{ url_for('static', filename='images/logo_index.png') }}" 
     style="margin-top:-5px ; max-height : 85px ;" >
 
-    <!-- <h3 class="" style="color:white">
-        à propos de {{ app_metas.title }}
-    </h3> -->
-
     <br><br>
-
     
     <hr>
 
@@ -269,17 +263,18 @@ aria-labelledby="mod_about">
                     <a href="http://www.la-bibliotheque.com" target="_blank">
                         La Bibliothèque 
                     </a>
-                    – 
+                </li>
+                <li> 
                     <a href="http://www.lecolededesign.com" target="_blank">
                         École de design de Nantes 
                     </a>
                 </li>
-                
                 <li>
                     <a href="http://www.univ-nantes.fr" target="_blank">
                         Université de Nantes 
                     </a>
-                    – 
+                </li>
+                <li> 
                     <a href="http://www.iutlaroche.univ-nantes.fr" target="_blank"> 
                         IUT de la Roche-sur-Yon
                     </a>
@@ -292,91 +287,13 @@ aria-labelledby="mod_about">
     <br>
 
 
-    <!-- <h3 class="" style="color:white">
-            <strong> conception </strong>
-    </h3>
-    
-    <h3 class="lead text-justify" style="color:white ; margin-left: 80px ; margin-right: 80px">
-            
-        <ul class="list-unstyled">
-
-            <li> {{ app_metas.title | title }} est un projet expérimental initié par 
-                <a href="http://www.la-bibliotheque.com" target="_blank">
-                    <strong>La Bibliothèque de Saint-Herblain </strong>
-                </a>
-                dans le cadre du cycle "Le livre et la lecture dans 5 ans". 
-            </li>
-            
-            <br>    
-
-            <li> 
-                {{ app_metas.title | title }}
-                est le fruit d’une question née de l’observation des pratiques de lecture : 
-                parmi les centaines de milliers d'ouvrages contenus dans une bibliothèque, comment représenter les emprunts de chacun ? 
-                L’opportunité du cycle
-                <strong><a href="https://www.stereolux.org/cycle-livre-lecture" target="_blank">
-                    "Le livre et la lecture dans 5 ans" 
-                </a></strong>
-                initié par Mobilis en octobre 2016 a permis à La Bibliothèque de
-                confier cette question à la curiosité d’usagers et d’étudiants qui l’ont d'abord explorée, questionnée et détournée
-                pour faire de ce bourgeon d’intuition la maquette d’un prototype. 
-                <br>
-                Cette première maquette a ensuite été interprétée et enrichie par le développeur, Julien Paris, 
-                qui a réalisé ce prototype d'un <strong>espace 3D interactif</strong>, mouvant ou liquide, semi-géométrique, semi-organique.
-            </li>    
-            
-            <li>
-                <a class="text-center" href="#about_next">
-                    <h2 style="margin-top: 20px; margin-bottom: 20px; color:white">
-                        <strong><span class="glyphicon glyphicon-menu-down" area-hidden="false"></span></strong>
-                    </h2>
-                </a>
-            </li>
-            
-            <li id="about_next"> 
-                <strong>Le premier défi</strong> de ce projet était artistique et technique : rendre <strong>graphique</strong> et <strong>"vivante"</strong> 
-                une somme considérable de données de manière interactive, 
-                et de mettre continuellement ces données à jour.
-                En effet l'ensemble du catalogue est mis à jour chaque nuit, et les nouveaux emprunts des lecteurs doivent pouvoir 
-                être importés dans {{ app_metas.title }} à la demande.
-                <br>
-                <strong>Le second enjeu</strong> du projet était également de poser les bases d'un outil permettant à terme 
-                l'<strong>exploration</strong> et l'<strong>analyse</strong> des parcours d'emprunts des utilisateurs,
-                ainsi que la gestion d'un catalogue de manière visuelle pour les professionnels des bibliothèques. 
-            </li>
-
-            <br>
-            
-            <li> 
-                {{ app_metas.title | title }} est dans sa version actuelle (<em>{{ app_metas.version }}</em>) une application de <strong>data visualisation</strong> de l'ensemble du catalogue 
-                de La Bibliothèque de Saint-Herblain ({{ basic_stats["count_notices"] }} ouvrages à ce jour) 
-                ainsi que des parcours d'emprunts des utilisateurs ({{ basic_stats["count_users"] }} parcours à ce jour).
-            </li>
-
-        </ul>
-    </h3> -->
-
-
-
-
-    <!-- <a class="text-center" href="#about_next2">
-        <h2 style="margin-top: 50px; margin-bottom: 50px; color:white">
-            <strong><span class="glyphicon glyphicon-menu-down" area-hidden="false"></span></strong>
-        </h2>
-    </a> -->
-
     <hr>
 
         <div >
             {% include "_realisation.html" %}
         </div>
 
-    <!-- <hr>
 
-    <h3 class="text-center" style="margin-top:30px">
-        <a data-dismiss="modal">× revenir à {{ app_metas.title }} ×</a>
-    </h3>
-    <br> -->
 
     {% include "_partners.html" %}
     
@@ -398,7 +315,7 @@ aria-labelledby="mod_about">
         <ul class="list-unstyled">
             
             <li> 
-                Emmanuelle Garcia  - <em>Mobilis</em>
+                Emmanuelle Garcia - <em>Mobilis</em>
                 <span class="fa fa-circle fa-sm" area-hidden="false"></span>
 
                 Claudine Paque - <em>Université de Nantes</em>
@@ -410,14 +327,17 @@ aria-labelledby="mod_about">
                 Martin Lambert, Boris Letessier - <em>Stereolux</em>
                 <span class="fa fa-circle fa-sm" area-hidden="false"></span>
                 
-                <!-- Sonia Mourlan, Magalie Badion, Laurent Hautbois, Muriel Souchon  - <em>Médiathèque Hermeland</em>
+                Sonia Mourlan (directrice), 
+                Magalie Badion,
+                Laurent Hautbois, 
+                Muriel Souchon 
+                - <em>La Bibliothèque / Ville de Saint-Herblain</em>
                 <span class="fa fa-circle fa-sm" area-hidden="false"></span>
                 
-                Maxime Lemonnier - <em>Ville de Saint Herblain</em>
-                <span class="fa fa-circle fa-sm" area-hidden="false"></span> -->
+                Maxime Lemonnier, Pascal Frémeaux, Christian Coipeau - <em>Service informatique / Ville de Saint Herblain</em>
+                <span class="fa fa-circle fa-sm" area-hidden="false"></span>
 
-                Damla Subasi Paris <span class="fa fa-heart fa-xs" area-hidden="false"></span> et 
-                <span class="fa fa-paw fa-sm" area-hidden="false"></span>
+                Damla Subasi Paris <span class="fa fa-heart fa-xs" area-hidden="false"></span> et <span class="fa fa-paw fa-sm" area-hidden="false"></span>
             </li>
             
         </ul>
@@ -502,7 +422,10 @@ aria-labelledby="mod_about">
         <ul class="list-unstyled">
 
             <li> 
-                <em>développeur et auteur du site</em> : Julien Paris (Jpy)
+                <em>développeur et auteur du site</em> : 
+                <a href="http://www.jpylab.com" target="_blank">
+                Julien Paris (Jpy)
+                </a>
             </li>
 
             <li>

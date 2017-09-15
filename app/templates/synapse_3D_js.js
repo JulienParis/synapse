@@ -1276,32 +1276,7 @@ preload_notices( function(json) {
     };
 
 
-    // // --- TRAVERSE SCENE FUNCTIONS --- //
-    // function onChangeControl ( factorName ) {
 
-    //     scene.traverse( function( node ) {
-
-    //         if ( node instanceof THREE.LineSegments | node instanceof THREE.Points ) {
-
-    //             if (node.name != "helper") {
-    //                 // console.log("--- traverse / node : ", node );
-
-    //                 if ( factorName == "velFactor" ) {
-    //                     node.material.uniforms.velFactor.value  = effectController.vitesse_rotations ;
-    //                 }
-    //                 if ( factorName == "scaFactor" ) {
-    //                     node.material.uniforms.scaFactor.value  = effectController.taille_points ;
-    //                 }
-    //                 if ( factorName == "respiration" ) {
-    //                     node.material.uniforms.respiration.value  = effectController.respiration ;
-    //                 }
-
-    //             }
-    //         }
-
-    //     });
-
-    // };
 
 
 
