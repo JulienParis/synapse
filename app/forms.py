@@ -77,7 +77,7 @@ class UserHistoryAloesForm(FlaskForm):
     cardPassword = PasswordField ( 'user password', validators = [ DataRequired() ], render_kw={'class': HTMLclass_form_control, 'placeholder':u'votre ' + dict_db_user[key_password] + u" de carte de bibliothèque"}  )
 
 class RequestCabForm(FlaskForm):
-    cab_code     = IntegerField  ( u'barcode',       validators = [ DataRequired() ],       render_kw={'class': HTMLclass_form_control, 'placeholder':u"le code barre de l'ouvrage ", "onfocus":u"this.placeholder = ''"}  )
+    cab_code     = IntegerField  ( u'barcode',       validators = [ DataRequired() ],       render_kw={'class': HTMLclass_form_control, 'placeholder':u"entrez le code barre de l'ouvrage ", "onfocus":u"this.placeholder = ''"}  )
     categ        = RadioField    ( u'catégorie',     choices=[ (key_parc_envies,u'envie de lire'),(key_parc_lus,u'ouvrage lu') ], render_kw={'class': HTMLclass_radio_line}, default=key_parc_envies )
 
 
