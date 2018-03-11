@@ -2,19 +2,19 @@
 
 
 ## **synapse** is a web application based on [Flask](http://flask.pocoo.org/) Python microframework, mongoDB database, Zeep, mySQL, and Three.js
-## **synapse** is available online for now at : **[synapse.la-bibliotheque.com]http://synapse.la-bibliotheque.com()**.
+## **synapse** is available online for now at : **[synapse.la-bibliotheque.com](http://synapse.la-bibliotheque.com)**.
 
 
 ----------------------------------------------------
 ## Licence & copyrights :
 
-- **Licence** : [???] ()
+- **Licence** : [GNU](https://github.com/JulienParis/synapse/blob/master/LICENSE)
 
 - **Project by** : [Julien Paris](http://jpylab.com/)
 
 - **Author code** : Copyright (C) 2017 [Julien Paris](http://jpylab.com/)
 
-- **Contact** : [jparis.py@gmail.com](mailto:jparis.py@gmail.com)
+- **Contact** : [youremail@email.com](mailto:youremail@email.com)
 
 
 >
@@ -53,14 +53,15 @@ This application proposes several features :
 
   >
   ```
-  $ git config --global user.name 'jpySynapse_prod'
-  $ git config --global user.email ‘jparis.py@gmail.com’
+  $ git config --global user.name 'your_username'
+  $ git config --global user.email ‘youremail@email.com’
   ```
 
-  - clone synapse project from gitlab :
+  - clone synapse project from github :
   >
   ```
-  $ git clone git@gitlab.com:Julien_P/synapse.git
+  $ git clone https://github.com/JulienParis/synapse.git
+
   ```
 
   - install, create and activate a virtual environment :
@@ -91,7 +92,7 @@ This application proposes several features :
 
 ## _SERVER_CONFIGURATION_ | Installation on Ubuntu server (after SSH access):
 
-  - connect to server : `$ ssh julien@80.82.225.40`
+  - connect to server : `$ ssh your_username@xx.xx.xxx.xx`
 
   - update ubuntu : `$ sudo apt-get update`
 
@@ -165,12 +166,12 @@ This application proposes several features :
   - cf : <https://www.youtube.com/watch?v=OtxdNuodlIE>
   - cf : <https://www.digitalocean.com/community/tutorials/how-to-install-git-on-ubuntu-16-04>
 
-  - connect to server : `—> julien@80.82.225.40 $`
+  - connect to server : `—> your_username@xx.xx.xxx.xx $`
 
   - ** if not set yet : create SSH key
   >
   ```
-  $ ssh-keygen -t rsa -C "jparis.py@gmail.com" -b 4096
+  $ ssh-keygen -t rsa -C "youremail@email.com" -b 4096
   or
   $ ssh-keygen -t rsa -b 4096
   (save it to /root/.ssh/id_rsa +Y )
@@ -208,15 +209,15 @@ This application proposes several features :
 
   - go to gitlab / github (on gitlab : https://gitlab.com/profile/keys) : `--> add ssh key to authorized keys / deployment keys`
 
-  - back to server - ssh : `—> julien@80.82.225.40:$ ...`
+  - back to server - ssh : `—> your_username@xx.xx.xxx.xx:$ ...`
 
   - install GIT on the server : `$ sudo apt-get install git`
 
   - config GIT :
   >
   ```
-  $ git config --global user.name 'julien'
-  $ git config --global user.email ‘jparis.py@gmail.com’
+  $ git config --global user.name 'yourname'
+  $ git config --global user.email ‘youremail@email.com’
   ```
 
   - create a directory to store apps : `$ sudo mkdir apps`
@@ -227,13 +228,13 @@ This application proposes several features :
   $ cd apps
   $ git config --list
   $ git init
-  $ git remote add origin ssh://git@gitlab.com:Julien_P/synapse.git
+  $ git remote add origin https://github.com/JulienParis/synapse.git
   ```
 
   - and clone :
   >
   ```
-  $ git clone git@gitlab.com:Julien_P/synapse.git
+  $ git clone git@github.com/JulienParis/synapse.git
   $ ...
   $ git remote -v
   ```
@@ -345,13 +346,13 @@ This application proposes several features :
   - cf : <https://unix.stackexchange.com/questions/106480/how-to-copy-files-from-one-machine-to-another-using-ssh>
   >
   ```
-  $ scp /Users/username/PATH/TO/PROJECT/config.py julien@80.82.225.40:/home/julien/apps/synapse
+  $ scp /Users/username/PATH/TO/PROJECT/config.py your_username@xx.xx.xxx.xx:/home/julien/apps/synapse
   ```
 
   - GIT maintainance : pull when changes
   >
   ```
-  $ ssh julien@80.82.225.40    ... + pwd
+  $ ssh your_username@xx.xx.xxx.xx    ... + pwd
   $ cd apps/synapse
   $ git pull
   ```
