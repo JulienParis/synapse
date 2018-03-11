@@ -14,7 +14,7 @@
 
 - **Author code** : Copyright (C) 2017 [Julien Paris](http://jpylab.com/)
 
-- **Contact** : [youremail@email.com](mailto:youremail@email.com)
+- **Contact** : [jparis.py@gmail.com](mailto:jparis.py@gmail.com)
 
 
 >
@@ -78,6 +78,14 @@ This application proposes several features :
   (venv)$ pip install -r requirements.txt
   ```
 
+  - update lxml libs
+  >
+  ```
+  $ brew install libxml2
+  $ brew install libxslt
+  $ brew link libxml2 --force
+  $ brew link libxslt --force
+  ```
   - run synapse in debugging mode :
   >
   ```
